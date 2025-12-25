@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Update Order Status</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h3>Update Order Status</h3>
+    <div class="card p-3 mb-3">
+        <div>
+            <strong>Order ID:</strong> <span th:text="${orderId}"></span><br/>
+            <strong>Order Number:</strong> <span th:text="${order.orderNumber}"></span>
+        </div>
+    </div>
+    <form th:action="@{/admin/orders/{orderId}/status(orderId=${orderId})}" method="post">
+        <div class="mb-3">
+            <label for="status" class="form-label">Select Status</label>
+            <select name="status" id="status" class="form-select" required>
+                <option th:each="s : ${T(com.hyperchip.order.model.OrderStatus).values()}"
+                        th:value="${s}" th:text="${s}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="note" class="form-label">Note (optional)</label>
+            <textarea name="note" id="note" class="form-control" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Status</button>
+        <a th:href="@{/admin/orders}" class="btn btn-secondary">Back</a>
+    </form>
+</div>
+</body>
+</html>

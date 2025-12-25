@@ -1,0 +1,15 @@
+/* coupon.css – Coupon section styles */
+
+#coupon-discount-row {
+    font-weight: bold;
+    color: #d9534f; /* emphasize discount in red */
+}
+
+#coupon-feedback {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+#apply-coupon-btn.btn-outline-primary {
+    min-width: 75px; /* consistent button width */
+}

@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Manage Addresses - Hyperchip</title>
+    <!-- Theme + Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/user.css}" />
+    <style>
+        :root { --card-radius: 12px; }
+        .addr-card { border-radius: var(--card-radius); transition: transform .12s ease, box-shadow .12s ease; }
+        .addr-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+        .addr-actions .btn { min-width: 92px; }
+        .badge-default { background: linear-gradient(90deg,#198754,#2ecc71); color: #fff; }
+        .empty-placeholder { min-height: 160px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:#6c757d; }
+        @media (max-width:767px) { .addr-actions { gap:.5rem; flex-wrap:wrap; } }
+        /* Make modal appear above any fixed footer */
+        .modal { z-index: 99999 !important; }
+        .modal-backdrop { z-index: 99990 !important; }
+        .modal-dialog { max-height: 90vh; overflow-y: auto; }
+        /* inline validation message styling (similar to signup) */
+        .field-error { color: #dc3545; font-size: .85rem; min-height: 1em; display:block; margin-top:.25rem; }
+        .required-star { color:#d00; margin-left:2px; }
+        .address-title h2{ color:#000}
+    </style>
+</head>
+<body>
+<!-- header -->
+<div th:replace="fragments/user-header :: userHeader"></div>
+<main class="container my-5 address-title">
+    <input type="hidden" id="page-user-id" th:value="${userId}" />
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="h4 mb-0">Saved Addresses</h2>
+            <div class="text-muted small">Manage delivery addresses for your account</div>
+        </div>
+        <div>
+            <!-- keep th:href mapping (fallback) but open modal when JS available -->
+            <a th:href="@{/user/address/new}" class="btn btn-primary">+ Add new address</a>
+        </div>
+    </div>
+    <!-- server-side list (unchanged mappings) -->
+    <div id="addresses-server" th:if="${addresses != null}">
+        <div class="row g-3">
+            <div class="col-12 col-md-6 col-lg-4" th:each="a : ${addresses}">
+                <div class="card addr-card p-3 h-100">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <strong th:text="${a.label != null ? a.label : 'Landmark'}">Landmark</strong>
+                                <span th:if="${a.isDefault}" class="badge ms-2 badge-default">Default</span>
+                            </div>
+                            <div class="text-muted small mt-1"
+                                 th:text="${a.addressLine1 + (a.addressLine2 != null ? ', ' + a.addressLine2 : '') + ', ' + a.city + ', ' + a.state + ' - ' + a.pincode}">
+                                Address lines
+                            </div>
+                            <div class="text-muted small mt-2">
+                                Contact: <span th:text="${a.contactName ?: '-'}">-</span> • <span th:text="${a.contactPhone ?: '-'}">-</span>
+                            </div>
+                            <div class="mt-3 d-flex addr-actions gap-2">
+                                <a th:href="@{|/user/address/${a.id}/edit|}"
+                                   class="btn btn-outline-secondary btn-sm">
+                                    Edit
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" th:attr="data-id=${a.id}" onclick="confirmDelete(this)">
+                                    Delete
+                                </button>
+                                <form th:if="${!a.isDefault}" th:action="@{|/user/address/${a.id}/set-default|}" method="post" style="display:inline;">
+                                    <button type="button" class="btn btn-sm btn-outline-success" th:attr="data-id=${a.id}" onclick="setDefault(this)">Set default</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- each -->
+        </div>
+        <!-- row -->
+    </div>
+    <!-- client-side rendering fallback -->
+    <div id="addresses-client" class="row g-3" th:if="${addresses == null}">
+        <div class="text-center py-4 w-100" id="addresses-loading">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-2 text-muted small">Loading addresses...</div>
+        </div>
+    </div>
+    <template id="tpl-empty">
+        <div class="col-12">
+            <div class="card p-4 empty-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                    <path d="M12.166 8.94c0 3.468-3.505 5.86-4.166 6.21-.66-.35-4.166-2.742-4.166-6.21A4.166 4.166 0 1 1 12.166 8.94z"/>
+                    <path d="M8 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                </svg>
+                <div class="fw-semibold">No saved addresses</div>
+                <div class="small text-muted">Add an address to make checkout faster and easier.</div>
+                <div class="mt-3"><a href="/user/address/new" class="btn btn-outline-primary btn-sm">Add address</a></div>
+            </div>
+        </div>
+    </template>
+</main>
+<!-- Address modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="addressModalTitle" class="modal-title">Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="addressModalBody" class="modal-body">
+                <div class="text-center py-4" id="modal-loading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2 text-muted small">Loading form...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- footer -->
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<!-- libs -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    (function(){
+      const userId = document.getElementById('page-user-id') ? document.getElementById('page-user-id').value : null;
+      const addressesClient = document.getElementById('addresses-client');
+      const addressesServer = document.getElementById('addresses-server');
+      const addBtn = document.getElementById('btn-add-address');
+      const modalEl = document.getElementById('addressModal');
+      const modal = new bootstrap.Modal(modalEl);
+      const modalBody = document.getElementById('addressModalBody');
+      const modalTitle = document.getElementById('addressModalTitle');
+
+      if (!addressesServer && addressesClient) loadAddresses();
+
+      if (addBtn) {
+        addBtn.addEventListener('click', function(ev){
+          ev.preventDefault();
+          openAddModal();
+        });
+      }
+
+      window.openAddModal = async function(){
+        modalTitle.innerText = 'Add address';
+        modalBody.innerHTML = document.getElementById('modal-loading') ? document.getElementById('modal-loading').outerHTML : '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
+        modal.show();
+        try {
+          const res = await fetch('/user/address/new', { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+          if (!res.ok) { modalBody.innerHTML = '<div class="alert alert-warning">Could not load form.</div>'; return; }
+          const html = await res.text();
+          modalBody.innerHTML = html;
+          attachModalFormHandler();
+        } catch (e) {
+          console.error(e); modalBody.innerHTML = '<div class="alert alert-danger">Error loading form.</div>';
+        }
+      };
+
+      window.openEditModal = async function(ev, el){
+        ev.preventDefault();
+        const id = el.getAttribute('data-id') || el.getAttribute('href')?.split('/').pop();
+        if (!id) return;
+        modalTitle.innerText = 'Edit address';
+        modalBody.innerHTML = document.getElementById('modal-loading') ? document.getElementById('modal-loading').outerHTML : '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
+        modal.show();
+        try {
+          const res = await fetch('/user/address/' + encodeURIComponent(id) + '/edit', { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+          if (!res.ok) { modalBody.innerHTML = '<div class="alert alert-warning">Could not load form.</div>'; return; }
+          const html = await res.text();
+          modalBody.innerHTML = html;
+          attachModalFormHandler();
+        } catch (e) {
+          console.error(e); modalBody.innerHTML = '<div class="alert alert-danger">Error loading form.</div>';
+        }
+      };
+
+      function attachModalFormHandler(){
+        const form = modalBody.querySelector('form');
+        if (!form) return;
+        // mark for ajax submission unless server opts out
+        form.classList.add('ajax-address-form');
+
+        // add inline validators for required fields
+        enableInlineValidation(form);
+
+        if (form.getAttribute('data-no-ajax') === 'true') return;
+
+        form.addEventListener('submit', async function(ev){
+          ev.preventDefault();
+          // run client validation
+          if (!validateForm(form)) return;
+
+          const submitBtn = form.querySelector('[type="submit"]');
+          if (submitBtn) { submitBtn.disabled = true; submitBtn.__origText = submitBtn.innerText; submitBtn.innerText = 'Saving...'; }
+
+          const action = form.getAttribute('action') || window.location.pathname;
+          const method = (form.getAttribute('method') || 'POST').toUpperCase();
+          const fd = new FormData(form);
+
+          try {
+            const r = await fetch(action, { method, credentials: 'same-origin', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+
+            const ct = r.headers.get('Content-Type') || '';
+            if (ct.includes('application/json')) {
+              const j = await r.json();
+              if (j && j.success) {
+                modal.hide();
+                Swal.fire({ icon: 'success', title: 'Saved', text: j.message || 'Address saved', timer: 1400, showConfirmButton: false });
+                if (document.getElementById('addresses-client')) loadAddresses();
+                else location.reload();
+                return;
+              } else {
+                const msg = (j && (j.message || j.error)) || 'Save failed';
+                Swal.fire({ icon: 'error', title: 'Failed', text: msg });
+                return;
+              }
+            }
+
+            // redirected -> follow
+            if (r.redirected) {
+              modal.hide();
+              window.location.href = r.url;
+              return;
+            }
+
+            if (r.ok) {
+              modal.hide();
+              Swal.fire({ icon: 'success', title: 'Saved', timer: 1100, showConfirmButton: false });
+              if (document.getElementById('addresses-client')) loadAddresses();
+              else location.reload();
+            } else {
+              const text = await r.text();
+              Swal.fire({ icon:'error', title:'Error', html: text || 'Failed to save address' });
+            }
+          } catch (err) {
+            console.error(err);
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Could not save address' });
+          } finally {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = submitBtn.__origText || 'Save'; }
+          }
+        });
+      }
+
+      // Inline validation helpers
+      function enableInlineValidation(form){
+        const inputs = Array.from(form.querySelectorAll('input,textarea,select'));
+        inputs.forEach(inp => {
+          // attach only once
+          if (inp._hasValidation) return;
+          inp._hasValidation = true;
+
+          // ensure there is an error container (small.field-error)
+          let err = inp.parentElement.querySelector('.field-error');
+          if (!err) {
+            err = document.createElement('small');
+            err.className = 'field-error';
+            inp.parentElement.appendChild(err);
+          }
+
+          inp.addEventListener('input', () => { clearError(inp); });
+          inp.addEventListener('blur', () => { validateField(inp); });
+        });
+      }
+
+      function validateField(inp){
+        const val = (inp.value || '').trim();
+        const errEl = inp.parentElement.querySelector('.field-error');
+        // required
+        if (inp.hasAttribute('required') && val.length === 0){
+          showError(inp, 'This field is required');
+          return false;
+        }
+        // pattern
+        const pattern = inp.getAttribute('pattern');
+        if (pattern && val.length > 0) {
+          const re = new RegExp('^' + pattern + '$');
+          if (!re.test(val)) {
+            const title = inp.getAttribute('title') || 'Invalid format';
+            showError(inp, title);
+            return false;
+          }
+        }
+        // minlength
+        const min = parseInt(inp.getAttribute('minlength') || '0', 10);
+        if (min && val.length > 0 && val.length < min) {
+          showError(inp, 'Too short');
+          return false;
+        }
+        clearError(inp);
+        return true;
+      }
+
+      function validateForm(form){
+        let ok = true;
+        const inputs = Array.from(form.querySelectorAll('input,textarea,select'));
+        inputs.forEach(inp => {
+          if (!validateField(inp)) ok = false;
+        });
+        if (!ok) {
+          // show top-level toast
+          Swal.fire({ icon: 'error', title: 'Please fix validation errors', timer: 1400, showConfirmButton: false });
+        }
+        return ok;
+      }
+
+      function showError(inp, msg){
+        const errEl = inp.parentElement.querySelector('.field-error');
+        if (errEl) errEl.textContent = msg;
+        inp.classList.add('is-invalid');
+      }
+      function clearError(inp){
+        const errEl = inp.parentElement.querySelector('.field-error');
+        if (errEl) errEl.textContent = '';
+        inp.classList.remove('is-invalid');
+      }
+
+      // Delete
+      window.confirmDelete = function(btn){
+        const id = btn.getAttribute('data-id'); if (!id) return;
+        Swal.fire({ title: 'Delete this address?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, delete it' })
+          .then(async (result) => {
+            if (!result.isConfirmed) return;
+            try {
+              const r = await fetch('/user/address/' + encodeURIComponent(id) + '/delete', { method: 'POST', credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+              if (!r.ok) throw new Error('Delete failed');
+              Swal.fire('Deleted!', 'Address has been deleted.', 'success');
+              if (document.getElementById('addresses-client')) loadAddresses(); else location.reload();
+            } catch (e) {
+              console.error(e); Swal.fire('Failed', 'Could not delete address.', 'error');
+            }
+          });
+      };
+
+      // set default
+      window.setDefault = async function(btn){
+        const id = btn.getAttribute('data-id'); if (!id) return;
+        try {
+          const r = await fetch('/user/address/' + encodeURIComponent(id) + '/set-default', { method: 'POST', credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+          if (!r.ok) throw new Error('Failed');
+          Swal.fire({ icon:'success', title:'Default set', timer:1000, showConfirmButton:false });
+          if (document.getElementById('addresses-client')) loadAddresses(); else location.reload();
+        } catch (e) {
+          console.error(e); Swal.fire('Failed', 'Could not set default.', 'error');
+        }
+      };
+
+      // client-side loader
+      async function loadAddresses(){
+        if (!userId) {
+          document.getElementById('addresses-client').innerHTML = '<div class="col-12"><div class="alert alert-warning">Please sign in to manage addresses.</div></div>';
+          return;
+        }
+        const api = '/user/api/proxy/addresses/' + encodeURIComponent(userId);
+        try {
+          const res = await fetch(api, { credentials: 'same-origin' });
+          const container = document.getElementById('addresses-client');
+          const loading = document.getElementById('addresses-loading');
+          loading && loading.remove();
+          if (!res.ok) { container.innerHTML = '<div class="col-12"><div class="alert alert-warning">Failed to load addresses.</div></div>'; return; }
+          const list = await res.json();
+          if (!Array.isArray(list) || list.length === 0) {
+            const tpl = document.getElementById('tpl-empty').content.cloneNode(true);
+            container.innerHTML = '';
+            container.appendChild(tpl);
+            return;
+          }
+          container.innerHTML = '';
+          list.forEach(a => {
+            const col = document.createElement('div'); col.className = 'col-12 col-md-6 col-lg-4';
+            col.innerHTML = `
+              <div class="card addr-card p-3 h-100">
+                <div class="d-flex align-items-start">
+                  <div class="flex-grow-1">
+                    <div class="d-flex align-items-center mb-1">
+                      <strong>${escapeHtml(a.label || 'Landmark')}</strong>
+                      ${a.isDefault ? '<span class="badge ms-2 badge-default">Default</span>' : ''}
+                    </div>
+                    <div class="text-muted small mt-1">${escapeHtml([a.addressLine1,a.addressLine2,a.city,a.state,a.pincode].filter(Boolean).join(', '))}</div>
+                    <div class="text-muted small mt-2">Contact: ${escapeHtml(a.contactName || '-')} • ${escapeHtml(a.contactPhone || '-')}</div>
+                    <div class="mt-3 d-flex addr-actions gap-2">
+                      <a class="btn btn-outline-secondary btn-sm" href="/user/address/${a.id}/edit" data-id="${a.id}" onclick="openEditModal(event,this)">Edit</a>
+                      <button type="button" class="btn btn-outline-danger btn-sm" data-id="${a.id}" onclick="confirmDelete(this)">Delete</button>
+                      ${a.isDefault ? '' : `<button type="button" class="btn btn-sm btn-outline-success" data-id="${a.id}" onclick="setDefault(this)">Set default</button>`}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+            container.appendChild(col);
+          });
+        } catch (err) {
+          console.error(err);
+          const container = document.getElementById('addresses-client');
+          container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error loading addresses.</div></div>';
+        }
+      }
+
+      function escapeHtml(s){ if (s === null || s === undefined) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+
+    })();
+    /*]]>*/
+</script>
+<script th:if="${successMsg}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: '[[${successMsg}]]',
+        timer: 1800,
+        showConfirmButton: false
+    });
+</script>
+<script th:if="${errorMsg}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: '[[${errorMsg}]]'
+    });
+</script>
+</body>
+</html>

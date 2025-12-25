@@ -1,0 +1,581 @@
+<!-- templates/admin/product-form.html-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title th:text="${(product != null) ? 'Edit Product' : 'Add Product'}">Product Form</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Cropper.js CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet"/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        /* required star (same idea as signup page) */
+        .hc-required { color:#dc3545; font-weight:700; }
+        /* modal image */
+        #cropImage { display:block; max-width:100%; margin:0 auto; }
+        .crop-controls { gap:.5rem; }
+        /* preview list */
+        .image-item { position:relative; display:inline-block; margin:6px; width:120px; height:120px; }
+        .image-item img { width:100%; height:100%; object-fit:cover; border-radius:8px; border:1px solid #e9ecef; display:block; }
+        .btn-remove { position:absolute; top:6px; right:6px; width:30px; height:30px; border-radius:50%; background:#dc3545; color:#fff; border:none; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        .btn-replace { position:absolute; left:6px; bottom:6px; padding:4px 6px; border-radius:6px; font-size:13px; background:#0d6efd; color:#fff; border:none; cursor:pointer; }
+        .removed-overlay { display:none; position:absolute; inset:0; background:rgba(255,255,255,0.85); border-radius:8px; align-items:center; justify-content:center; text-align:center; }
+    </style>
+</head>
+<body>
+<!-- Admin header -->
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container mt-5 mb-5 productForm">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0" th:text="${(product != null) ? 'Edit Product' : 'Add Product'}"></h4>
+        </div>
+        <div class="card-body">
+            <!-- NOTE: Save action must accept Multipart files named 'images' -->
+            <form id="productForm"
+                  th:action="@{/admin/products/save}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  th:object="${product}"
+                  class="needs-validation"
+                  novalidate>
+                <div class="mb-3">
+                    <small class="text-muted">Fields marked <span class="hc-required">*</span> are required.</small>
+                </div>
+                <!-- Hidden Product ID -->
+                <input type="hidden" th:if="${product != null and product.id != null}" th:field="*{id}" />
+                <!-- Product Title -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">
+                        Product Title <span class="hc-required">*</span>
+                    </label>
+                    <input type="text"
+                           th:field="*{title}"
+                           class="form-control"
+                           id="title"
+                           placeholder="Enter product name"
+                           required />
+                    <div class="invalid-feedback">Please enter the product title.</div>
+                </div>
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">
+                        Description <span class="hc-required">*</span>
+                    </label>
+                    <textarea th:field="*{description}"
+                              class="form-control"
+                              id="description"
+                              rows="4"
+                              placeholder="Enter product description"
+                              required></textarea>
+                    <div class="invalid-feedback">Please enter the product description.</div>
+                </div>
+                <!-- Price & Stock -->
+                <div class="mb-3 row">
+                    <div class="col-md-6">
+                        <label for="price" class="form-label">
+                            Price (₹) <span class="hc-required">*</span>
+                        </label>
+                        <input type="number"
+                               th:field="*{price}"
+                               class="form-control"
+                               id="price"
+                               placeholder="Enter product price"
+                               required
+                               min="0"
+                               step="0.01" />
+                        <div class="invalid-feedback">Please enter a valid price (0 or above).</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="stock" class="form-label">
+                            Stock Quantity <span class="hc-required">*</span>
+                        </label>
+                        <input type="number"
+                               th:field="*{stock}"
+                               class="form-control"
+                               id="stock"
+                               required
+                               min="0" />
+                        <div class="invalid-feedback">Please enter a valid stock quantity (0 or above).</div>
+                    </div>
+                </div>
+                <!-- Discount & Discounted Price -->
+                <!--                <div class="mb-3 row">-->
+                <!--                    <div class="col-md-6">-->
+                <!--                        <label for="discount" class="form-label">Discount (%)</label>-->
+                <!--                        <input type="number" th:field="*{discount}" class="form-control" id="discount" placeholder="Enter discount" min="0" max="100" step="1" />-->
+                <!--                    </div>-->
+                <!--                    <div class="col-md-6">-->
+                <!--                        <label for="discountPrice" class="form-label">Discounted Price (₹)</label>-->
+                <!--                        <input type="number" th:field="*{discountPrice}" class="form-control" id="discountPrice" readonly />-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <!-- Category & Brand -->
+                <div class="mb-3 row">
+                    <div class="col-md-6">
+                        <label for="category" class="form-label">
+                            Category <span class="hc-required">*</span>
+                        </label>
+                        <select th:field="*{categoryId}" id="category" class="form-select" required>
+                            <option value="">-- Select Category --</option>
+                            <option th:each="cat : ${categories}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.name}"
+                                    th:selected="${product != null and product.categoryId == cat.id}"></option>
+                        </select>
+                        <div class="invalid-feedback">Please select a category.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="brand" class="form-label">
+                            Brand <span class="hc-required">*</span>
+                        </label>
+                        <select th:field="*{brandId}" id="brand" class="form-select" required>
+                            <option value="">-- Select Brand --</option>
+                            <option th:each="br : ${brands}"
+                                    th:value="${br.id}"
+                                    th:text="${br.name}"
+                                    th:selected="${product != null and product.brandId == br.id}"></option>
+                        </select>
+                        <div class="invalid-feedback">Please select a brand.</div>
+                    </div>
+                </div>
+                <!-- Image Upload (new files) -->
+                <div class="mb-3">
+                    <label for="imageFiles" class="form-label">
+                        Product Images (min. 3) — New uploads <span class="hc-required">*</span>
+                    </label>
+                    <input type="file" class="form-control" id="imageFiles" accept="image/*" multiple />
+                    <small class="text-muted d-block mt-1">
+                        Keep existing images or upload new images so that total images are at least 3.
+                    </small>
+                </div>
+                <!-- Crop settings -->
+                <div class="mb-3 d-flex align-items-center crop-controls">
+                    <label class="me-2">Output Size:</label>
+                    <input id="targetWidth" type="number" class="form-control me-2" style="width:110px;" value="1000" min="1" />
+                    <label class="me-2">x</label>
+                    <input id="targetHeight" type="number" class="form-control me-2" style="width:110px;" value="1000" min="1" />
+                    <label class="me-2">Aspect</label>
+                    <select id="aspectRatioSelect" class="form-select" style="width:150px;">
+                        <option value="1">Square (1:1)</option>
+                        <option value="1.3333333333">4:3</option>
+                        <option value="1.7777777778">16:9</option>
+                        <option value="free" selected>Free</option>
+                    </select>
+                </div>
+                <!-- Preview for new (cropped) files -->
+                <div class="mb-3">
+                    <label class="form-label">Images to Upload (preview)</label>
+                    <div id="imagePreview" class="d-flex flex-wrap"></div>
+                </div>
+                <!-- Existing Images (if editing) -->
+                <div class="col-12 mb-3"
+                     th:if="${product != null and product.imageNames != null and !#lists.isEmpty(product.imageNames)}">
+                    <label class="form-label">Current Images (click × to remove or ↻ to replace)</label>
+                    <div id="existingImages" class="d-flex flex-wrap">
+                        <div th:each="img : ${product.imageNames}"
+                             class="image-item"
+                             th:attr="data-image-name=${img}">
+                            <img th:src="@{/uploads/products/{imageName}(imageName=${img})}"
+                                 th:attr="data-orig-url=@{/uploads/products/{imageName}(imageName=${img})}"
+                                 th:alt="${img}"
+                                 onerror="this.dataset.broken='true'; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;120&quot; height=&quot;80&quot;><rect width=&quot;100%&quot; height=&quot;100%&quot; fill=&quot;%23f6f7f9&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; fill=&quot;%23999&quot; font-size=&quot;12&quot;>Image not found</text></svg>'" />
+                            <button type="button" class="btn-remove" title="Remove">×</button>
+                            <button type="button" class="btn-replace" title="Replace">↻</button>
+                            <div class="removed-overlay" style="display:none; align-items:center; justify-content:center;">
+                                <div style="color:#d9534f; font-weight:700;">Removed</div>
+                            </div>
+                            <!-- per-slot replace input -->
+                            <input type="file" accept="image/*" class="d-none per-replace-input" />
+                        </div>
+                    </div>
+                </div>
+                <!-- Holder for hidden removed inputs (will be placed into form) -->
+                <div id="removedInputs" style="display:none;"></div>
+                <!-- Submit Button -->
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success px-4 rounded-pill">
+                        <i class="bi bi-save"></i> Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Cropper Modal -->
+<div class="modal fade" id="cropModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crop Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="cropImage" style="max-width: 100%;" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cropConfirm" class="btn btn-primary">Crop & Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Admin footer -->
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<script>
+    /* ---------- Discount auto-update ---------- */
+    <!--    (function () {-->
+    <!--        const priceInput = document.getElementById('price');-->
+    <!--        const discountInput = document.getElementById('discount');-->
+    <!--        const discountPriceInput = document.getElementById('discountPrice');-->
+
+    <!--        function updateDiscountPrice() {-->
+    <!--            const price = parseFloat(priceInput?.value) || 0;-->
+    <!--            const discount = parseFloat(discountInput?.value) || 0;-->
+    <!--            if (discountPriceInput) discountPriceInput.value = ((price * (100 - discount)) / 100).toFixed(2);-->
+    <!--        }-->
+    <!--        if (priceInput && discountInput && discountPriceInput) {-->
+    <!--            priceInput.addEventListener('input', updateDiscountPrice);-->
+    <!--            discountInput.addEventListener('input', updateDiscountPrice);-->
+    <!--            window.addEventListener('load', updateDiscountPrice);-->
+    <!--        }-->
+    <!--    })();-->
+
+    /* ---------- Image upload + crop + existing images management (single clean script) ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+        // Elements
+        const imageFilesInput = document.getElementById('imageFiles'); // new uploads input
+        const previewEl = document.getElementById('imagePreview');     // previews for new uploads
+        const existingImagesEl = document.getElementById('existingImages'); // existing images container (may be null)
+        const removedInputsHolder = document.getElementById('removedInputs'); // hidden inputs holder
+        const formEl = document.getElementById('productForm');
+
+        // Crop modal setup
+        const cropModalEl = document.getElementById('cropModal');
+        const cropImageEl = document.getElementById('cropImage');
+        const cropConfirmBtn = document.getElementById('cropConfirm');
+        let cropper = null;
+        const bootstrapCropModal = cropModalEl ? new bootstrap.Modal(cropModalEl) : null;
+
+        // State
+        let queueFiles = [];
+        let currentQueueIndex = 0;
+        const finalFiles = [];    // Files to be uploaded (cropped blobs)
+        let replaceTargetIndex = null;      // index in finalFiles to replace
+        let replaceExistingTarget = null;   // DOM element of existing image to replace
+
+        // Helper: add hidden removed input (avoid duplicates)
+        function addRemovedInput(filename) {
+            if (!filename || !removedInputsHolder) return;
+            const sel = `input[data-removed-for="${CSS.escape ? CSS.escape(filename) : filename}"]`;
+            if (removedInputsHolder.querySelector(sel)) return;
+            const i = document.createElement('input');
+            i.type = 'hidden';
+            i.name = 'removedImageNames';
+            i.value = filename;
+            i.dataset.removedFor = filename;
+            removedInputsHolder.appendChild(i);
+        }
+
+        // Helper: render previews for finalFiles
+        function renderPreviewList() {
+            if (!previewEl) return;
+            previewEl.innerHTML = '';
+            finalFiles.forEach((file, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'image-item';
+                wrap.dataset.index = idx;
+
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.alt = file.name;
+
+                const rm = document.createElement('button');
+                rm.type = 'button';
+                rm.className = 'btn-remove';
+                rm.title = 'Remove';
+                rm.innerText = '×';
+                rm.addEventListener('click', () => {
+                    const i = parseInt(wrap.dataset.index, 10);
+                    if (!Number.isNaN(i) && i >= 0 && i < finalFiles.length) {
+                        finalFiles.splice(i, 1);
+                        renderPreviewList();
+                    } else {
+                        const found = finalFiles.findIndex(f => f.name === file.name);
+                        if (found >= 0) {
+                            finalFiles.splice(found, 1);
+                            renderPreviewList();
+                        }
+                    }
+                });
+
+                const rp = document.createElement('button');
+                rp.type = 'button';
+                rp.className = 'btn-replace';
+                rp.title = 'Replace';
+                rp.innerText = '↻';
+                rp.addEventListener('click', () => {
+                    replaceTargetIndex = parseInt(wrap.dataset.index, 10);
+                    const tmp = document.createElement('input');
+                    tmp.type = 'file';
+                    tmp.accept = 'image/*';
+                    tmp.style.display = 'none';
+                    document.body.appendChild(tmp);
+                    tmp.addEventListener('change', (e) => {
+                        const f = tmp.files && tmp.files[0];
+                        if (f) {
+                            queueFiles = [f];
+                            currentQueueIndex = 0;
+                            openCropperForFile(f);
+                        }
+                        document.body.removeChild(tmp);
+                    });
+                    tmp.click();
+                });
+
+                wrap.appendChild(img);
+                wrap.appendChild(rm);
+                wrap.appendChild(rp);
+                previewEl.appendChild(wrap);
+            });
+        }
+
+        // open cropper modal with a File
+        function openCropperForFile(file) {
+            if (!cropImageEl || !bootstrapCropModal) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                cropImageEl.src = ev.target.result;
+                bootstrapCropModal.show();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Cropper modal lifecycle
+        if (cropModalEl) {
+            cropModalEl.addEventListener('shown.bs.modal', () => {
+                if (cropper) try { cropper.destroy(); } catch (_) {}
+                const aspectVal = document.getElementById('aspectRatioSelect')?.value;
+                const aspect = aspectVal === 'free' ? NaN : parseFloat(aspectVal);
+                cropper = new Cropper(cropImageEl, {
+                    aspectRatio: isNaN(aspect) ? NaN : aspect,
+                    viewMode: 1,
+                    autoCropArea: 0.9,
+                    responsive: true,
+                    background: false
+                });
+            });
+            cropModalEl.addEventListener('hidden.bs.modal', () => {
+                if (cropper) try { cropper.destroy(); } catch (_) {}
+                cropper = null;
+                // If we were cropping batch queue, advance
+                if (replaceExistingTarget === null && replaceTargetIndex === null) {
+                    currentQueueIndex++;
+                    if (currentQueueIndex < queueFiles.length) {
+                        openCropperForFile(queueFiles[currentQueueIndex]);
+                    } else {
+                        finalizeFilesIntoInput();
+                    }
+                }
+            });
+        }
+
+        // When user clicks Crop & Add
+        if (cropConfirmBtn) {
+            cropConfirmBtn.addEventListener('click', () => {
+                if (!cropper) return;
+                const W = Math.max(1, parseInt(document.getElementById('targetWidth')?.value) || 600);
+                const H = Math.max(1, parseInt(document.getElementById('targetHeight')?.value) || 600);
+                const canvas = cropper.getCroppedCanvas({ width: W, height: H, imageSmoothingQuality: 'high' });
+                canvas.toBlob((blob) => {
+                    const orig = queueFiles[currentQueueIndex] || null;
+                    const name = orig ? orig.name.replace(/\.[^/.]+$/, '') + '.jpg' : `img-${Date.now()}.jpg`;
+                    const newFile = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+
+                    // Replacing existing product image slot
+                    if (replaceExistingTarget) {
+                        const origName = replaceExistingTarget.dataset.imageName;
+                        if (origName) addRemovedInput(origName);
+
+                        // visually replace thumbnail
+                        const imgEl = replaceExistingTarget.querySelector('img');
+                        if (imgEl) imgEl.src = URL.createObjectURL(newFile);
+
+                        // mark DOM to indicate a replacement (so server will receive a new file and removal)
+                        replaceExistingTarget.dataset.replaced = 'true';
+
+                        // add replacement file to finalFiles
+                        finalFiles.push(newFile);
+
+                        // disable slot controls to avoid double changes
+                        replaceExistingTarget.querySelectorAll('button').forEach(b => b.disabled = true);
+
+                        replaceExistingTarget = null;
+                        finalizeFilesIntoInput();
+                    }
+                    // Replacing a preview in finalFiles
+                    else if (replaceTargetIndex !== null) {
+                        finalFiles[replaceTargetIndex] = newFile;
+                        replaceTargetIndex = null;
+                        renderPreviewList();
+                        finalizeFilesIntoInput();
+                    }
+                    // Normal add
+                    else {
+                        finalFiles.push(newFile);
+                        renderPreviewList();
+                        finalizeFilesIntoInput();
+                    }
+
+                    if (bootstrapCropModal) bootstrapCropModal.hide();
+                }, 'image/jpeg', 0.92);
+            });
+        }
+
+        // Bulk selection -> queue -> crop
+        imageFilesInput?.addEventListener('change', (e) => {
+            if (!e.target.files || e.target.files.length === 0) return;
+            queueFiles = Array.from(e.target.files);
+            currentQueueIndex = 0;
+            openCropperForFile(queueFiles[currentQueueIndex]);
+        });
+
+        // finalize finalFiles into an input the browser will send
+        function finalizeFilesIntoInput() {
+            if (!formEl) return;
+            const dt = new DataTransfer();
+            finalFiles.forEach(f => dt.items.add(f));
+
+            const prev = formEl.querySelector('input[data-temp="1"]');
+            if (prev) prev.remove();
+
+            const temp = document.createElement('input');
+            temp.type = 'file';
+            temp.name = 'uploadedImages';
+            temp.multiple = true;
+            temp.style.display = 'none';
+            temp.setAttribute('data-temp', '1');
+
+            let tempSet = false;
+            try {
+                temp.files = dt.files;
+                if (temp.files && temp.files.length > 0) tempSet = true;
+            } catch (err) {
+                tempSet = false;
+            }
+
+            if (tempSet) {
+                formEl.appendChild(temp);
+                try { imageFilesInput.removeAttribute('name'); } catch (_) {}
+            } else {
+                try { imageFilesInput.name = 'uploadedImages'; } catch (_) { formEl.appendChild(temp); }
+            }
+        }
+
+        // Existing images: remove & replace (delegated)
+        if (existingImagesEl) {
+            existingImagesEl.addEventListener('click', (evt) => {
+                const removeBtn = evt.target.closest('.btn-remove');
+                const replaceBtn = evt.target.closest('.btn-replace');
+
+                if (removeBtn) {
+                    const item = removeBtn.closest('.image-item');
+                    if (!item) return;
+                    const name = item.dataset.imageName;
+                    if (name) addRemovedInput(name);
+                    item.remove();
+
+                    // best-effort immediate delete call to admin API (optional)
+                    const pidInput = formEl.querySelector('input[name="id"], input[id="productId"]');
+                    const productId = pidInput ? pidInput.value : null;
+                    if (productId && name) {
+                        fetch(`/api/admin/products/${productId}/images/${encodeURIComponent(name)}`, {
+                            method: 'DELETE',
+                            credentials: 'same-origin'
+                        }).catch(() => {});
+                    }
+                    return;
+                }
+
+                if (replaceBtn) {
+                    const item = replaceBtn.closest('.image-item');
+                    if (!item) return;
+                    replaceExistingTarget = item;
+                    const tmp = item.querySelector('.per-replace-input');
+                    if (tmp) {
+                        tmp.value = null;
+                        tmp.click();
+                    } else {
+                        const t = document.createElement('input');
+                        t.type = 'file'; t.accept = 'image/*'; t.style.display = 'none';
+                        document.body.appendChild(t);
+                        t.addEventListener('change', (e) => {
+                            const f = t.files && t.files[0];
+                            if (f) { queueFiles = [f]; currentQueueIndex = 0; openCropperForFile(f); }
+                            document.body.removeChild(t);
+                        });
+                        t.click();
+                    }
+                    return;
+                }
+            });
+
+            // handle per-slot replace input change
+            existingImagesEl.addEventListener('change', (evt) => {
+                const inputEl = evt.target;
+                if (!inputEl.classList.contains('per-replace-input')) return;
+                const file = inputEl.files && inputEl.files[0];
+                if (!file) { replaceExistingTarget = null; return; }
+                queueFiles = [file];
+                currentQueueIndex = 0;
+                openCropperForFile(file);
+            });
+        }
+
+        // Submit handler – normal form submit (no AJAX)
+        // Validates required fields + ensures image count >= 3
+        formEl.addEventListener('submit', (e) => {
+            // Bootstrap-style validation UI
+            formEl.classList.add('was-validated');
+
+            // First: HTML required validations (title, description, price, stock, category, brand)
+            if (!formEl.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+
+            // count existing images left in DOM
+            const existingCount = existingImagesEl ? existingImagesEl.querySelectorAll('.image-item').length : 0;
+            const totalImagesCount = existingCount + finalFiles.length;
+
+            if (totalImagesCount < 3) {
+                e.preventDefault();
+                alert('Please provide at least 3 images (either keep existing images or upload new ones).');
+                return;
+            }
+
+            // Make sure finalFiles are put into a hidden file input
+            finalizeFilesIntoInput();
+            // 👉 no e.preventDefault() here, browser will submit normally
+        });
+
+        // Visual mark for broken existing images (optional)
+        if (existingImagesEl) {
+            Array.from(existingImagesEl.querySelectorAll('img')).forEach(img => {
+                if (img.dataset && img.dataset.broken === 'true') {
+                    img.style.outline = '2px dashed #dc3545';
+                    img.title = 'Image not found on server';
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

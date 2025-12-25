@@ -1,0 +1,141 @@
+<!-- templates/user/address-form.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title th:text="${address != null and address.id != null ? 'Edit Address' : 'Add Address'}">Address</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/user.css}" />
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .hc-required { color:#dc3545; font-weight:700; }
+        .card-lg { border-radius: 12px; }
+        .shadow-lg h4{color:#fff; }
+    </style>
+</head>
+<body>
+<!-- header (same as other pages) -->
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container mt-5 mb-5">
+    <div class="card shadow-lg card-lg">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0" th:text="${address != null and address.id != null ? 'Edit Address' : 'Add New Address'}"></h4>
+        </div>
+        <div class="card-body">
+            <!-- single form handles both create & update -->
+            <!-- fragment wrapper so controller can return just the form for modal -->
+            <div th:fragment="addressForm">
+                <form
+                        th:action="${address != null and address.id != null} ? @{/user/address/{id}/update(id=${address.id})} : @{/user/address/create}"
+                        method="post"
+                        th:object="${address}"
+                        class="needs-validation"
+                        novalidate>
+                    <!-- ... rest of your existing <form> ... -->
+                    <!-- Keep id hidden when editing -->
+                    <input type="hidden" th:if="${address != null and address.id != null}" th:field="*{id}" />
+                    <p class="text-muted mb-3">Fields marked <span class="hc-required">*</span> are required.</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Address Type / Landmark <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{label}" placeholder="Home / Office / Landmark" required />
+                            <div class="invalid-feedback">Required</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{contactName}" placeholder="Receiver name" required />
+                            <div class="invalid-feedback">Required</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mobile Number <span class="hc-required">*</span></label>
+                            <input type="tel" class="form-control" th:field="*{contactPhone}" pattern="[0-9]{10}" placeholder="10 digit mobile" required />
+                            <div class="invalid-feedback">Enter valid mobile number</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Address Line 1 <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{addressLine1}" placeholder="House no, building, street" required />
+                            <div class="invalid-feedback">Required</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Address Line 2 (Area / Landmark)</label>
+                            <input type="text" class="form-control" th:field="*{addressLine2}" placeholder="Optional" />
+                            <div class="invalid-feedback">Optional</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">City <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{city}" required />
+                            <div class="invalid-feedback">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">State <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{state}" required />
+                            <div class="invalid-feedback">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Pincode <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{pincode}" pattern="[0-9]{6}" required />
+                            <div class="invalid-feedback">Enter valid pincode</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Country <span class="hc-required">*</span></label>
+                            <input type="text" class="form-control" th:field="*{country}" th:value="${address?.country != null ? address.country : 'India'}" required />
+                            <div class="invalid-feedback">Required</div>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center">
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" th:field="*{isDefault}" id="isDefault" />
+                                <label class="form-check-label" for="isDefault">Set as default address</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <a th:href="@{/user/address}" class="btn btn-secondary">Back to addresses</a>
+                        <button type="submit" class="btn btn-success px-4 rounded-pill ms-2"
+                                th:text="${address != null and address.id != null ? 'Update Address' : 'Add Address'}"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- footer -->
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<!-- bootstrap bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap validation (same pattern as your category form) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.needs-validation').forEach(function(form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    });
+</script>
+<!-- SweetAlert flash messages (display when controller provides successMsg/errorMsg) -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+      const sMsg = /*[[${successMsg}]]*/ null;
+      const eMsg = /*[[${errorMsg}]]*/ null;
+
+      if (sMsg) {
+        Swal.fire({ icon: 'success', title: 'Success', text: sMsg, timer: 1600, showConfirmButton: false });
+      }
+      if (eMsg) {
+        Swal.fire({ icon: 'error', title: 'Error', text: eMsg, confirmButtonColor: '#f3a111' });
+      }
+    /*]]>*/
+</script>
+</body>
+</html>

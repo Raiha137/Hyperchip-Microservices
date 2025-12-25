@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title th:text="${brand.id} == null ? 'Add Brand - Hyperchip Admin' : 'Edit Brand - Hyperchip Admin'">Brand Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <!--                <div class="card-header bg-primary text-white text-center">-->
+                <!--                    <h3 th:text="${brand.id} == null ? 'Add Brand' : 'Edit Brand'">Brand Form</h3>-->
+                <!--                </div>-->
+                <div class="card-body">
+                    <div th:if="${successMsg}" class="alert alert-success text-center" th:text="${successMsg}"></div>
+                    <div th:if="${errorMsg}" class="alert alert-danger text-center" th:text="${errorMsg}"></div>
+                    <div class="addBrand">
+                        <div class="form-container">
+                            <h2 th:text="${brand.id} == null ? 'Add Brand' : 'Edit Brand'">Add Brand</h2>
+                            <form th:action="@{/admin/brands/save}" th:object="${brand}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                                <input type="hidden" th:field="*{id}" />
+                                <div class="form-group mb-3">
+                                    <label for="name">
+                                        Brand Name <span class="hc-required">*</span>
+                                    </label>
+                                    <input type="text" id="name"
+                                           th:field="*{name}"
+                                           class="form-control"
+                                           placeholder="Enter brand name"
+                                           required />
+                                    <div class="invalid-feedback">
+                                        Please enter the brand name.
+                                    </div>
+                                    <small id="dupBrandMsg" class="text-danger" style="display:none;">
+                                        Brand already exists. Please choose another name.
+                                    </small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="imageFile">Upload Image</label>
+                                    <input type="file" id="imageFile" name="imageFile" accept="image/*" />
+                                </div>
+                                <!-- Existing image preview (for edit mode) -->
+                                <div class="mb-3" id="existingImageContainer" th:if="${brand.imageName != null}">
+                                    <label class="form-label">Current Image:</label><br />
+                                    <img th:src="${masterBaseUrl + '/uploads/brands/' + brand.imageName}" alt="brand" style="max-height:120px; object-fit:cover;" />
+                                </div>
+                                <div class="mb-3" id="previewContainer" style="display:none;">
+                                    <label class="form-label">Selected Image Preview:</label><br />
+                                    <img id="imagePreview" width="150" class="rounded" />
+                                </div>
+                                <div class="form-group checkbox">
+                                    <input type="checkbox" id="active" th:field="*{active}" />
+                                    <label for="active">Active</label>
+                                </div>
+                                <button type="submit" class="btn-submit"
+                                        th:text="${brand.id} == null ? 'Add Brand' : 'Update Brand'">Submit</button>
+                            </form>
+                            <div class="back-link">
+                                <a th:href="@{/admin/brands}">Back to Brand List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    setTimeout(() => document.querySelectorAll('.alert').forEach(e => e.remove()), 4000);
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+        form.classList.add('was-validated');
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+    });
+
+</script>
+<script>
+    const fileInput = document.getElementById('imageFile');
+    if (fileInput) {
+    fileInput.addEventListener('change', function(e){
+    const f = e.target.files[0];
+    const previewContainer = document.getElementById('previewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const existing = document.getElementById('existingImageContainer'); // new
+
+    if (f) {
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        imagePreview.src = ev.target.result;
+        previewContainer.style.display = 'block';
+        if (existing) existing.style.display = 'none'; // hide old image
+      };
+      reader.readAsDataURL(f);
+    } else {
+      previewContainer.style.display = 'none';
+      if (existing) existing.style.display = ''; // show old image again
+    }
+    });
+    }
+
+</script>
+<!-- SUCCESS POPUP -->
+<script th:if="${successMsg}" th:inline="javascript">
+    Swal.fire({
+        icon: 'success',
+        title: [[${successMsg}]],
+        confirmButtonColor: '#f3a111'
+    });
+</script>
+<script th:inline="javascript">
+    const allBrands = /*[[${allBrands}]]*/ [];
+    const existingBrandNames = allBrands
+        .map(b => (b.name || '').trim().toLowerCase());
+
+    const brandInput = document.getElementById('name');
+    const dupBrandMsg = document.getElementById('dupBrandMsg');
+    const submitBtn = document.querySelector('button[type="submit"]');
+
+    // for edit mode allow same name
+    const currentName = /*[[${brand.name}]]*/ '';
+    const currentLower = (currentName || '').trim().toLowerCase();
+
+    function checkBrandDuplicate() {
+        const v = (brandInput.value || '').trim().toLowerCase();
+
+        const isDuplicate = v.length > 0
+            && existingBrandNames.includes(v)
+            && v !== currentLower;
+
+        dupBrandMsg.style.display = isDuplicate ? 'block' : 'none';
+        if (submitBtn) submitBtn.disabled = isDuplicate;
+    }
+
+    brandInput.addEventListener('input', checkBrandDuplicate);
+    checkBrandDuplicate();
+</script>
+</body>
+</html>

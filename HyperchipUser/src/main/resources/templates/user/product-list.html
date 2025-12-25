@@ -1,0 +1,732 @@
+<!--templates/user/product-list.html-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Products - Hyperchip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- base theme -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <!-- Custom styles for attractive product cards, inline price, and compact icon buttons -->
+    <style>
+        :root { --card-radius: 1rem; --muted: #6c757d; }
+        /* card & hover */
+        .product-card { transition: transform .14s ease, box-shadow .14s ease; overflow: hidden; border-radius: var(--card-radius); }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(20,20,20,0.08); }
+        /* image area */
+        .product-img-wrapper { height: 170px; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg,#fff,#f8f9fa); padding:12px; }
+        .product-img { max-height: 100%; max-width:100%; object-fit:contain; }
+        /* body */
+        .card-body { padding: 1rem; display:flex; flex-direction:column; }
+        .card-title { margin-bottom: .25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .price-currency {
+        font-family: "Segoe UI", "Arial", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        vertical-align: super;
+        position: relative;
+        top: -8px;
+        margin-right: -6px;
+        color: #000;
+        }
+        /* stock */
+        .stock-meta { font-size:.8rem; color:var(--muted); margin-bottom:.4rem; text-align:center; }
+        /* compact circular icon buttons */
+        .btn-icon {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        }
+        .btn-icon i { font-size: 1rem; }
+        .card-actions { display:flex; gap:.5rem; justify-content:center; margin-top: auto; } /* push to bottom */
+        .badge-discount {
+        top: 12px;
+        right: 12px;
+        padding: .35rem .7rem;
+        border-radius: 999px;
+        font-size: .8rem;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff;
+        box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35);
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        }
+        .badge-discount i {
+        font-size: .8rem;
+        }
+        .productTab h3{
+        color:#000;
+        }
+        /* ensure small screens still look ok */
+        @media (max-width: 420px) {
+        .product-img-wrapper { height: 140px; }
+        .price-current { font-size: 1rem; }
+        .btn-icon { width: 36px; height:36px; }
+        }
+        /* ===== PRICE SLIDER (PRO THEME) ===== */
+        /* ---- Clean Slider CSS (single visible track) ---- */
+        /* ===== Clean Themeed Price Slider (Amazon-like) ===== */.price-slider { padding: 8px 4px 6px; }
+        /* slider container */
+        .slider { position: relative; height: 48px; }
+        /* full track */
+        .slider-track {
+        position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+        height: 10px; background: #eceff1; border-radius: 999px; z-index: 1;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        /* active selected range */
+        .slider-range {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        height: 10px; background: linear-gradient(90deg,#fbbf24,#f97316);
+        border-radius: 999px; z-index: 2;
+        box-shadow: 0 4px 10px rgba(249,115,22,0.2);
+        }
+        /* stacked inputs */
+        .range-input {
+        -webkit-appearance: none; appearance:none;
+        position: absolute; left: 0; right:0; top:0; height:48px;
+        background: transparent; pointer-events: auto;
+        }
+        /* hide default track */
+        .range-input::-webkit-slider-runnable-track { background: transparent; }
+        .range-input::-moz-range-track { background: transparent; }
+        /* thumb */
+        .range-input::-webkit-slider-thumb {
+        -webkit-appearance:none; width: 22px; height:22px;
+        border-radius:50%; background:#fff; border:4px solid #f97316;
+        cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);
+        transition: transform .12s ease;
+        }
+        .range-input::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        .range-input::-moz-range-thumb {
+        width:22px; height:22px; border-radius:50%;
+        background:#fff; border:4px solid #f97316; cursor:pointer;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
+        }
+        /* z-index to ensure right thumb is clickable */
+        .range-input#minRange { z-index: 5; }
+        .range-input#maxRange { z-index: 6; }
+        /* labels */
+        .price-values { font-size:0.9rem; color:#6c757d; }
+        /* small screens */
+        @media (max-width:420px){
+        .slider { height:52px; }
+        .range-input::-webkit-slider-thumb { width:18px;height:18px;border-width:3px; }
+        }
+        /* --- Price area responsive & forced-stack when offer exists --- */
+        .price-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;   /* keeps price centered horizontally */
+        gap: 10px;
+        position: relative;
+        min-height: 56px;          /* keeps cards uniform height */
+        }
+        /* currency + prices inline group */
+        .price-main {
+        display: flex;
+        align-items: baseline;
+        gap: .5rem;
+        white-space: nowrap;
+        }
+        /* currency - keep simple baseline alignment for price-area */
+        .price-area .price-currency {
+        margin-right: -2px;
+        vertical-align: baseline;
+        font-size: 1rem;
+        font-weight: 500;
+        }
+        /* prominent current price */
+        .price-area .price-current { font-size: 28px; font-weight:700; color:#000; }
+        /* original price (strike) */
+        .price-area .price-original { font-size:.9rem; color:var(--muted); text-decoration:line-through; margin-left:6px; }
+        /* savings pill */
+        .price-area .save-pill {
+        background: rgba(25, 135, 84, .08);
+        color: #198754;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: .75rem;
+        white-space: nowrap;
+        }
+        /* FORCE stack when server indicates an offer — price stacked, savings stays below/right */
+        .price-area.force-stack,
+        .price-area.force-stack .price-main {
+        display: block;
+        text-align: center;
+        }
+        .price-area.force-stack .price-original { display: block; margin-top: 6px; }
+        .price-area.force-stack .save-pill { display:block; margin-top:6px; }
+        /* fallback auto stacking class used by JS */
+        .price-area.compact-stacked { display: block; text-align:center; }
+        .price-area.compact-stacked .price-main { display:block; }
+        .price-area.compact-stacked .price-original { display:block; margin-top:6px; }
+        /* mobile tweaks */
+        @media (max-width:420px) {
+        .price-area { min-height: 48px; gap: 6px; }
+        .price-area .price-current { font-size: 1rem; }
+        .price-area .save-pill { font-size: .7rem; padding: 3px 6px; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container-fluid mt-5 pt-4">
+    <div class="row g-4">
+        <!-- Sidebar -->
+        <aside class="col-lg-3">
+            <div class="card sidebar-filters shadow p-3 rounded-4 border-0">
+                <h5 class="mb-3 fw-bold text-primary"><i class="fa fa-filter me-2"></i>Filters</h5>
+                <form th:action="@{/user/products}" method="get" id="filtersForm">
+                    <!-- Keep pagination/sort state via hidden fields -->
+                    <input type="hidden" name="sort" th:value="${sort}" />
+                    <input type="hidden" name="page" th:value="${pageNo}" />
+                    <input type="hidden" name="size" th:value="${pageSize}" />
+                    <input type="hidden" id="minPriceHidden" name="minPrice" th:value="${minPrice}">
+                    <input type="hidden" id="maxPriceHidden" name="maxPrice" th:value="${maxPrice}">
+                    <section class="mb-4">
+                        <h6 class="filters-heading">Categories</h6>
+                        <div th:each="catName : ${categories}" class="form-check">
+                            <input class="form-check-input" type="radio"
+                                   th:id="'cat-' + ${catName.hashCode()}"
+                                   name="category" th:value="${catName}" th:checked="${catName == category}" />
+                            <label class="form-check-label" th:for="'cat-' + ${catName.hashCode()}" th:text="${catName}">Category</label>
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearCategory()">Clear</button>
+                        </div>
+                    </section>
+                    <section class="mb-4">
+                        <h6 class="filters-heading">Brands</h6>
+                        <div th:each="brandName : ${brands}" class="form-check">
+                            <input class="form-check-input" type="radio"
+                                   th:id="'brand-' + ${brandName.hashCode()}"
+                                   name="brand" th:value="${brandName}" th:checked="${brandName == brand}" />
+                            <label class="form-check-label" th:for="'brand-' + ${brandName.hashCode()}" th:text="${brandName}">Brand</label>
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearBrand()">Clear</button>
+                        </div>
+                    </section>
+                    <section class="mb-4">
+                        <!-- PRICE FILTER (drop-in replacement) -->
+                        <div class="price-slider">
+                            <div class="d-flex justify-content-between mb-2 price-values align-items-center">
+                                <small class="text-muted">₹ <span id="minDisplay">100</span></small>
+                                <div class="text-center fw-semibold small" id="rangeLabel">₹ <span id="minDisplayCenter">0</span> – ₹ <span id="maxDisplayCenter">100000</span></div>
+                                <small class="text-muted">₹ <span id="maxDisplay">100000</span></small>
+                            </div>
+                            <div class="slider">
+                                <div class="slider-track"></div>
+                                <div class="slider-range" id="sliderRange"></div>
+                                <input class="range-input" id="minRange" type="range" min="0" max="100000" step="100" value="0" aria-label="Minimum price">
+                                <input class="range-input" id="maxRange" type="range" min="0" max="100000" step="100" value="100000" aria-label="Maximum price">
+                            </div>
+                            <div class="mt-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Apply</button>
+                                <button type="button" class="btn btn-outline-secondary"
+                                        onclick="window.location.href='/user/products'">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                        <!-- END price filter -->
+                        <!--                        <h6 class="filters-heading">Price Range</h6>-->
+                        <!--                        <div class="d-flex mb-2">-->
+                        <!--                            <input type="number" class="form-control me-2" name="minPrice" placeholder="Min" th:value="${minPrice}">-->
+                        <!--                            <input type="number" class="form-control" name="maxPrice" placeholder="Max" th:value="${maxPrice}">-->
+                        <!--                        </div>-->
+                        <!--                        <div class="d-flex gap-2">-->
+                        <!--                            <button type="submit" class="btn btn-primary btn-sm">Apply</button>-->
+                        <!--                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearPrice()">Clear</button>-->
+                        <!--                        </div>-->
+                    </section>
+                </form>
+                <section class="mb-4">
+                    <h6 class="filters-heading">Sort By</h6>
+                    <div class="list-group">
+                        <a th:href="@{/user/products(sort='priceAsc', category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}"
+                           th:classappend="${sort == 'priceAsc'} ? ' active' : ''"
+                           class="list-group-item list-group-item-action">Price Low → High</a>
+                        <a th:href="@{/user/products(sort='priceDesc', category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}"
+                           th:classappend="${sort == 'priceDesc'} ? ' active' : ''"
+                           class="list-group-item list-group-item-action">Price High → Low</a>
+                        <a th:href="@{/user/products(sort='alphaAsc', category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}"
+                           th:classappend="${sort == 'alphaAsc'} ? ' active' : ''"
+                           class="list-group-item list-group-item-action">A → Z</a>
+                        <a th:href="@{/user/products(sort='alphaDesc', category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}"
+                           th:classappend="${sort == 'alphaDesc'} ? ' active' : ''"
+                           class="list-group-item list-group-item-action">Z → A</a>
+                    </div>
+                </section>
+                <div class="text-center">
+                    <button class="btn btn-sm btn-outline-danger mt-2" onclick="resetAll()">Reset all</button>
+                </div>
+            </div>
+        </aside>
+        <!-- Products Grid -->
+        <main class="col-lg-9">
+            <div class="row align-items-center productTab mb-3">
+                <div class="col">
+                    <h3 class="mb-0">Products</h3>
+                    <small class="text-muted" th:text="${totalPages != null ? 'Showing page ' + (pageNo + 1) + ' of ' + totalPages : ''}"></small>
+                </div>
+                <div class="col-auto">
+                    <form th:action="@{/user/products}" method="get" class="d-flex gap-2">
+                        <input type="hidden" name="category" th:value="${category}">
+                        <input type="hidden" name="brand" th:value="${brand}">
+                        <input type="hidden" name="minPrice" th:value="${minPrice}">
+                        <input type="hidden" name="maxPrice" th:value="${maxPrice}">
+                        <input type="hidden" name="sort" th:value="${sort}">
+                        <input type="text" name="keyword" class="form-control form-control-sm" placeholder="Search" th:value="${keyword}">
+                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                        <a th:href="@{/user/products}" class="btn btn-outline-secondary btn-sm">Clear</a>
+                    </form>
+                </div>
+            </div>
+            <div class="row g-4" th:if="${products != null and !#lists.isEmpty(products)}">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3" th:each="prod : ${products}">
+                    <div class="card product-card shadow-sm h-100 position-relative border-0 rounded-4"
+                         th:attr="data-href=@{/user/product/{id}(id=${prod.id})}">
+                        <!-- OFFER BADGE (top-right) -->
+                        <div class="badge badge-discount position-absolute d-flex align-items-center gap-1"
+                             th:if="${prod.finalPrice != null
+                        and prod.originalPrice != null
+                        and prod.finalPrice < prod.originalPrice}">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                            <span th:text="${#numbers.formatDecimal(
+                           (prod.originalPrice - prod.finalPrice)
+                           * 100 / prod.originalPrice, 0, 0) + '% OFF'}">
+                        10% OFF
+                        </span>
+                        </div>
+                        <div class="product-img-wrapper">
+                            <img th:if="${prod.imageNames != null and !#lists.isEmpty(prod.imageNames)}"
+                                 th:src="${masterBaseUrl + '/uploads/products/' + prod.imageNames[0]}"
+                                 class="product-img" th:alt="${prod.title}" />
+                            <img th:if="${prod.imageNames == null or #lists.isEmpty(prod.imageNames)}"
+                                 th:src="@{/img/default-product.png}" class="product-img" alt="No Image" />
+                        </div>
+                        <div class="card-body text-center d-flex flex-column">
+                            <h6 class="card-title fw-semibold" th:title="${prod.title}"
+                                th:text="${prod.title != null ? prod.title : 'Product Name'}">Product Name</h6>
+                            <p class="text-muted small mb-0" th:text="${prod.categoryName != null ? prod.categoryName : 'Category N/A'}">Category</p>
+                            <!-- Price row: currency + discounted price (prominent) + original price (strike) + savings -->
+                            <!-- Price area (responsive: inline when space permits, stacked if congested) -->
+                            <!-- Price area (responsive; force stacked when offer exists) -->
+                            <div class="price-area"
+                                 th:classappend="${(prod.originalPrice != null and prod.finalPrice != null and prod.finalPrice < prod.originalPrice)} ? ' force-stack' : ''">
+                                <div class="price-main">
+                                    <span class="price-currency">₹</span>
+                                    <span class="price-current"
+                                          th:attr="data-price=${prod.finalPrice != null
+                                 ? prod.finalPrice
+                                 : (prod.originalPrice != null
+                                 ? prod.originalPrice
+                                 : (prod.discountPrice != null
+                                 ? prod.discountPrice
+                                 : (prod.price != null ? prod.price : 0.00)))}">
+                              0.00
+                              </span>
+                                </div>
+                                <div class="price-meta d-flex justify-content-center align-items-center gap-2"
+                                     th:if="${prod.originalPrice != null and prod.finalPrice != null and prod.originalPrice.doubleValue() > 0 and prod.finalPrice.doubleValue() < prod.originalPrice.doubleValue()}">
+                              <span class="price-original"
+                                    th:attr="data-price-original=${prod.originalPrice}">
+                              ₹ 0.00
+                              </span>
+                                    <span class="save-pill">
+                              <span th:text="${T(java.lang.Math).round(((prod.originalPrice.doubleValue() - prod.finalPrice.doubleValue()) * 100.0) / prod.originalPrice.doubleValue()) + '% OFF'}">
+                              20% OFF
+                              </span>
+                              </span>
+                                </div>
+                            </div>
+                            <p class="stock-meta mb-0" th:if="${prod.stock != null}" th:text="${prod.stock > 0 ? 'Stock: ' + prod.stock : 'Sold Out'}"></p>
+                            <!-- Icon-only action buttons (Cart, Wishlist, View) -->
+                            <div class="card-actions mt-3 wishlist">
+                                <!-- Icon-only action buttons (Cart, Wishlist, View) -->
+                                <div class="card-actions mt-3">
+                                    <!-- Add to Cart -->
+                                    <button type="button"
+                                            class="btn btn-warning btn-icon btn-add-to-cart-list"
+                                            style="width: 60px;"
+                                            th:classappend="${(prod.stock != null and prod.stock == 0) or (prod.active == null or !prod.active)} ? ' disabled' : ''"
+                                            th:attr="data-product-id=${prod.id}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Add to cart"
+                                            aria-label="Add to cart">
+                                        <i class="fa-solid fa-cart-plus"></i>
+                                    </button>
+                                    <!-- Add to Wishlist -->
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-icon btn-add-to-wishlist-list"
+                                            style="width: 60px;"
+                                            th:classappend="${(prod.active == null or !prod.active)} ? ' disabled' : ''"
+                                            th:attr="data-product-id=${prod.id}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Add to wishlist"
+                                            aria-label="Add to wishlist">
+                                        <i class="fa-solid fa-heart"></i>
+                                    </button>
+                                    <!-- View Details -->
+                                    <a th:href="@{/user/product/{id}(id=${prod.id})}"
+                                       class="btn btn-outline-dark btn-icon"
+                                       style="width: 60px;"
+                                       data-bs-toggle="tooltip" data-bs-placement="top"
+                                       title="View details"
+                                       aria-label="View details">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${products == null or #lists.isEmpty(products)}" class="alert alert-warning shadow-sm rounded-4">
+                    No products found.
+                </div>
+                <!-- pagination -->
+                <nav th:if="${page != null and page.totalPages > 1}" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/user/products(page=${page.number - 1}, size=${page.size}, sort=${sort}, category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}">Previous</a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages-1)}"
+                            th:classappend="${i == page.number} ? 'active'">
+                            <a class="page-link" th:text="${i + 1}"
+                               th:href="@{/user/products(page=${i}, size=${page.size}, sort=${sort}, category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/user/products(page=${page.number + 1}, size=${page.size}, sort=${sort}, category=${category}, brand=${brand}, minPrice=${minPrice}, maxPrice=${maxPrice}, keyword=${keyword})}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+        </main>
+    </div>
+</div>
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<!-- scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Initialize Bootstrap tooltips for icon buttons
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (el) {
+            try { new bootstrap.Tooltip(el); } catch(e) { /* ignore */ }
+        });
+
+        // Server-side injected flags (match product-detail pattern)
+        var signedIn = /*[[${session.currentUser != null}]]*/ false;
+        var userId = /*[[${session.currentUser != null ? session.currentUser.id : -1}]]*/ -1;
+        var authLoginUrl = /*[[${@environment.getProperty('auth.service.login.url') != null ? @environment.getProperty('auth.service.login.url') : '/login'}]]*/ '/login';
+
+        // util: update nav badges if present
+        function updateCartBadge(totalItems) {
+            var badge = document.getElementById('nav-cart-count');
+            if (badge && totalItems != null) badge.innerText = totalItems;
+        }
+        function updateWishlistBadge(count) {
+            var badge = document.getElementById('nav-wishlist-count');
+            if (badge && count != null) badge.innerText = count;
+        }
+
+        // Add to cart from listing (quantity = 1)
+        document.querySelectorAll('.btn-add-to-cart-list').forEach(function(btn){
+            btn.addEventListener('click', async function(ev){
+                ev.preventDefault();
+                if (btn.classList.contains('disabled')) return;
+
+                var pid = btn.getAttribute('data-product-id');
+                if (!signedIn || userId === -1) {
+                    var redirectBack = window.location.pathname + window.location.search;
+                    window.location.href = authLoginUrl + '?redirect=' + encodeURIComponent(redirectBack);
+                    return;
+                }
+
+                try {
+                    var payload = { userId: parseInt(userId), productId: parseInt(pid), quantity: 1 };
+                    var res = await fetch('/user/api/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(payload),
+                        credentials: 'same-origin'
+                    });
+
+                    if (!res.ok) {
+                        let errText = 'Could not add to cart';
+                        try {
+                            const json = await res.json();
+                            if (json && json.error) errText = json.error;
+                        } catch(e) { errText = res.statusText || errText; }
+                        Swal.fire({ icon: 'error', title: 'Add to cart failed', text: errText, confirmButtonColor: '#f3a111' });
+                        return;
+                    }
+
+                    const body = await res.json();
+                    Swal.fire({ icon: 'success', title: 'Added', timer: 900, showConfirmButton: false });
+                    if (body && body.totalItems != null) updateCartBadge(body.totalItems);
+
+                    // quick icon feedback: change icon to check briefly
+                    var icon = btn.querySelector('i');
+                    if (icon) {
+                        var prev = icon.className;
+                        icon.className = 'fa-solid fa-check';
+                        btn.classList.add('btn-success');
+                        setTimeout(function(){
+                            icon.className = prev;
+                            btn.classList.remove('btn-success');
+                        }, 1000);
+                    }
+
+                } catch (err) {
+                    console.error('Add to cart error', err);
+                    Swal.fire({ icon: 'error', title: 'Network error', text: 'Could not contact server. Try again later.' });
+                }
+            });
+        });
+
+        // Wishlist from listing
+        document.querySelectorAll('.btn-add-to-wishlist-list').forEach(function(btn){
+            btn.addEventListener('click', async function(ev){
+                ev.preventDefault();
+                if (btn.classList.contains('disabled')) return;
+
+                var pid = btn.getAttribute('data-product-id');
+                if (!signedIn || userId === -1) {
+                    var redirectBack = window.location.pathname + window.location.search;
+                    window.location.href = authLoginUrl + '?redirect=' + encodeURIComponent(redirectBack);
+                    return;
+                }
+
+                try {
+                    var url = '/user/api/wishlist/' + encodeURIComponent(userId) + '/items/' + encodeURIComponent(pid);
+                    var res = await fetch(url, { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) {
+                        var text = await res.text().catch(()=>res.statusText);
+                        try {
+                            var j = JSON.parse(text);
+                            var err = j.error || j.message || text;
+                            Swal.fire({ icon: 'error', title: 'Wishlist error', text: String(err) });
+                        } catch(e){
+                            Swal.fire({ icon: 'error', title: 'Wishlist error', text: text || res.statusText });
+                        }
+                        console.warn('wishlist add failed', res.status, text);
+                        return;
+                    }
+
+                    var body = {};
+                    try { body = await res.json(); } catch(e) { body = {}; }
+
+                    Swal.fire({ icon: 'success', title: 'Added to wishlist', timer: 900, showConfirmButton: false });
+                    if (body && body.totalItems != null) updateWishlistBadge(body.totalItems);
+
+                    // small visual feedback: toggle color briefly
+                    btn.classList.remove('btn-outline-danger');
+                    btn.classList.add('btn-danger');
+                    setTimeout(function(){
+                        btn.classList.remove('btn-danger');
+                        btn.classList.add('btn-outline-danger');
+                    }, 1000);
+
+                } catch (err) {
+                    console.error('Wishlist error', err);
+                    Swal.fire({ icon: 'error', title: 'Could not add to wishlist', text: err.message || 'Network error' });
+                }
+            });
+        });
+
+    });
+    /*]]>*/
+</script>
+<script>
+    // small helpers to clear filters
+    function clearCategory() {
+        document.querySelectorAll('input[name="category"]').forEach(i => i.checked = false);
+        document.getElementById('filtersForm').submit();
+    }
+    function clearBrand() {
+        document.querySelectorAll('input[name="brand"]').forEach(i => i.checked = false);
+        document.getElementById('filtersForm').submit();
+    }
+    function clearPrice() {
+        document.querySelector('input[name="minPrice"]').value = '';
+        document.querySelector('input[name="maxPrice"]').value = '';
+        document.getElementById('filtersForm').submit();
+    }
+    function resetAll() {
+        window.location = /*[[${@environment.getProperty('server.servlet.context-path')?:''}]]*/ '/user/products';
+    }
+</script>
+<script>
+    (function(){
+      const minRange = document.getElementById('minRange');
+      const maxRange = document.getElementById('maxRange');
+      const rangeBar = document.getElementById('sliderRange');
+
+      const minHidden = document.getElementById('minPriceHidden');
+      const maxHidden = document.getElementById('maxPriceHidden');
+
+      const minDisplay = document.getElementById('minDisplay');
+      const maxDisplay = document.getElementById('maxDisplay');
+      const minCenter = document.getElementById('minDisplayCenter') || document.getElementById('minCenter');
+      const maxCenter = document.getElementById('maxDisplayCenter') || document.getElementById('maxCenter');
+      const rangeLabel = document.getElementById('rangeLabel');
+
+      const clearBtn = document.getElementById('clearPriceBtn');
+      const form = document.getElementById('filtersForm');
+
+      const GAP = 100;
+      const MIN = Number(minRange.min || 0);
+      const MAX = Number(minRange.max || 100000);
+
+      function fmt(n){ return Number(n).toLocaleString('en-IN'); }
+
+      function updateUI(active=null){
+        let min = Math.max(MIN, Math.min(MAX, Number(minRange.value)));
+        let max = Math.max(MIN, Math.min(MAX, Number(maxRange.value)));
+
+        // enforce gap
+        if(max - min < GAP){
+          if(active===minRange) { min = max - GAP; minRange.value = min; }
+          if(active===maxRange) { max = min + GAP; maxRange.value = max; }
+        }
+
+        // update range bar
+        const leftPct = ((min - MIN)/(MAX-MIN))*100;
+        const rightPct = ((max - MIN)/(MAX-MIN))*100;
+        rangeBar.style.left = leftPct+'%';
+        rangeBar.style.width = Math.max(0,rightPct-leftPct)+'%';
+
+        // update displays
+        if(minDisplay) minDisplay.textContent=fmt(min);
+        if(maxDisplay) maxDisplay.textContent=fmt(max);
+        if(minCenter) minCenter.textContent=fmt(min);
+        if(maxCenter) maxCenter.textContent=fmt(max);
+        if(rangeLabel) rangeLabel.textContent='₹ '+fmt(min)+' – ₹ '+fmt(max);
+
+        // update hidden inputs
+        if(minHidden) minHidden.value=min;
+        if(maxHidden) maxHidden.value=max;
+      }
+
+      // make active thumb top-most
+      function bringFront(el){
+        if(el===minRange){ minRange.style.zIndex=6; maxRange.style.zIndex=5; }
+        else { maxRange.style.zIndex=6; minRange.style.zIndex=5; }
+      }
+
+      minRange.addEventListener('input',()=>{ bringFront(minRange); updateUI(minRange); });
+      maxRange.addEventListener('input',()=>{ bringFront(maxRange); updateUI(maxRange); });
+
+      minRange.addEventListener('pointerdown',()=>bringFront(minRange));
+      maxRange.addEventListener('pointerdown',()=>bringFront(maxRange));
+
+      if(form) form.addEventListener('submit',()=>updateUI());
+
+      if(clearBtn) clearBtn.addEventListener('click',()=>{
+        minRange.value=MIN; maxRange.value=MAX;
+        if(minHidden) minHidden.value=''; if(maxHidden) maxHidden.value='';
+        if(form){ const p=form.querySelector('input[name="page"]'); if(p)p.value=0; form.submit(); }
+      });
+
+      // initialize from hidden inputs
+      (function init(){
+        const hMin = Number(minHidden && minHidden.value ? minHidden.value : minRange.value);
+        const hMax = Number(maxHidden && maxHidden.value ? maxHidden.value : maxRange.value);
+        if(!isNaN(hMin)) minRange.value=Math.max(MIN, Math.min(MAX,hMin));
+        if(!isNaN(hMax)) maxRange.value=Math.max(MIN, Math.min(MAX,hMax));
+        updateUI();
+      })();
+    })();
+</script>
+<script>
+    (function(){
+      function formatIndianNumber(num){
+        if(num === null || num === undefined) return '0.00';
+        let n = Number(num);
+        if(isNaN(n)) return num;
+        let parts = n.toFixed(2).split('.');
+        let intPart = parts[0];
+        let decPart = parts[1];
+        if(intPart.length <= 3) { return intPart + '.' + decPart; }
+        let last3 = intPart.slice(-3);
+        let rest = intPart.slice(0, -3);
+        rest = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+        return rest + ',' + last3 + '.' + decPart;
+      }
+
+      function applyFormatting(){
+        document.querySelectorAll('.price-current').forEach(function(el){
+          let raw = el.getAttribute('data-price');
+          if(raw == null) raw = el.textContent;
+          el.textContent = formatIndianNumber(raw);
+        });
+        document.querySelectorAll('.price-original').forEach(function(el){
+          let raw = el.getAttribute('data-price-original');
+          if(raw == null) raw = el.textContent.replace(/[^0-9.]/g,'');
+          if(raw != null && raw !== '') { el.textContent = '₹ ' + formatIndianNumber(raw); }
+        });
+      }
+
+      function fitsHorizontally(container){
+        const children = Array.from(container.children);
+        let total = 0;
+        children.forEach(c => { const r = c.getBoundingClientRect(); total += r.width; });
+        return total + 12 < container.getBoundingClientRect().width;
+      }
+
+      function adaptPriceLayouts(){
+        document.querySelectorAll('.price-area').forEach(function(area){
+          // if server forced stack (force-stack class), skip auto-adaptation
+          if(area.classList.contains('force-stack')) return;
+          const main = area.querySelector('.price-main');
+          if(!main) return;
+          area.classList.remove('compact-stacked');
+          if(!fitsHorizontally(main)) {
+            area.classList.add('compact-stacked');
+          }
+        });
+      }
+
+      function setupCardClicks(){
+        document.querySelectorAll('.product-card').forEach(function(card){
+          card.addEventListener('click', function(e){
+            if (e.target.closest('a, button, input, label, select, textarea') || e.target.isContentEditable) return;
+            const href = card.getAttribute('data-href');
+            if(href) window.location.href = href;
+          });
+        });
+      }
+
+      function init(){
+        applyFormatting();
+        adaptPriceLayouts();
+        setupCardClicks();
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+
+      let _t;
+      window.addEventListener('resize', function(){
+        clearTimeout(_t);
+        _t = setTimeout(function(){ applyFormatting(); adaptPriceLayouts(); }, 120);
+      });
+
+    })();
+</script>
+</body>
+</html>

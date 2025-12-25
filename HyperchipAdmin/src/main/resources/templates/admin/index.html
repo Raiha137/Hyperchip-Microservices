@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>ADMIN INDEX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<section class="admin-dashboard">
+    <div class="container mt-5 py-5">
+        <h3 class="text-center display-5 mb-4"><b>Admin Dashboard</b></h3>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <a th:href="@{/admin/categories}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-primary">
+                            <i class="fa-solid fa-square-plus fa-3x mb-3"></i>
+                            <h4 class="card-title">Category</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/products/add}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-primary">
+                            <i class="fa-solid fa-square-plus fa-3x mb-3"></i>
+                            <h4 class="card-title">Product</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/brands}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-primary">
+                            <i class="fa-solid fa-square-plus fa-3x mb-3"></i>
+                            <h4 class="card-title">Brand</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!--            <div class="col-md-4">-->
+            <!--                <a th:href="@{/admin/categories}" class="text-decoration-none">-->
+            <!--                    <div class="card shadow-sm text-center">-->
+            <!--                        <div class="card-body text-success">-->
+            <!--                            <i class="fa-solid fa-table-list fa-3x mb-3"></i>-->
+            <!--                            <h4 class="card-title">View Category</h4>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </a>-->
+            <!--            </div>-->
+            <!--            <div class="col-md-4">-->
+            <!--                <a th:href="@{/admin/products}" class="text-decoration-none">-->
+            <!--                    <div class="card shadow-sm text-center">-->
+            <!--                        <div class="card-body text-success">-->
+            <!--                            <i class="fa-solid fa-table-list fa-3x mb-3"></i>-->
+            <!--                            <h4 class="card-title">View Product</h4>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </a>-->
+            <!--            </div>-->
+            <!--            <div class="col-md-4">-->
+            <!--                <a th:href="@{/admin/brands}" class="text-decoration-none">-->
+            <!--                    <div class="card shadow-sm text-center">-->
+            <!--                        <div class="card-body text-success">-->
+            <!--                            <i class="fa-solid fa-table-list fa-3x mb-3"></i>-->
+            <!--                            <h4 class="card-title">View Brands</h4>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </a>-->
+            <!--            </div>-->
+            <!-- ORDERS CARD -->
+            <div class="col-md-4">
+                <a th:href="@{/admin/orders}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-warning">
+                            <i class="fa-solid fa-box-open fa-3x mb-3"></i>
+                            <h4 class="card-title">Orders</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/users}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-success">
+                            <i class="fa-solid fa-circle-user fa-3x mb-3"></i>
+                            <h4 class="card-title">Users</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/offers/product}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-info">
+                            <i class="fa-solid fa-tags fa-3x mb-3"></i>
+                            <h4 class="card-title">Product Offers</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/offers/category}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-info">
+                            <i class="fa-solid fa-layer-group fa-3x mb-3"></i>
+                            <h4 class="card-title">Category Offers</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/reports/sales}" class="text-decoration-none">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body text-warning">
+                            <i class="fa-solid fa-chart-line fa-3x mb-3"></i>
+                            <h4 class="card-title">Sales Report</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!--            <div class="col-md-4">-->
+            <!--                <a th:href="@{/admin/shipping}" class="text-decoration-none">-->
+            <!--                    <div class="card shadow-sm text-center">-->
+            <!--                        <div class="card-body text-primary">-->
+            <!--                            <i class="fa-solid fa-truck-fast fa-3x mb-3"></i>-->
+            <!--                            <h4 class="card-title">Shipping Settings</h4>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </a>-->
+            <!--            </div>-->
+            <!--            <div class="col-md-4">-->
+            <!--                <a th:href="@{/admin/shipping}" class="text-decoration-none">-->
+            <!--                    <div class="card shadow-sm text-center">-->
+            <!--                        <div class="card-body text-info">-->
+            <!--                            <i class="fa-solid fa-truck-fast fa-3x mb-3"></i>-->
+            <!--                            <h4 class="card-title">Shipping Config</h4>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </a>-->
+            <!--            </div>-->
+        </div>
+    </div>
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h4>Sales Overview</h4>
+        <select id="period-select" class="form-select w-auto">
+            <option value="DAY">Day</option>
+            <option value="WEEK">Week</option>
+            <option value="MONTH" selected>Month</option>
+            <option value="YEAR">Year</option>
+        </select>
+    </div>
+    <canvas id="sales-chart" height="120"></canvas>
+    <h4 class="mt-5">Top 10 Products</h4>
+    <table class="table table-striped mt-2">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>Total Qty</th>
+            <th>Total Amount</th>
+        </tr>
+        </thead>
+        <tbody id="top-products-body">
+        </tbody>
+    </table>
+    <hr class="my-5"/>
+    <h4 class="mt-5">Top 10 Categories</h4>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>CATEGORY</th>
+            <th>TOTAL QTY</th>
+            <th>TOTAL AMOUNT</th>
+        </tr>
+        </thead>
+        <tbody id="top-categories-body"></tbody>
+    </table>
+    <h4 class="mt-5">Top 10 Brands</h4>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>BRAND</th>
+            <th>TOTAL QTY</th>
+            <th>TOTAL AMOUNT</th>
+        </tr>
+        </thead>
+        <tbody id="top-brands-body"></tbody>
+    </table>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/admin-dashboard.js}"></script>
+</body>
+</html>

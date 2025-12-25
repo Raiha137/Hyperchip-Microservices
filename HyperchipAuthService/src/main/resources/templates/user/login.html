@@ -1,0 +1,163 @@
+<!-- templates/user/login.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Login - Hyperchip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Bootstrap + FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+    <!-- Global styles -->
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/login.css}" rel="stylesheet"/>
+</head>
+<body class="hc-login-body">
+
+<!-- AUTH HEADER -->
+<div th:replace="fragments/auth-header :: authHeader"></div>
+
+<section class="hc-login-section">
+    <div class="hc-login-overlay"></div>
+
+    <div class="container hc-login-container">
+        <div class="row g-5 align-items-center">
+
+            <!-- LEFT SIDE: Hero text -->
+            <div class="col-lg-6">
+                <div class="hc-login-left">
+                    <!-- Logo + Brand -->
+                    <div class="d-flex align-items-center mb-4">
+                        <img th:src="@{/img/logo.png}" alt="Hyperchip Logo" class="hc-login-logo me-2">
+                        <span class="hc-login-logo-text">Hyperchip</span>
+                    </div>
+
+                    <h1 class="hc-login-title mb-3">Welcome Back</h1>
+
+                    <p class="hc-login-subtitle mb-4">
+                        Sign in to your Hyperchip account and continue shopping the latest laptops,
+                        mobiles, accessories and more – all in one secure place.
+                    </p>
+
+                    <ul class="hc-login-bullets">
+                        <li><i class="fa-solid fa-circle-check"></i> Fast &amp; secure checkout</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Track your orders in real time</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Access offers, wallet &amp; wishlist</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: Login form -->
+            <div class="col-lg-5 offset-lg-1">
+                <div class="hc-login-form-wrapper">
+
+                    <h2 class="hc-login-form-title mb-1">Login</h2>
+                    <p class="hc-login-form-subtitle mb-4">
+                        Enter your email and password to continue.
+                    </p>
+
+                    <!-- SUCCESS MESSAGE -->
+                    <div th:if="${successMsg}" class="alert-background  alert alert-success text-center mb-3" th:text="${successMsg}"></div>
+
+                    <!-- LOGOUT SUCCESS MESSAGE -->
+                    <div th:if="${param.logout != null}" class="alert-background alert alert-success text-center mb-3">
+                        You have been logged out successfully.
+                    </div>
+
+                    <!-- ERROR MESSAGES -->
+                    <div th:if="${param.error == 'bad_credentials'}" class="alert alert-danger text-center mb-3">
+                        Invalid email or password.
+                    </div>
+                    <div th:if="${param.error == 'locked'}" class="alert alert-warning text-center mb-3">
+                        Your account is locked. Please contact support.
+                    </div>
+                    <div th:if="${param.error == 'disabled'}" class="alert alert-warning text-center mb-3">
+                        Your account is disabled. Please contact support.
+                    </div>
+                    <div th:if="${param.error == 'expired'}" class="alert alert-warning text-center mb-3">
+                        Your account has expired. Please contact support.
+                    </div>
+                    <div th:if="${param.error == 'credentials_expired'}" class="alert alert-warning text-center mb-3">
+                        Your credentials have expired. Please reset your password.
+                    </div>
+                    <div th:if="${param.error != null and param.logout == null
+                                 and !(param.error == 'bad_credentials' or param.error == 'locked'
+                                 or param.error == 'disabled' or param.error == 'expired'
+                                 or param.error == 'credentials_expired')}"
+                         class="alert alert-danger text-center mb-3">
+                        Invalid email or password.
+                    </div>
+
+                    <!-- LOGIN FORM -->
+                    <form th:action="@{/login}" method="post" class="hc-login-form">
+
+                        <!-- EMAIL -->
+                        <div class="mb-4">
+                            <label class="hc-login-label" for="email">Email</label>
+                            <div class="hc-login-input-wrapper">
+                                <input type="email" id="email" name="email"
+                                       class="hc-login-input auth-input"
+                                       placeholder="Enter your email" required autocomplete="username">
+                                <span class="hc-login-input-icon"><i class="fa-regular fa-envelope"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div class="mb-3">
+                            <label class="hc-login-label" for="password">Password</label>
+                            <div class="hc-login-input-wrapper">
+                                <input type="password" id="password" name="password"
+                                       class="hc-login-input auth-input"
+                                       placeholder="Enter your password" required autocomplete="current-password">
+                                <span class="hc-login-input-icon toggle-password"><i class="fa-regular fa-eye"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- REMEMBER + FORGOT -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+                                <label class="form-check-label hc-login-remember" for="remember-me">
+                                    Remember me
+                                </label>
+                            </div>
+                            <a th:href="@{/forgot-password}" class="hc-login-link">Forgot password?</a>
+                        </div>
+
+                        <!-- LOGIN BUTTON -->
+                        <button type="submit" class="btn hc-login-btn w-100">LOGIN</button>
+
+                        <!-- SIGNUP LINK -->
+                        <p class="hc-login-bottom mt-3 mb-0 text-center">
+                            Don’t have an account?
+                            <a th:href="@{/signup}" class="hc-login-link fw-semibold">Create one</a>
+                        </p>
+
+                        <!-- GOOGLE LOGIN -->
+                        <div class="mt-4">
+                            <a th:href="@{/oauth2/authorization/google}"
+                               class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fab fa-google"></i>
+                                <span>Sign in with Google</span>
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- AUTH FOOTER -->
+<div th:replace="fragments/auth-footer :: authFooter"></div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/login.js}"></script>
+</body>
+</html>

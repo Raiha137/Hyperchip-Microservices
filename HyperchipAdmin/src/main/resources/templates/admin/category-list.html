@@ -1,0 +1,194 @@
+<!-- templates/admin/category-list.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Manage Categories - Hyperchip Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons for eye icon -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<!-- Header -->
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Categories</h2>
+    <!-- Success/Error messages -->
+    <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <!-- Search form -->
+    <form method="get" th:action="@{/admin/categories}">
+        <div class="input-group mb-3">
+            <input type="text" name="q" class="form-control" placeholder="Search categories..." th:value="${q}" />
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+            <a class="btn btn-outline-secondary" th:href="@{/admin/categories}">Clear</a>
+        </div>
+    </form>
+    <!-- Add Category -->
+    <a th:href="@{/admin/categories/add}" class="btn btn-primary mb-3">Add Category</a>
+    <!-- Table -->
+    <table class="table table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th class="text-center">Image</th>
+            <th style="width: 150px;" class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories.content}">
+            <td th:text="${category.id}">1</td>
+            <td th:text="${category.name}">Electronics</td>
+            <!-- IMAGE VIEW ICON (no direct image) -->
+            <td class="text-center">
+                <!-- If image exists, show eye icon -->
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm"
+                        th:if="${category.imageName != null}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#categoryImageModal"
+                        th:attr="data-image-url=${masterBaseUrl + '/uploads/categories/' + category.imageName},
+                        data-category-name=${category.name}">
+                    <i class="bi bi-eye"></i> View
+                </button>
+                <!-- If no image -->
+                <span th:if="${category.imageName == null}" class="text-muted small">
+                     No image
+                     </span>
+            </td>
+            <!-- ACTION BUTTONS (forced horizontal) -->
+            <td class="text-center text-nowrap">
+                <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
+                   class="btn btn-warning btn-sm me-1">
+                    Edit
+                </a>
+                <button type="button"
+                        class="btn btn-danger btn-sm delete-btn"
+                        th:attr="data-id=${category.id}">
+                    Delete
+                </button>
+            </td>
+        </tr>
+        <tr th:if="${categories.content.size() == 0}">
+            <td colspan="4" class="text-center">No categories found.</td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Pagination -->
+    <nav th:if="${categories.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${categories.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/categories(page=${categories.number - 1}, size=${categories.size}, q=${q})}">
+                    Previous
+                </a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}"
+                th:classappend="${i == categories.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/admin/categories(page=${i}, size=${categories.size}, q=${q})}"
+                   th:text="${i + 1}">
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${categories.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/categories(page=${categories.number + 1}, size=${categories.size}, q=${q})}">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!-- IMAGE MODAL -->
+<div class="modal fade" id="categoryImageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryImageModalLabel">Category Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="categoryImageModalImg"
+                     src=""
+                     alt="Category Image"
+                     style="max-width: 350px; max-height: 350px; object-fit: contain;"
+                     class="rounded shadow-sm" />
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Delete confirmation -->
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            let categoryId = this.getAttribute('data-id');
+
+            Swal.fire({
+                title: 'Delete Category?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f3a111', // brand orange
+                cancelButtonColor: '#6c757d',  // subtle gray
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-4 shadow-lg',
+                    title: 'fw-bold text-dark',
+                    confirmButton: 'px-4 py-2',
+                    cancelButton: 'px-4 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/admin/categories/delete/${categoryId}`;
+                }
+            })
+        });
+    });
+</script>
+<!-- Image modal script -->
+<script>
+    const imageModal = document.getElementById('categoryImageModal');
+    if (imageModal) {
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (!button) return;
+
+            const imageUrl = button.getAttribute('data-image-url');
+            const categoryName = button.getAttribute('data-category-name') || 'Category Image';
+
+            const modalImg = imageModal.querySelector('#categoryImageModalImg');
+            const modalTitle = imageModal.querySelector('#categoryImageModalLabel');
+
+            modalImg.src = imageUrl;
+            modalTitle.textContent = categoryName;
+        });
+
+        // Optional: clear image when closing
+        imageModal.addEventListener('hidden.bs.modal', function () {
+            const modalImg = imageModal.querySelector('#categoryImageModalImg');
+            modalImg.src = '';
+        });
+    }
+</script>
+</body>
+</html>

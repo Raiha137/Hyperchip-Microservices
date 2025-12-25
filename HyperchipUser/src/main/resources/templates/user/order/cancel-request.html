@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Cancel Order - Hyperchip</title>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+</head>
+<body>
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card p-4">
+                <h4>
+                    Cancel Order
+                    <small class="text-muted">
+                        Order <span th:text="${orderId}">#123</span>
+                    </small>
+                </h4>
+                <!-- INFO TEXT -->
+                <p class="text-muted mt-2 mb-3">
+                     <span th:if="${itemId != null}">
+                     You are cancelling a specific item from this order.
+                     </span>
+                    <span th:unless="${itemId != null}">
+                     You are cancelling the entire order.
+                     </span>
+                </p>
+                <!-- FORM -->
+                <form th:action="@{/user/order/cancel}" method="post">
+                    <!-- Hidden fields -->
+                    <input type="hidden" name="orderId" th:value="${orderId}" />
+                    <input type="hidden" name="itemId" th:value="${itemId}" />
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Reason (optional)</label>
+                        <textarea id="reason"
+                                  name="reason"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Tell us why you are cancelling (optional)"></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">Submit Cancellation</button>
+                        <!-- back to order details -->
+                        <a th:href="@{/user/order/details/{id}(id=${orderId})}"
+                           class="btn btn-outline-secondary">
+                            Back to Order
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/user-footer :: userFooter"></div>
+</body>
+</html>

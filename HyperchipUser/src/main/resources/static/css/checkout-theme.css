@@ -1,0 +1,113 @@
+/* checkout-theme.css - Modern, clean checkout theme */
+
+/* =========================
+   Variables
+========================= */
+:root {
+    --primary: #2563eb;
+    --accent: #06b6d4;
+    --muted: #6b7280;
+    --bg: #f7fafc;
+    --surface: #ffffff;
+    --shadow: 0 10px 30px rgba(2,6,23,0.06);
+}
+
+/* =========================
+   Global Styles
+========================= */
+body {
+    background: linear-gradient(180deg, #f4fbff 0%, var(--bg) 100%);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color: #0f172a;
+}
+
+.container { max-width: 1100px; }
+
+/* =========================
+   Cards
+========================= */
+.card-lg {
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.checkout .card-lg { padding: 20px; }
+
+/* =========================
+   Address / Items
+========================= */
+.address-card {
+    border-radius: 10px;
+    border: 1px solid #edf2f7;
+    padding: 14px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    background: linear-gradient(180deg, #ffffff, #fcfdff);
+}
+
+.address-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+}
+
+.address-card .badge { font-size: 0.65rem; }
+
+.product-thumb {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eef2f7;
+}
+
+/* =========================
+   Order Summary
+========================= */
+.summary-title { font-weight: 700; font-size: 1.05rem; }
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.total-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px dashed #eef2f7;
+    margin-top: 12px;
+}
+
+.total-amount { font-size: 1.25rem; font-weight: 700; }
+
+/* =========================
+   Buttons
+========================= */
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(37,99,235,0.12);
+}
+
+.btn-primary:disabled { opacity: 0.6; }
+
+/* =========================
+   Form / Payment
+========================= */
+.form-check-label { cursor: pointer; }
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 991px) {
+    .checkout .sticky-top { position: static !important; }
+    .product-thumb { width: 56px; height: 56px; }
+}

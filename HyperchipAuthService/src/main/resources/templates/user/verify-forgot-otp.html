@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Verify Forgot Password OTP - Hyperchip</title>
+
+    <!-- ==============================
+         External Libraries
+         ============================== -->
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+    <!-- ==============================
+         Custom CSS
+         ============================== -->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/> <!-- Global styles -->
+</head>
+<body>
+
+<!-- ==============================
+     Header Fragment
+     ============================== -->
+<div th:replace="fragments/user-header :: header"></div>
+
+<!-- ==============================
+     OTP Verification Section
+     ============================== -->
+<section class="d-flex align-items-center justify-content-center min-vh-100" style="background-color: #08131e;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+
+                <!-- Login / OTP Card -->
+                <div class="login-box p-4 rounded shadow-lg">
+
+                    <!-- Title & Subtitle -->
+                    <h3 class="text-center mb-4 text-warning">Verify OTP</h3>
+                    <p class="text-center text-light mb-4">
+                        Enter the OTP sent to your email and set your new password.
+                    </p>
+
+                    <!-- ==============================
+                         Server-side Messages
+                         ============================== -->
+                    <div th:if="${error}" class="alert alert-danger text-center fw-bold" th:text="${error}"></div>
+                    <div th:if="${success}" class="alert alert-success text-center fw-bold" th:text="${success}"></div>
+
+                    <!-- ==============================
+                         OTP Form
+                         ============================== -->
+                    <form id="forgotOtpForm" th:action="@{/verify-forgot-otp}" method="post" novalidate>
+
+                        <!-- OTP Input -->
+                        <div class="mb-3">
+                            <label for="otp" class="form-label text-warning fw-semibold">OTP</label>
+                            <input type="number" id="otp" name="otp" class="form-control"
+                                   placeholder="Enter OTP" required pattern="[0-9]{4,6}"
+                                   title="OTP should be 4 to 6 digits" autocomplete="off"/>
+                        </div>
+
+                        <!-- New Password -->
+                        <div class="mb-3 position-relative">
+                            <label for="password" class="form-label text-warning fw-semibold">New Password</label>
+                            <input type="password" id="password" name="password" class="form-control"
+                                   placeholder="Enter new password" required minlength="6" autocomplete="new-password"/>
+                            <i class="fas fa-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                               id="togglePassword" style="cursor:pointer;"></i>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-3 position-relative">
+                            <label for="confirmPassword" class="form-label text-warning fw-semibold">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                                   placeholder="Confirm new password" required minlength="6" autocomplete="new-password"/>
+                            <i class="fas fa-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                               id="toggleConfirmPassword" style="cursor:pointer;"></i>
+                        </div>
+
+                        <!-- Error message placeholder -->
+                        <p id="errorMsg" class="text-danger fw-bold"></p>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Reset Password</button>
+                    </form>
+
+                    <!-- Back to Login -->
+                    <div class="text-center mt-3">
+                        <a th:href="@{/user/login}" class="text-decoration-none text-light">
+                            <i class="fas fa-arrow-left"></i> Back to Login
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================
+     Footer Fragment
+     ============================== -->
+<div th:replace="fragments/user-footer :: footer"></div>
+
+<!-- ==============================
+     Scripts
+     ============================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Password Visibility Toggle & Validation -->
+<script>
+    // ==============================
+    // Password Toggle Elements
+    // ==============================
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', () => {
+        password.type = password.type === 'password' ? 'text' : 'password';
+        togglePassword.classList.toggle('fa-eye-slash');
+    });
+    toggleConfirmPassword.addEventListener('click', () => {
+        confirmPassword.type = confirmPassword.type === 'password' ? 'text' : 'password';
+        toggleConfirmPassword.classList.toggle('fa-eye-slash');
+    });
+
+    // ==============================
+    // Form Validation on Submit
+    // ==============================
+    document.getElementById('forgotOtpForm').addEventListener('submit', function (e) {
+        const pw = password.value.trim();
+        const cpw = confirmPassword.value.trim();
+        const errorMsg = document.getElementById('errorMsg');
+        errorMsg.textContent = '';
+
+        if (pw.length < 6) {
+            e.preventDefault();
+            errorMsg.textContent = 'Password must be at least 6 characters long.';
+            return;
+        }
+
+        if (pw !== cpw) {
+            e.preventDefault();
+            errorMsg.textContent = 'Passwords do not match.';
+            return;
+        }
+    });
+
+    // Live password match feedback
+    confirmPassword.addEventListener('input', () => {
+        if (confirmPassword.value !== password.value) {
+            confirmPassword.setCustomValidity("Passwords do not match");
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    });
+</script>
+
+</body>
+</html>

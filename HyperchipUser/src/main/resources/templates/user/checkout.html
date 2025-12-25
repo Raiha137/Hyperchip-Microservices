@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Checkout - Hyperchip</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/user.css}" />
+    <link rel="stylesheet" th:href="@{/css/checkout-theme.css}" />
+    <!-- NEW: coupon styles (optional) -->
+    <link rel="stylesheet" th:href="@{/css/coupon.css}" />
+    <style>
+        .product-thumb { width:64px; height:64px; object-fit:cover; border-radius:6px; }
+        .address-card { cursor: pointer; transition: box-shadow .12s ease; }
+        .address-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+        .card-lg { border-radius:12px; }
+        .checkout .sticky-top { position:sticky; top:20px; }
+        @media (max-width: 991px) {
+        .checkout .sticky-top { position:static; top:auto; }
+        }
+        /* small default style if coupon.css is not present */
+        .coupon-remove-btn {
+        font-size: 0.85rem;
+        }
+    </style>
+    <!-- App currency: prefer server-side injection if available; fallback to ₹ -->
+    <script>
+        window.APP_CURRENCY = /*[[${appCurrency}]]*/ '₹';
+        window.APP_CURRENCY_SYMBOL = /*[[${appCurrencySymbol}]]*/ (window.APP_CURRENCY + ' ');
+    </script>
+</head>
+<body>
+<div th:replace="fragments/user-header :: userHeader"></div>
+<main class="container my-5">
+    <input type="hidden" id="page-user-id" th:value="${userId}" />
+    <input type="hidden" id="page-user-email" th:value="${userEmail}" />
+    <div class="row g-4">
+        <!-- Left: Addresses + Items (UNCHANGED) -->
+        <div class="col-lg-8">
+            <div class="card card-lg p-4 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">1. Select delivery address</h4>
+                    <a th:href="@{/user/address/new}" class="btn btn-outline-primary btn-sm">Add new address</a>
+                </div>
+                <div id="addresses-area" class="row gy-3">
+                    <div class="text-center py-4 w-100" id="addresses-loading">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="mt-2 text-muted small">Loading addresses...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-lg p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">2. Items</h4>
+                    <a th:href="@{/user/products}" class="btn btn-outline-secondary btn-sm">Continue shopping</a>
+                </div>
+                <div id="checkout-items-area">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="mt-2 text-muted small">Loading cart...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Right: Summary + Coupon -->
+        <div class="col-lg-4 checkout">
+            <div class="card card-lg p-3 shadow-sm sticky-top">
+                <h5 class="mb-3">Order Summary</h5>
+                <div class="d-flex justify-content-between">
+                    <span>Subtotal</span><strong id="cart-subtotal">₹ 0.00</strong>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                    <span>Delivery Charge (based on location)</span>
+                    <span id="cart-shipping">₹ 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                    <span>Tax</span><span id="cart-tax">₹ 0.00</span>
+                </div>
+                <!-- NEW: Discount row (shown only when coupon is applied) -->
+                <div id="coupon-discount-row" class="d-flex justify-content-between mt-1 d-none">
+                     <span>
+                     Discount
+                     (<span id="applied-coupon-code"></span>)
+                     </span>
+                    <span id="cart-discount">₹ 0.00</span>
+                </div>
+                <hr/>
+                <div class="d-flex justify-content-between">
+                    <strong>Total</strong><strong id="cart-total">₹ 0.00</strong>
+                </div>
+                <!-- NEW: Coupon input area -->
+                <div class="mt-3">
+                    <label for="coupon-code-input" class="form-label">Promo code</label>
+                    <div class="input-group">
+                        <input type="text" id="coupon-code-input" class="form-control" placeholder="Enter coupon code">
+                        <button id="apply-coupon-btn" class="btn btn-outline-primary" type="button">
+                            Apply
+                        </button>
+                        <button id="remove-coupon-btn" class="btn btn-link coupon-remove-btn d-none" type="button">
+                            Remove
+                        </button>
+                    </div>
+                    <div id="coupon-feedback" class="small text-danger" style="display:none;"></div>
+                </div>
+                <!-- Payment methods (UNCHANGED) -->
+                <div class="mt-3">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="pay-cod" value="COD" checked>
+                        <label class="form-check-label" for="pay-cod">Cash on Delivery</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="pay-razorpay" value="RAZORPAY">
+                        <label class="form-check-label" for="pay-razorpay">Razorpay</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="pay-wallet" value="WALLET">
+                        <label class="form-check-label" for="pay-wallet">Pay Using Wallet</label>
+                        <!-- NEW: Wallet balance button + text -->
+                        <div class="mt-1">
+                            <button type="button"
+                                    id="check-wallet-balance-btn"
+                                    class="btn btn-sm btn-outline-secondary">
+                                Check Wallet Balance
+                            </button>
+                            <span id="wallet-balance-text"
+                                  class="ms-2 small text-muted">
+                              <!-- balance will be shown here -->
+                           </span>
+                        </div>
+                    </div>
+                    <!-- COD limit warning (shown when total > 1000) -->
+                    <div id="cod-limit-warning"
+                         class="small text-danger mt-1"
+                         style="display:none;">
+                        Cash on Delivery is available only for orders up to 1000. Please choose another payment method.
+                    </div>
+                    <button id="place-order-btn" class="btn btn-primary w-100 mt-2" type="button">
+                        Place Order
+                    </button>
+                    <div id="place-order-feedback" class="mt-2 small text-danger" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<!-- Razorpay checkout library -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Bootstrap bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Expose key for frontend fallback (replace at runtime via Thymeleaf): -->
+<script>window.RAZORPAY_KEY = /*[[${razorpayKey}]]*/ 'rzp_test_YOUR_KEY_HERE';</script>
+<!-- Your updated checkout JS (with window.checkoutData etc.) -->
+<script th:src="@{/js/checkout.js}"></script>
+<!-- NEW: Coupon logic must come AFTER checkout.js -->
+<script th:src="@{/js/coupon.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const userIdInput = document.getElementById('page-user-id');
+    const walletBtn = document.getElementById('check-wallet-balance-btn');
+    const walletText = document.getElementById('wallet-balance-text');
+
+    if (!userIdInput || !walletBtn || !walletText) {
+        return; // nothing to do
+    }
+
+    const userId = userIdInput.value;
+
+    walletBtn.addEventListener('click', function () {
+        if (!userId) {
+            walletText.textContent = 'User not found';
+            return;
+        }
+
+        walletText.textContent = 'Checking...';
+
+        // 🔹 Adjust URL if your gateway path is different
+        const url = '/api/wallet/' + userId;
+
+        fetch(url)
+            .then(function (res) {
+                if (!res.ok) {
+                    throw new Error('Failed to load wallet');
+                }
+                return res.json();
+            })
+            .then(function (data) {
+                const balance = data && typeof data.balance === 'number'
+                    ? data.balance
+                    : 0;
+
+                walletText.textContent = 'Balance: ₹ ' + balance.toFixed(2);
+            })
+            .catch(function (err) {
+                console.error(err);
+                walletText.textContent = 'Could not load wallet balance';
+            });
+    });
+    });
+
+</script>
+</body>
+</html>

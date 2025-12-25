@@ -1,0 +1,34 @@
+<!-- templates/fragments/auth-header.html -->
+<header th:fragment="authHeader" xmlns:th="http://www.thymeleaf.org">
+    <nav class="navbar navbar-expand-lg navbar-dark auth-navbar">
+        <div class="container">
+
+            <!-- Logo + brand -->
+            <a class="navbar-brand d-flex align-items-center fw-bold">
+                <img src="/img/logo.png" alt="Hyperchip Logo" width="70" class="me-2"/>
+                <span>Hyperchip</span>
+            </a>
+
+            <!-- Burger menu for mobile (optional if links added later) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#authNavbar" aria-controls="authNavbar"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation links -->
+            <div class="collapse navbar-collapse justify-content-end" id="authNavbar">
+                <ul class="navbar-nav align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{http://localhost:8084/login}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{http://localhost:8083/contact}">Contact</a>
+                    </li>
+                    <!-- Placeholder: Add Help/Support links here if needed -->
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,171 @@
+/* contact.css – Dark theme matching login/signup */
+
+/* =========================
+   Body
+========================= */
+body.hc-login-body {
+    background-color: #020816;
+    color: #f8f9fa;
+}
+
+/* =========================
+   Hero Section
+========================= */
+.contact-hero {
+    position: relative;
+    padding: 56px 0;
+    background: url("/img/board-bg.jpg") center/cover no-repeat, #050b13;
+    color: #fff;
+}
+
+.contact-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(0,0,0,0.75), rgba(4,17,38,0.9));
+}
+
+.contact-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+.contact-hero h1 {
+    font-family: "Times New Roman", serif;
+    font-weight: 700;
+    color: #f3a111;
+}
+
+.contact-hero .lead {
+    color: #fdfdfd;
+    max-width: 560px;
+}
+
+.muted { color: #a7b0c2; }
+
+/* =========================
+   Right-side Hero Card
+========================= */
+.contact-card {
+    border-radius: 14px;
+    background: #050f1f;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    border: 1px solid rgba(243,161,17,0.25);
+}
+
+.contact-card p i,
+.contact-card .checkout h5,
+.contact-card span,
+.contact-card strong,
+.contact-card .txt-black h6,
+.contact-card .txt-black p { color: #fff; }
+
+.contact-card a {
+    color: #ffd267;
+    text-decoration: none;
+}
+
+.contact-card a:hover { text-decoration: underline; }
+
+.contact-divider { border-color: rgba(255,255,255,0.1); }
+
+/* =========================
+   Main Form Section
+========================= */
+.contact-section {
+    background: radial-gradient(circle at top, #0b1725 0, #050912 60%, #02040a 100%);
+}
+
+.support-form {
+    background-color: #050f1f;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    padding: 28px 26px 30px;
+    color: #f8f9fa;
+    border: 1px solid rgba(243,161,17,0.25);
+}
+
+.support-form .form-label { font-weight: 600; color: #f8f9fa; }
+
+.support-form .form-control,
+.support-form textarea { background-color: #dfe9ff; border-radius: 8px; }
+
+.support-form .btn-primary {
+    background-color: #f3a111;
+    border-color: #f3a111;
+    border-radius: 999px;
+    padding-inline: 24px;
+    font-weight: 600;
+}
+
+.support-form .btn-primary:hover {
+    background-color: #ffb836;
+    border-color: #ffb836;
+}
+
+/* =========================
+   Contact Info Card
+========================= */
+.contact-info-card {
+    background-color: #050f1f;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border: 1px solid rgba(243,161,17,0.25);
+    color: #f8f9fa;
+}
+
+.contact-list {
+    padding-left: 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.contact-list li { margin-bottom: 0.25rem; }
+
+/* =========================
+   Alerts / Errors
+========================= */
+#contactClientError {
+    font-size: 0.9rem;
+}
+
+.text-danger {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: var(--bs-form-invalid-color);
+}
+/* Input text color */
+.support-form input,
+.support-form textarea {
+    color: #000; /* typed text will be white */
+}
+
+/* Placeholder color (optional, lighter) */
+.support-form input::placeholder,
+.support-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6); /* light gray placeholder */
+}
+
+/* Optional: focus border color */
+.support-form input:focus,
+.support-form textarea:focus {
+    border-color: #fbbf24; /* accent color on focus */
+    box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.25);
+}
+.contact-msg{
+    color:#fff;
+}
+/* =========================
+   Input Fields
+========================= */
+.hc-input { color: #000 !important; }
+.form-control { color: #000; }
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 767.98px) {
+    .contact-hero { padding: 32px 0; }
+    .support-form { padding: 22px 18px 24px; }
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Hyperchip Discovery Service (Eureka Server)
+    This POM configures the Spring Boot application that acts as the Eureka Discovery Server
+    for all Hyperchip microservices.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Spring Boot parent POM providing default config and dependency management -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+        <relativePath/>
+    </parent>
+
+    <!-- Module coordinates for the Discovery (Eureka) service -->
+    <groupId>com.hyperchip.infrastructure</groupId>
+    <artifactId>hyperchip-discovery</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Hyperchip Discovery</name>
+    <description>Eureka Discovery Server for Hyperchip microservices</description>
+
+    <!-- Common project properties -->
+    <properties>
+        <!-- Java version used to compile this module -->
+        <java.version>21</java.version>
+
+        <!-- Spring Cloud BOM version (aligned with Spring Boot 3.x) -->
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+
+        <!-- Source file encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- Import Spring Cloud BOM so that all cloud dependencies use compatible versions -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Runtime and test dependencies for the Eureka Discovery Server -->
+    <dependencies>
+        <!-- Core web support (required for Eureka dashboard and REST endpoints) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Netflix Eureka Server starter (turns this app into a Discovery Server) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+
+        <!-- Actuator endpoints (health, info, metrics) for monitoring the discovery server -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Test support for unit and integration tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Build configuration for this module -->
+    <build>
+        <plugins>
+            <!-- Java compiler configuration (uses the java.version property) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot plugin to build executable JAR and run the app -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

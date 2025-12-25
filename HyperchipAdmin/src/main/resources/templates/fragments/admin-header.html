@@ -1,0 +1,65 @@
+<!-- src/main/resources/templates/fragments/admin-header.html -->
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="adminHeader">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold">
+                <img th:src="@{/img/logo.png}" alt="Hyperchip Admin Logo" width="40" class="me-2" />
+                Hyperchip Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
+                    aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="adminNavbar">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'home'} ? ' active' : ''" th:href="@{/admin/home}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'users'} ? ' active' : ''" th:href="@{/admin/users}">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'categories'} ? ' active' : ''" th:href="@{/admin/categories}">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/products}">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/brands}">Brands</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'orders'} ? ' active' : ''" th:href="@{/admin/orders}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${activePage == 'reports'} ? ' active' : ''"
+                           th:href="@{/admin/reports/sales}">
+                            Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${activePage == 'ledger'} ? ' active' : ''"
+                           th:href="@{/admin/reports/ledger}">
+                            Ledger Book
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/offers/product}">Product Offer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/offers/category}">Category Offer</a>
+                    </li>
+                    <!--                    <li class="nav-item">-->
+                    <!--                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/shipping}">Category Offer</a>-->
+                    <!--                    </li>-->
+                </ul>
+                <div class="d-flex">
+                    <a th:href="@{/logout}" class="btn btn-outline-light me-2">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>

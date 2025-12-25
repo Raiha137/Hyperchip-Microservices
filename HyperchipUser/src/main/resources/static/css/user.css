@@ -1,0 +1,76 @@
+/* =========================
+   CART PAGE
+========================= */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Times New Roman', serif;
+}
+
+/* Cart item */
+.cart-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.cart-item img {
+    max-width: 100px;
+    border-radius: 8px;
+}
+.cart-item h5 { font-size: 16px; font-weight: 600; }
+.cart-item p { font-size: 14px; }
+.cart-item .btn { font-size: 14px; border-radius: 6px; }
+
+/* Quantity buttons */
+.quantity-btn {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #f8f9fa;
+    color: #000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.quantity-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Cart summary */
+.cart-summary {
+    background: #f3f3f3;
+    border-radius: 12px;
+    padding: 20px;
+}
+.cart-summary h5 { font-weight: 600; }
+.cart-summary p { font-weight: 500; }
+.cart-summary .btn-primary {
+    background-color: #f3a111;
+    border-color: #f3a111;
+    font-weight: bold;
+}
+.cart-summary .btn-primary:hover {
+    background-color: #ee831b;
+    border-color: #ee831b;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .cart-item { flex-direction: column; align-items: flex-start; }
+    .cart-item img { margin-bottom: 10px; }
+    .cart-summary { margin-top: 20px; }
+}
+
+/* =========================
+   ADMIN ORDERS
+========================= */
+body { background: #f6f7fb; color: #1f2937; }
+.table-hover tbody tr:hover { background: #fff7ed; }
+.card { border-radius: 10px; }
+.navbar-brand { font-weight: 700; color: #f3a111 !important; }

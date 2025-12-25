@@ -1,0 +1,203 @@
+<header th:fragment="userHeader" xmlns:th="http://www.thymeleaf.org">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar navbar-expand-lg hc-navbar sticky-top" aria-label="Main navigation">
+        <div class="container">
+
+            <!-- BRAND -->
+            <a class="navbar-brand d-flex align-items-center gap-2">
+                <img th:src="@{/img/logo.png}" alt="Hyperchip Logo" class="hc-logo" width="56" height="56"/>
+                <div class="d-flex flex-column">
+                    <span class="hc-brand">HYPERCHIP</span>
+                    <span class="hc-brand-sub">ELECTRONICS STORE</span>
+                </div>
+            </a>
+
+            <!-- MOBILE TOGGLER -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#userNavbar" aria-controls="userNavbar"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- COLLAPSIBLE CONTENT -->
+            <div class="collapse navbar-collapse" id="userNavbar">
+
+                <!-- CENTER BLOCK: MENU + SEARCH -->
+                <div class="hc-center-block">
+
+                    <!-- NAVIGATION LINKS -->
+                    <ul class="navbar-nav hc-nav">
+                        <li class="nav-item"><a class="nav-link" th:href="@{/user/home}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/user/products}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/user/orders}">Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/user/contact}">Contact</a></li>
+                    </ul>
+
+                    <!-- SEARCH FORM -->
+                    <form th:action="@{/user/products}" method="get" class="hc-search-form" role="search" aria-label="Search products">
+                        <label for="hc-search-input" class="visually-hidden">Search products</label>
+
+                        <div class="hc-search-wrapper">
+                            <input id="hc-search-input" name="keyword" type="search"
+                                   class="form-control hc-search-input"
+                                   placeholder="Search products"
+                                   th:value="${param.keyword}" autocomplete="off"/>
+
+                            <!-- Clear Button -->
+                            <button type="button" class="hc-search-clear" id="hc-search-clear" aria-label="Clear search" title="Clear search">
+                                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                            </button>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="hc-search-icon" aria-label="Search" title="Search">
+                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                </div> <!-- END CENTER BLOCK -->
+
+                <!-- RIGHT CONTROLS: WISHLIST / CART / PROFILE -->
+                <div class="hc-right-controls ms-lg-3">
+
+                    <!-- HIDDEN USER ID (for cart badge) -->
+                    <div id="header-user"
+                         th:attr="data-user-id=${session.currentUser != null ? session.currentUser.id : ''}"
+                         style="display:none"></div>
+
+                    <!-- WISHLIST -->
+                    <a th:href="@{/user/wishlist}" class="hc-icon-pill hc-pill-soft" title="Wishlist">
+                        <i class="fa-solid fa-heart"></i>
+                        <span class="d-none d-md-inline">Wishlist</span>
+                    </a>
+
+                    <!-- CART -->
+                    <a th:href="@{/user/cart}" id="nav-cart-link"
+                       class="hc-icon-pill hc-pill-soft position-relative"
+                       th:attr="title=${session.currentUser != null ? 'View cart' : 'Cart'}">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span id="nav-cart-count"
+                              class="hc-cart-badge badge rounded-pill bg-danger visually-hidden"
+                              aria-live="polite" aria-atomic="true">0</span>
+                    </a>
+
+                    <!-- LOGIN / SIGNUP (if not logged in) -->
+                    <div th:if="${session.currentUser == null}" class="d-flex align-items-center gap-2">
+                        <a class="btn btn-outline-light btn-sm"
+                           th:href="${@environment.getProperty('auth.service.login.url') != null
+                                   ? @environment.getProperty('auth.service.login.url')
+                                   : '/login'}">Login</a>
+                        <a th:href="@{/signup}" class="btn btn-light btn-sm text-primary">Sign Up</a>
+                    </div>
+
+                    <!-- PROFILE DROPDOWN (if logged in) -->
+                    <div th:if="${session.currentUser != null}" class="dropdown dropdown-account-icon">
+                        <button id="accountDropdown"
+                                class="hc-icon-pill hc-pill-solid dropdown-toggle d-flex align-items-center"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:src="${session.currentUser.profileImage != null ? session.currentUser.profileImage : '/img/default-profile.png'}"
+                                 alt="avatar" class="rounded-circle hc-avatar"/>
+                            <span class="d-none d-md-inline ms-1"
+                                  th:text="${session.currentUser.name != null ? session.currentUser.name : session.currentUser.email}">
+                                User
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">My Account</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/address}">Addresses</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/updateProfile}">Edit Profile</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/orders}">Orders</a></li>
+                            <li><hr class="dropdown-divider"/></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div> <!-- END RIGHT CONTROLS -->
+
+            </div> <!-- END COLLAPSIBLE CONTENT -->
+
+        </div>
+    </nav>
+
+    <!-- CART BADGE SCRIPT -->
+    <script>
+        (function () {
+            try {
+                const badge = document.getElementById('nav-cart-count');
+                const userEl = document.getElementById('header-user');
+                const userId = userEl ? userEl.getAttribute('data-user-id') : '';
+                if (!badge) return;
+
+                function setBadge(count) {
+                    const n = Number(count || 0);
+                    badge.textContent = String(n);
+                    if (n <= 0) badge.classList.add('visually-hidden');
+                    else badge.classList.remove('visually-hidden');
+                }
+
+                async function fetchCartCount() {
+                    if (!userId) { setBadge(0); return; }
+                    try {
+                        const res = await fetch('/user/api/cart/' + encodeURIComponent(userId), {
+                            credentials: 'same-origin'
+                        });
+                        if (!res.ok) return;
+                        const json = await res.json();
+                        const total = (json && json.totalItems) ? json.totalItems : 0;
+                        setBadge(total);
+                    } catch (e) {
+                        console.warn('fetchCartCount error', e);
+                    }
+                }
+
+                document.addEventListener('DOMContentLoaded', fetchCartCount);
+                window.refreshCartBadge = fetchCartCount;
+                setInterval(fetchCartCount, 30000);
+            } catch (e) {
+                console.warn('cart badge script failed', e);
+            }
+        })();
+    </script>
+
+    <!-- SEARCH CLEAR BUTTON SCRIPT -->
+    <script>
+        (function () {
+            const input = document.getElementById('hc-search-input');
+            const clearBtn = document.getElementById('hc-search-clear');
+            if (!input || !clearBtn) return;
+
+            function toggleClear() {
+                if (input.value && input.value.trim().length > 0) {
+                    clearBtn.classList.add('visible');
+                } else {
+                    clearBtn.classList.remove('visible');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', toggleClear);
+            input.addEventListener('input', toggleClear);
+
+            clearBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                input.value = '';
+                toggleClear();
+                input.focus();
+                // optional: uncomment to submit empty search
+                // input.form.submit();
+            });
+
+            input.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Escape') {
+                    input.value = '';
+                    toggleClear();
+                }
+            });
+        })();
+    </script>
+
+</header>

@@ -1,0 +1,84 @@
+<!-- templates/fragments/user-header.html -->
+<header th:fragment="userHeader" xmlns:th="http://www.thymeleaf.org">
+    <nav class="navbar navbar-expand-lg navbar-dark user-navbar sticky-top">
+        <div class="container">
+
+            <!-- Logo / Brand -->
+            <a class="navbar-brand d-flex align-items-center fw-bold">
+                <img src="/img/logo.png" alt="Hyperchip Logo" width="80" class="me-2"/>
+                Hyperchip
+            </a>
+
+            <!-- Burger menu for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#userNavbar"
+                    aria-controls="userNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="userNavbar">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/user/home}">Home</a></li>
+
+                    <!-- Categories dropdown -->
+                    <li class="nav-item dropdown">
+                        <button class="nav-link btn btn-link dropdown-toggle" id="categoriesDropdown" data-bs-toggle="dropdown"
+                                aria-expanded="false" type="button">Categories</button>
+                        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                            <li><a class="dropdown-item" th:href="@{/products/category/laptop}">Laptops</a></li>
+                            <li><a class="dropdown-item" th:href="@{/products/category/phone}">Mobile Phones</a></li>
+                            <li><a class="dropdown-item" th:href="@{/products/category/tablet}">Tablets</a></li>
+                            <li><a class="dropdown-item" th:href="@{/products/category/accessories}">Accessories</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item"><a class="nav-link" th:href="@{/about}">About</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
+                </ul>
+
+                <!-- User account actions -->
+                <div class="d-flex align-items-center">
+
+                    <!-- Not logged in -->
+                    <div th:if="${session.currentUser == null}">
+                        <a class="btn btn-outline-light me-2" th:href="@{http://localhost:8084/login}">Login</a>
+                        <a class="btn btn-light text-primary" th:href="@{http://localhost:8084/signup}">Sign Up</a>
+                    </div>
+
+                    <!-- Logged in -->
+                    <div th:if="${session.currentUser != null}" class="dropdown ms-2">
+                        <button id="accountDropdown" class="btn btn-outline-light dropdown-toggle d-flex align-items-center"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:src="${session.currentUser.profileImage != null ? session.currentUser.profileImage : '/img/default-profile.png'}"
+                                 alt="avatar" class="rounded-circle me-2" style="width:32px;height:32px;object-fit:cover;">
+                            <span th:text="${session.currentUser.name != null ? session.currentUser.name : session.currentUser.email}">User</span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">My Account</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/orders}">Orders</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/address}">Addresses</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/updateProfile}">Edit Profile</a></li>
+                            <li><a class="dropdown-item" th:href="@{http://localhost:8084/forgot-password}">Change Password</a></li>
+                            <li><hr class="dropdown-divider"/></li>
+                            <li>
+                                <form th:action="@{http://localhost:8084/login}" method="post" class="d-inline">
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Cart / Wishlist -->
+                    <a class="btn btn-outline-light me-2" th:href="@{/user/cart}">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                    </a>
+                    <a class="btn btn-outline-light me-2" th:href="@{/wishlist}">
+                        <i class="fa-solid fa-heart me-1"></i> Wishlist
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

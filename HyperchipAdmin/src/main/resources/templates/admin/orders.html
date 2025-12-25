@@ -1,0 +1,104 @@
+<!-- src/main/resources/templates/admin/orders.html -->
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Admin - Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<!-- header fragment -->
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Orders</h3>
+        <form th:action="@{/admin/orders}" method="get" class="d-flex">
+            <input type="text" name="q" th:value="${q}" class="form-control me-2" placeholder="Search order / user / id"/>
+            <!-- plain value for the All option (avoid empty th: expression) -->
+            <select name="status" class="form-select me-2">
+                <option value="">All</option>
+                <option value="PENDING" th:selected="${filterStatus == 'PENDING'}">Pending</option>
+                <option value="CONFIRMED" th:selected="${filterStatus == 'CONFIRMED'}">Confirmed</option>
+                <option value="PACKED" th:selected="${filterStatus == 'PACKED'}">Packed</option>
+                <option value="SHIPPED" th:selected="${filterStatus == 'SHIPPED'}">Shipped</option>
+                <option value="OUT_FOR_DELIVERY" th:selected="${filterStatus == 'OUT_FOR_DELIVERY'}">Out for Delivery</option>
+                <option value="DELIVERED" th:selected="${filterStatus == 'DELIVERED'}">Delivered</option>
+                <option value="CANCELLED" th:selected="${filterStatus == 'CANCELLED'}">Cancelled</option>
+                <option value="RETURNED" th:selected="${filterStatus == 'RETURNED'}">Returned</option>
+            </select>
+            <button class="btn btn-primary me-2" type="submit">Search</button>
+            <a th:href="@{/admin/orders}" class="btn btn-outline-secondary">Clear</a>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>User</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody class="admin-order">
+            <!-- Fallback when no orders -->
+            <tr th:if="${orders == null or #lists.isEmpty(orders)}">
+                <td colspan="7" class="text-center">No orders found</td>
+            </tr>
+            <!-- Order rows -->
+            <tr th:each="o : ${orders}">
+                <td th:text="${o.orderNumber}">ORD-001</td>
+                <!-- Format LocalDateTime safely -->
+                <td>
+                        <span th:if="${o.orderDate != null}"
+                              th:text="${#temporals.format(o.orderDate, 'dd-MMM-yyyy HH:mm')}">01-Jan-2025 12:00</span>
+                    <span th:unless="${o.orderDate != null}">-</span>
+                </td>
+                <!-- Show user id (or fallback) -->
+                <td>
+                    <span th:text="${o.userId != null ? o.userId : '-'}">123</span>
+                </td>
+                <td>
+                    <span th:text="${o.totalItems != null ? o.totalItems : 0}">0</span>
+                </td>
+                <td>
+                    <span th:if="${o.total != null}" th:text="${#numbers.formatDecimal(o.total, 1, 2)}">0.00</span>
+                    <span th:unless="${o.total != null}">0.00</span>
+                </td>
+                <td>
+                    <span th:text="${o.status != null ? o.status : '-'}">PENDING</span>
+                </td>
+                <td>
+                    <a th:href="@{/admin/orders/{id}(id=${o.orderId})}" class="btn btn-sm btn-info">View</a>
+                    <form th:action="@{/admin/orders/{id}/cancel(id=${o.orderId})}"
+                          th:method="post"
+                          th:onsubmit="return confirm('Cancel full order?');"
+                          style="display:inline">
+                        <input type="hidden" name="reason" value="Cancelled by admin"/>
+                        <button class="btn btn-sm btn-danger" type="submit">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>Showing page <span th:text="${currentPage != null ? currentPage + 1 : 1}">1</span></div>
+        <div>
+            <a th:href="@{/admin/orders(page=${(currentPage == null ? 0 : currentPage) - 1})}"
+               th:classappend="${currentPage == null or currentPage <= 0} ? ' disabled' : ''"
+               class="btn btn-outline-secondary btn-sm">Prev</a>
+            <a th:href="@{/admin/orders(page=${(currentPage == null ? 0 : currentPage) + 1})}"
+               class="btn btn-outline-secondary btn-sm ms-2">Next</a>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

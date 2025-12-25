@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Hyperchip API Gateway
+    This module is the entry point for all external requests
+    coming into the Hyperchip system. It uses Spring Cloud
+    Gateway to route requests to the appropriate microservices
+    and integrates with Eureka for service discovery.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Spring Boot parent providing default configuration and dependency versions -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.2</version>
+        <relativePath/>
+    </parent>
+
+    <!-- Maven coordinates for the API Gateway module -->
+    <groupId>com.hyperchip.infrastructure</groupId>
+    <artifactId>HyperchipApiGateway</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>HyperchipApiGateway</name>
+    <description>Spring Cloud Gateway for Hyperchip microservices</description>
+
+    <!-- Common project properties -->
+    <properties>
+        <!-- Java version used to compile this project -->
+        <java.version>21</java.version>
+
+        <!-- Spring Cloud BOM version aligned with Spring Boot 3.x -->
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+    </properties>
+
+    <!--
+        Dependency Management
+        Import Spring Cloud BOM so that all Spring Cloud-related
+        dependencies use compatible versions automatically.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Runtime and test dependencies for the API Gateway -->
+    <dependencies>
+        <!-- Spring Cloud Gateway (reactive API gateway for routing and filters) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <!-- Eureka Client (to discover downstream microservices via Eureka Server) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!-- Actuator (for monitoring and health endpoints of the Gateway) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Config Client (to load externalized configuration from Config Server) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <!-- Test dependencies for unit and integration testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Build configuration -->
+    <build>
+        <plugins>
+            <!-- Spring Boot plugin to build an executable JAR and run the gateway -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

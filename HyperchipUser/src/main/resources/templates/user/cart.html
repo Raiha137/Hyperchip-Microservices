@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Your Cart - Hyperchip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .card { border-radius: 12px; }
+        .qty-input { width: 80px; text-align:center; min-width:70px; max-width:120px; }
+        .fade-in { animation: fadeIn .35s ease both; }
+        @keyframes fadeIn { from {opacity:0; transform: translateY(6px)} to{opacity:1; transform:none} }
+        .muted-note { font-size: .9rem; color: #6c757d; }
+        .disabled-overlay { opacity: 0.6; pointer-events: none; }
+        .out-of-stock-badge { font-size: 0.75rem; padding: .25rem .5rem; border-radius: .25rem; background: #f8d7da; color: #842029; }
+        /* --- New rules to prevent overlap and allow wrapping --- */
+        .card .row.g-2 {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center; /* keep vertical alignment */
+        }
+        /* image column: keep it compact */
+        .cart-img-col {
+        flex: 0 0 84px; /* fixed-ish width for image */
+        max-width: 84px;
+        padding-right: .5rem;
+        }
+        .cart-img-col img { height:80px; width:84px; object-fit:cover; border-radius:6px; }
+        /* title column: flexible, allows wrapping and limits width so it doesn't overlap controls */
+        .cart-title-col {
+        flex: 1 1 300px;
+        padding-right: .75rem;
+        word-break: break-word;
+        white-space: normal;
+        }
+        .cart-title-col .title-space{width : 300px;}
+        .cart-title-col strong { display:block; font-size:1rem; line-height:1.15; }
+        .cart-title-col .text-muted { font-size:.9rem; }
+        /* controls column: try to keep compact and right-aligned on larger screens */
+        .cart-controls-col {
+        flex: 0 0 220px;
+        min-width: 160px;
+        text-align: right;
+        }
+        /* ensure quantity controls do not overflow */
+        .cart-controls-col .d-flex { justify-content:flex-end; gap:.5rem; align-items:center; }
+        /* On very small widths let controls span full width under the title */
+        @media (max-width: 540px) {
+        .cart-controls-col { text-align: left; width: 100%; margin-top: .5rem; }
+        .cart-img-col { margin-bottom:.4rem; }
+        .cart-title-col { width: 100%; }
+        }
+        /* inline alert area */
+        #cart-inline-alert { display:none; margin-bottom: .75rem; }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container my-5">
+    <input type="hidden" id="page-user-id" th:value="${userId}" />
+    <div class="row">
+        <div class="col-md-8">
+            <div id="cart-items-area">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-3">Loading cart...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 cart">
+            <div class="card p-3 shadow-sm fade-in cart">
+                <h5 class="mb-3">Order Summary</h5>
+                <div id="cart-inline-alert"></div>
+                <ul class="list-unstyled">
+                    <li class="d-flex justify-content-between">
+                        <span>Subtotal</span>
+                        <strong id="cart-subtotal">₹ 0.00</strong>
+                    </li>
+                    <li class="d-flex justify-content-between">
+                        <span>Shipping</span>
+                        <!-- We will not calculate here. Just tell user it will be added later -->
+                        <span id="cart-shipping">Calculated at checkout</span>
+                    </li>
+                    <li class="d-flex justify-content-between mt-3">
+                        <strong>Total</strong>
+                        <strong id="cart-total">₹ 0.00</strong>
+                    </li>
+                </ul>
+                <div id="cart-warning" class="mb-2" style="display:none;"></div>
+                <div class="d-grid mt-3">
+                    <a id="checkout-btn" class="btn btn-primary" href="#" role="button">Proceed to Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 for friendly popups -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    (function(){
+      var userIdEl = document.getElementById('page-user-id');
+      var userId = userIdEl ? (userIdEl.value || null) : null;
+      if (!userId) {
+        document.getElementById('cart-items-area').innerHTML = '<div class="alert alert-warning">Please sign in to view your cart.</div>';
+        return;
+      }
+
+      var apiBase = '/user/api/cart/' + encodeURIComponent(userId);
+      var checkoutBtn = document.getElementById('checkout-btn');
+      var cartWarning = document.getElementById('cart-warning');
+
+      function formatMoney(v){ return '₹ ' + (Number(v) || 0).toFixed(2); }
+
+      async function parseErrorResponse(res) {
+        let txt = await res.text().catch(()=>res.statusText);
+        try {
+          const obj = JSON.parse(txt);
+          return obj.error || txt || res.statusText;
+        } catch(e) {
+          return txt || res.statusText;
+        }
+      }
+
+      /* ---------- Friendly UI helpers ---------- */
+      function showToast(message, options) {
+        // using SweetAlert2 toast mode for small friendly messages
+        options = options || {};
+        Swal.fire({
+          toast: true,
+          position: options.position || 'top-end',
+          icon: options.icon || 'info',
+          title: message,
+          showConfirmButton: false,
+          timer: options.timer || 2500,
+          timerProgressBar: true,
+          customClass: { popup: 'swal2-sm' }
+        });
+      }
+
+      function showError(message) {
+        Swal.fire({ icon: 'error', title: 'Error', text: message });
+      }
+
+      function showInlineAlert(message, type) {
+        var el = document.getElementById('cart-inline-alert');
+        if (!el) return;
+        type = type || 'warning';
+        el.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+                       escapeHtml(message) +
+                       '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        el.style.display = '';
+      }
+
+      /* ---------- Fetch and render ---------- */
+
+      async function fetchCart(){
+        try {
+          var res = await fetch(apiBase, { credentials: 'same-origin' });
+          if (!res.ok) {
+            const msg = await parseErrorResponse(res);
+            throw new Error(msg);
+          }
+          var cart = await res.json();
+          renderCart(cart);
+        } catch (e) {
+          console.error(e);
+          document.getElementById('cart-items-area').innerHTML = '<div class="alert alert-danger">Could not load cart: '+ escapeHtml(e.message || '') +'</div>';
+          if (checkoutBtn) checkoutBtn.setAttribute('disabled','disabled');
+          updateNavBadge(0);
+        }
+      }
+
+      function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+      function renderCart(cart){
+        if (!cart || !Array.isArray(cart.items) || cart.items.length === 0){
+          document.getElementById('cart-items-area').innerHTML = `
+            <div class="card p-4 text-center">
+              <h5>Your cart is empty</h5>
+              <p>Add products to get started.</p>
+              <a class="btn btn-outline-primary" href="/user/products">Shop now</a>
+            </div>`;
+          updateSummary(0);
+          if (checkoutBtn) checkoutBtn.setAttribute('disabled','disabled');
+          updateNavBadge(0);
+          return;
+        }
+
+        var hasBlocked = false;
+
+        var itemsHtml = cart.items.map(function(item){
+          var img = item.productImage ? item.productImage : '/img/default-product.png';
+          var purchasable = (item.purchasable === undefined) ? true : !!item.purchasable;
+          var availableQty = (typeof item.availableQty === 'number') ? item.availableQty : (typeof item.stock === 'number' ? item.stock : null);
+          var stock = (typeof item.stock === 'number') ? item.stock : null;
+          var blocked = !!item.blocked;
+          var categoryBlocked = !!item.categoryBlocked;
+          if (!purchasable) { hasBlocked = true; }
+          var badgeHtml = '';
+          if (!purchasable) {
+            badgeHtml = `<div class="mb-2"><span class="out-of-stock-badge">Not available</span></div>`;
+          } else if (stock != null && stock < 1) {
+            badgeHtml = `<div class="mb-2"><span class="out-of-stock-badge">Out of stock</span></div>`;
+          }
+          var disableClass = purchasable ? '' : 'disabled-overlay';
+          var maxAttr = (availableQty != null) ? `max="${availableQty}"` : '';
+
+          return `<div class="card mb-3 p-3 ${disableClass}" data-product="${escapeHtml(String(item.productId||''))}">
+            <div class="row g-2 align-items-center">
+              <div class="cart-img-col"><img src="${escapeHtml(img)}" class="rounded" /></div>
+              <div class="cart-title-col">
+                <div class="title-space"><strong>${escapeHtml(item.productTitle || ('#' + item.productId))}</strong></div>
+                <div class="text-muted small">Unit: ${formatMoney(item.unitPrice || 0)}</div>
+                ${badgeHtml}
+                <div class="muted-note">
+                  ${stock != null ? ('Stock: ' + stock) : ''}
+                  ${blocked ? ' • Blocked' : ''}
+                  ${categoryBlocked ? ' • Category blocked' : ''}
+                </div>
+              </div>
+              <div class="cart-controls-col">
+                <div class="d-flex align-items-center mb-2">
+                  <button class="btn btn-sm btn-outline-secondary me-2 qty-decr" data-product="${item.productId}">−</button>
+                  <input type="number" class="form-control qty-input" value="${item.quantity}" min="1" ${maxAttr} data-product="${item.productId}" />
+                  <button class="btn btn-sm btn-outline-secondary ms-2 qty-incr" data-product="${item.productId}">+</button>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-danger remove-btn" data-action="remove" data-product="${item.productId}">Remove</button>
+                  <button class="btn btn-sm btn-outline-secondary ms-1 move-to-wishlist" data-product="${item.productId}">Wishlist</button>
+                </div>
+                <div class="mt-2"><strong>${formatMoney(item.total || (item.unitPrice * item.quantity) || 0)}</strong></div>
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+
+        document.getElementById('cart-items-area').innerHTML = itemsHtml;
+
+        document.querySelectorAll('.qty-incr').forEach(function(btn){
+          btn.addEventListener('click', function(){ onQtyChangeBtn(this, +1); });
+        });
+        document.querySelectorAll('.qty-decr').forEach(function(btn){
+          btn.addEventListener('click', function(){ onQtyChangeBtn(this, -1); });
+        });
+        document.querySelectorAll('.qty-input').forEach(function(inp){ inp.addEventListener('change', onQtyInputChange); });
+        document.querySelectorAll('.remove-btn').forEach(function(b){ b.addEventListener('click', function(){ removeItem(this.getAttribute('data-product')); }); });
+        document.querySelectorAll('.move-to-wishlist').forEach(function(b){ b.addEventListener('click', function(){ moveToWishlist(this.getAttribute('data-product')); }); });
+
+        updateSummary(cart.subtotal || 0);
+        updateNavBadge(cart.totalItems || 0);
+
+        if (hasBlocked) {
+          if (checkoutBtn) {
+            checkoutBtn.setAttribute('disabled','disabled');
+            cartWarning.style.display = '';
+            cartWarning.className = 'alert alert-warning';
+            cartWarning.innerText = 'One or more items are unavailable or blocked. Please remove them to proceed to checkout.';
+          }
+        } else {
+          if (checkoutBtn) {
+            checkoutBtn.removeAttribute('disabled');
+            cartWarning.style.display = 'none';
+          }
+        }
+      }
+
+      function updateSummary(subtotal){
+        var subEl = document.getElementById('cart-subtotal');
+        var totEl = document.getElementById('cart-total');
+        if (subEl) subEl.innerText = formatMoney(subtotal);
+        if (totEl) totEl.innerText = formatMoney(subtotal);
+      }
+
+      function updateNavBadge(count){
+        try {
+          var navBadge = document.getElementById('nav-cart-count');
+          if (navBadge) {
+            navBadge.innerText = Number(count || 0);
+            if(Number(count||0) === 0) navBadge.classList.add('visually-hidden'); else navBadge.classList.remove('visually-hidden');
+          }
+        } catch(e){ /* ignore */ }
+      }
+
+      function getQtyInputFor(pid){
+        return document.querySelector('.qty-input[data-product="'+pid+'"]');
+      }
+
+      async function onQtyChangeBtn(btn, delta){
+        var pid = btn.getAttribute('data-product');
+        var input = getQtyInputFor(pid);
+        if (!input) return;
+        var cur = parseInt(input.value || '1', 10);
+        var max = input.getAttribute('max');
+        if (delta > 0 && max) {
+          var m = parseInt(max,10);
+          if (cur >= m) {
+            // friendly toast (instead of default alert showing host:port)
+            showToast('Only ' + m + ' item' + (m>1 ? 's' : '') + ' available in stock.', { icon: 'warning' });
+            return;
+          }
+        }
+        cur = Math.max(1, cur + delta);
+        await setQuantity(pid, cur);
+      }
+
+      async function onQtyInputChange(e){
+        var pid = e.target.getAttribute('data-product');
+        var qty = parseInt(e.target.value || '1', 10);
+        if (isNaN(qty) || qty < 1) qty = 1;
+        var max = e.target.getAttribute('max');
+        if (max && qty > parseInt(max,10)) {
+          qty = parseInt(max,10);
+          // friendly inline message + toast
+          showInlineAlert('Quantity adjusted: only ' + qty + ' item' + (qty>1 ? 's' : '') + ' available.', 'info');
+          showToast('Quantity adjusted to ' + qty, { icon: 'info' });
+          e.target.value = qty;
+        }
+        await setQuantity(pid, qty);
+      }
+
+      async function setQuantity(productId, quantity){
+        try {
+          // Double-check against DOM max to avoid unnecessary API calls
+          var input = getQtyInputFor(productId);
+          if (input) {
+            var max = input.getAttribute('max');
+            if (max && quantity > parseInt(max,10)) {
+              showToast('Only ' + max + ' item' + (max>1 ? 's' : '') + ' available in stock.', { icon: 'warning' });
+              input.value = parseInt(max,10);
+              return;
+            }
+          }
+
+          var url = '/user/api/cart/' + encodeURIComponent(userId) + '/items/' + encodeURIComponent(productId) + '?qty=' + encodeURIComponent(quantity);
+          var res = await fetch(url, { method: 'PUT', credentials: 'same-origin' });
+          if (!res.ok) {
+            const msg = await parseErrorResponse(res);
+            // friendly error
+            showError('Could not update quantity: ' + (msg || 'Server error'));
+            await fetchCart();
+            return;
+          }
+          var updated = await res.json();
+          renderCart(updated);
+          showToast('Quantity updated', { icon: 'success' });
+        } catch (err) {
+          console.error(err);
+          showError('Error updating cart: ' + (err.message || ''));
+          await fetchCart();
+        }
+      }
+
+      async function removeItem(productId){
+        try {
+          var url = '/user/api/cart/' + encodeURIComponent(userId) + '/items/' + encodeURIComponent(productId);
+          var res = await fetch(url, { method: 'DELETE', credentials: 'same-origin' });
+          if (!res.ok) {
+            const msg = await parseErrorResponse(res);
+            showError('Failed to remove: ' + (msg || 'Server error'));
+            return;
+          }
+          await fetchCart();
+          showToast('Item removed', { icon: 'success' });
+        } catch (e) { console.error(e); showError('Failed to remove: '+ (e.message||'')); }
+      }
+
+      async function moveToWishlist(productId){
+        try {
+          var addUrl = '/user/api/wishlist/' + encodeURIComponent(userId) + '/items/' + encodeURIComponent(productId);
+          await fetch(addUrl, { method: 'POST', credentials: 'same-origin' }).catch(()=>null);
+          await removeItem(productId);
+        } catch(e){ console.error(e); await fetchCart(); }
+      }
+
+      if (checkoutBtn) checkoutBtn.href = '/user/checkout';
+
+      fetchCart();
+
+    })();
+    /*]]>*/
+</script>
+</body>
+</html>

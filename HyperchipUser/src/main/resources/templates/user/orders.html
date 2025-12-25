@@ -1,0 +1,402 @@
+<!-- orders.html -->
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>My Orders - Hyperchip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <!-- small page-specific adjustments to align buttons/status -->
+    <style>
+        /* Ensure actions align vertically and horizontally */
+        .order-actions { display:flex; gap:8px; align-items:center; justify-content:flex-end; }
+        .status-pill { display:inline-block; padding:6px 10px; border-radius:12px; background:#f0f0f0; font-weight:600; }
+        .thumbs-col img { width:100%; height:100%; object-fit:cover; border-radius:6px; }
+        .order-card { border-radius:10px; }
+        .order-block h5,h3{color: #000 !important;}
+
+        /* Keep your existing desktop styles intact; mobile overrides come via media queries below */
+        .order-actions { display:flex; gap:8px; align-items:center; justify-content:flex-end; }
+        .status-pill { display:inline-block; padding:6px 10px; border-radius:12px; background:#f0f0f0; font-weight:600; }
+        .thumbs-col img { width:100%; height:100%; object-fit:cover; border-radius:6px; }
+        .order-card { border-radius:10px; overflow:hidden; }
+        .order-block h5,h3{color: #000 !important;}
+
+        /* MOBILE / SMALL SCREEN ADJUSTMENTS */
+        @media (max-width: 768px) {
+          /* Stack the card contents vertically on narrow screens */
+          .order-card {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 12px;
+            gap: 10px;
+          }
+
+          .thumbs-col {
+            flex: 0 0 auto;
+            max-width: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 6px;
+          }
+
+          /* Use a contained image in mobile (prevent it from forcing horizontal layout) */
+          .thumbs-col img {
+            width: 84%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            display: block;
+          }
+
+          .order-meta {
+            order: 2;
+            min-width: 0;               /* important to allow ellipsis */
+            padding: 0 4px;
+          }
+
+          /* Prevent the order id from rotating / stacking; truncate long IDs */
+          .order-id-txt {
+            font-size: 1rem;
+            writing-mode: horizontal-tb !important;
+            transform: none !important;
+            text-orientation: initial !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            display: inline-block;
+            margin-bottom: 6px;
+          }
+
+          .order-meta .text-muted { font-size: .85rem; }
+
+          /* Move actions to bottom of card and spread them across the width */
+          .order-actions {
+            order: 3;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(0,0,0,0.04);
+          }
+
+          .order-actions .status-pill { margin: 0; }
+
+          .order-actions .btn {
+            font-size: .82rem;
+            padding: .35rem .6rem;
+            white-space: nowrap;
+          }
+
+          /* Ensure the main container has small side padding on phones */
+          .container { padding-left: 12px; padding-right: 12px; }
+
+          /* Search input sizing on small screens: allow it to shrink nicely */
+          #q { min-width: 120px !important; width: auto; max-width: calc(100vw - 140px); }
+
+          /* Make sure the order list doesn't create horizontal scroll */
+          #orders-list { overflow: visible; }
+
+          /* Optional: slightly smaller spacing between cards */
+          .col-12 { padding-left: 0.35rem; padding-right: 0.35rem; }
+        }
+
+        /* Small extra fallback for very narrow phones */
+        @media (max-width: 420px) {
+          .thumbs-col img { width: 90%; }
+          .status-pill { padding: 5px 8px; font-size: .82rem; }
+        }
+    </style>
+
+</head>
+<body>
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div th:fragment="pageContent">
+    <div class="container my-5 order-block">
+        <input type="hidden" id="page-user-id" th:value="${userId}" />
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">My Orders</h3>
+            <div class="d-flex align-items-center">
+                <input id="q" class="form-control form-control-sm me-2" style="min-width:280px" placeholder="Search order id / number / product...">
+                <button id="clear-search" class="btn btn-sm btn-outline-secondary">Clear</button>
+            </div>
+        </div>
+        <div id="orders-list" class="row g-3">
+            <!-- cards inserted by JS -->
+        </div>
+        <!-- Pagination: Load more button -->
+        <div class="d-flex justify-content-center my-3">
+            <button id="btn-load-more" class="btn btn-outline-primary btn-sm d-none">
+                Load more orders
+            </button>
+        </div>
+    </div>
+    <div th:replace="fragments/user-footer :: userFooter"></div>
+</div>
+<!-- Bootstrap JS (needed for dropdown, modal, etc.) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    (async function () {
+        const userIdEl = document.getElementById('page-user-id');
+    const userId = userIdEl ? userIdEl.value : null;
+
+    // Auth login URL (same logic as product-list.html)
+    const authLoginUrl =
+    /*[[${@environment.getProperty('auth.service.login.url') != null
+     ? @environment.getProperty('auth.service.login.url')
+     : '/login'}]]*/ '/login';
+
+    // If there is no userId, redirect to **auth-service** login
+    if (!userId || userId === 'null' || userId === 'undefined') {
+    const back = window.location.pathname + window.location.search;
+    window.location.href = authLoginUrl + '?redirect=' + encodeURIComponent(back);
+    return;
+    }
+
+
+        const listEl      = document.getElementById('orders-list');
+        const loadMoreBtn = document.getElementById('btn-load-more');
+        const qEl         = document.getElementById('q');
+        const clearEl     = document.getElementById('clear-search');
+
+        const pageSize = 10;        // how many orders per “page”
+        let page      = 0;          // current page index (0-based)
+        let allOrders = [];         // all orders fetched from server
+        let loading   = false;
+
+        const baseListUrl = `/user/api/proxy/orders/user/${encodeURIComponent(userId)}`;
+
+        function safeNum(v) {
+            if (v === null || v === undefined) return 0;
+            const n = Number(v);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        function buildImageUrl(raw) {
+            if (!raw) return null;
+            raw = raw.trim();
+            if (/^https?:\/\//i.test(raw)) return raw;
+            if (raw.startsWith('/')) return window.location.origin + raw;
+            if (raw.indexOf('uploads/') !== -1) return window.location.origin + '/' + raw.replace(/^\/+/, '');
+            const master = /*[[${masterBaseUrl}]]*/ '';
+            if (master) {
+                if (!raw.includes('/')) return master + '/uploads/products/' + raw;
+                return master + '/' + raw.replace(/^\/+/, '');
+            }
+            return window.location.origin + '/uploads/products/' + raw;
+        }
+
+        function renderOrderCard(o) {
+            const safeId = (o.orderId ?? o.id ?? o.orderNumber ?? null);
+            const orderNumber = (o.orderNumber ?? o.orderNo ?? safeId ?? '').toString();
+
+            const items = Array.isArray(o.items) && o.items.length
+                ? o.items
+                : (Array.isArray(o.orderItems) ? o.orderItems : []);
+
+            const thumbs = [];
+            items.forEach(it => {
+                const cand = it.productImage || it.image ||
+                             (it.productImages && it.productImages[0]) ||
+                             (it.images && it.images[0]) ||
+                             it.imageUrl || null;
+                if (cand) thumbs.push(buildImageUrl(cand));
+            });
+            if (thumbs.length === 0) {
+                thumbs.push(window.location.origin + '/img/default-product.png');
+            }
+
+            let totalFromApi = safeNum(
+                o.total ?? o.totalAmount ?? o.orderTotal ?? o.orderTotalAmount ?? o.grandTotal
+            );
+            if (totalFromApi <= 0) {
+                totalFromApi = items.reduce((acc, it) => {
+                    const itemTotal = safeNum(it.total ?? it.lineTotal ?? it.priceTotal);
+                    if (itemTotal > 0) return acc + itemTotal;
+                    return acc + safeNum(it.quantity) *
+                                 safeNum(it.unitPrice ?? it.price ?? it.unitPriceValue);
+                }, 0);
+            }
+
+            const qty      = items.reduce((a, it) => a + (safeNum(it.quantity) || 0), 0);
+            const distinct = items.length;
+
+            const placed = (o.orderDate || o.orderPlacedAt || o.createdAt || o.createdOn) || null;
+            const placedStr = placed
+                ? new Date((typeof placed === 'object' && placed.epochSecond)
+                    ? (safeNum(placed.epochSecond) * 1000)
+                    : placed).toLocaleString()
+                : '';
+
+            const status = (o.status || o.orderStatus || 'UNKNOWN').toUpperCase();
+            const viewHref = safeId ? '/user/order/details/' + encodeURIComponent(safeId) : '#';
+
+            return `
+                <div class="col-12">
+                  <div class="card p-3 order-card d-flex flex-row align-items-start gap-3 order-block">
+                    <div class="thumbs-col" style="flex:0 0 110px; max-width:110px;">
+                      <img src="${thumbs[0]}" alt="product-thumb"
+                           style="width:110px;height:110px;object-fit:cover;border-radius:6px;" />
+                    </div>
+                    <div class="order-meta d-flex flex-column" style="flex:1 1 auto;min-width:0;">
+                      <h5 class="mb-1 order-id-txt">Order #${orderNumber}</h5>
+                      <div class="text-muted small mb-2">Placed: ${placedStr}</div>
+                      <div class="mb-2 text-dark small">
+                        <span class="me-3">Items: <strong>${qty}</strong></span>
+                        <span class="me-3">Products: <strong>${distinct}</strong></span>
+                        <span class="fw-bold">Total: ₹ ${Number(totalFromApi || 0).toFixed(2)}</span>
+                      </div>
+                    </div>
+                    <div class="order-actions" style="flex:0 0 240px;">
+                      <div class="me-2"><div class="status-pill">${status}</div></div>
+                      <div>
+                        <a href="${viewHref}" class="btn btn-outline-primary btn-sm me-2">View</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+        }
+
+        function renderPage() {
+            if (!allOrders || allOrders.length === 0) {
+                listEl.innerHTML = '<div class="alert alert-info">No orders found.</div>';
+                if (loadMoreBtn) loadMoreBtn.classList.add('d-none');
+                return;
+            }
+
+            const end   = Math.min((page + 1) * pageSize, allOrders.length);
+            const slice = allOrders.slice(0, end);
+
+            listEl.innerHTML = slice.map(renderOrderCard).join('');
+
+            if (loadMoreBtn) {
+                if (end < allOrders.length) {
+                    loadMoreBtn.classList.remove('d-none');
+                } else {
+                    loadMoreBtn.classList.add('d-none');
+                }
+            }
+        }
+
+        async function fetchAllOrders() {
+            if (loading) return;
+            loading = true;
+
+            try {
+                const res = await fetch(baseListUrl, { credentials: 'same-origin' });
+                if (!res.ok) {
+                    listEl.innerHTML = '<div class="alert alert-warning">Failed to load orders.</div>';
+                    if (loadMoreBtn) loadMoreBtn.classList.add('d-none');
+                    return;
+                }
+
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    allOrders = data;
+                } else if (data && Array.isArray(data.content)) {
+                    allOrders = data.content;
+                } else if (data && Array.isArray(data.orders)) {
+                    allOrders = data.orders;
+                } else {
+                    allOrders = [];
+                }
+
+                page = 0;
+                renderPage();
+            } catch (e) {
+                console.error(e);
+                listEl.innerHTML = '<div class="alert alert-danger">Error loading orders.</div>';
+                if (loadMoreBtn) loadMoreBtn.classList.add('d-none');
+            } finally {
+                loading = false;
+            }
+        }
+
+        // Initial load
+        await fetchAllOrders();
+
+        // “Load more” button
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function () {
+                const maxPages = Math.ceil(allOrders.length / pageSize);
+                if (page < maxPages - 1) {
+                    page++;
+                    renderPage();
+                }
+            });
+        }
+
+        // ===== Search (client-side filtering on allOrders) =====
+        if (qEl) {
+            qEl.addEventListener('input', function (e) {
+                const t = String(e.target.value || '').toLowerCase().trim();
+
+                if (!t) {
+                    // Clear search → back to normal paginated view
+                    page = 0;
+                    renderPage();
+                    return;
+                }
+
+                const filtered = allOrders.filter(o => {
+                    const on = (o.orderNumber || o.orderNo || '').toString().toLowerCase();
+                    if (on.includes(t)) return true;
+
+                    const items = (o.items || o.orderItems || []);
+                    return items.some(it =>
+                        ((it.productTitle || it.title || '') + '').toLowerCase().includes(t)
+                    );
+                });
+
+                listEl.innerHTML = filtered.map(renderOrderCard).join('');
+                if (loadMoreBtn) loadMoreBtn.classList.add('d-none'); // hide pagination during search
+            });
+        }
+
+        if (clearEl) {
+            clearEl.addEventListener('click', function () {
+                if (qEl) qEl.value = '';
+                page = 0;
+                renderPage();
+            });
+        }
+
+    })();
+     /*]]>*/
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const params = new URLSearchParams(window.location.search);
+        const cancelSuccess = params.get('cancelSuccess') === '1';
+        const returnSuccess = params.get('returnSuccess') === '1';
+
+        if (cancelSuccess || returnSuccess) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: cancelSuccess
+                        ? 'Order cancelled successfully.'
+                        : 'Return request submitted successfully.',
+                confirmButtonColor: '#f3a111'
+            }).then(() => {
+                // remove query params so popup doesn’t keep coming
+                const url = new URL(window.location.href);
+                url.searchParams.delete('cancelSuccess');
+                url.searchParams.delete('returnSuccess');
+                window.history.replaceState({}, document.title, url.toString());
+            });
+        }
+    });
+</script>
+</body>
+</html>

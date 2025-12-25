@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>My Referral Code - Hyperchip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Theme + Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* Mobile referral buttons fix */
+@media (max-width: 576px) {
+    .referral-actions {
+        flex-direction: row;
+    }
+
+    .referral-actions .btn {
+        font-size: 0.85rem;
+        padding: 0.45rem 0.75rem;
+        white-space: nowrap;
+    }
+}
+
+    </style>
+</head>
+<body>
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container my-5">
+    <!-- hidden: we will use this in JS -->
+    <input type="hidden" id="page-user-id" th:value="${userId}">
+    <input type="hidden" id="page-user-email" th:value="${userEmail}">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">Invite & Earn</h4>
+                    <p class="text-muted small mb-3">
+                        Share this referral code with your friends. <br>
+                        When they register using your code, you will get rewards.
+                    </p>
+                    <div class="mb-3">
+                        <span class="fw-bold">Your Referral Code:</span>
+                        <div class="mt-2">
+                           <span id="ref-code-text" class="fs-5 fw-semibold text-primary">
+                              <!-- code will come here -->
+                              ---
+                           </span>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-center gap-2 mt-3 referral-actions">
+                        <button id="load-referral-btn" class="btn btn-primary">
+                            Generate / Show Referral Code
+                        </button>
+
+                        <button id="copy-referral-btn" class="btn btn-outline-secondary" type="button">
+                            Copy
+                        </button>
+
+                        <button id="share-referral-btn" class="btn btn-success" type="button">
+                            Share
+                        </button>
+                    </div>
+
+                    <div id="referral-msg" class="small text-muted mt-3"></div>
+                </div>
+            </div>
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5>Your Referral Rewards</h5>
+                    <table class="table table-sm mt-3" id="referral-reward-table">
+                        <thead>
+                        <tr>
+                            <th>Friend Email</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- JS will fill this -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Referral Rewards -->
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const userIdInput = document.getElementById('page-user-id');
+        const codeSpan = document.getElementById('ref-code-text');
+        const msg = document.getElementById('referral-msg');
+        const loadBtn = document.getElementById('load-referral-btn');
+        const copyBtn = document.getElementById('copy-referral-btn');
+        const shareBtn = document.getElementById('share-referral-btn');
+
+
+        if (!userIdInput) {
+            return;
+        }
+        const userId = userIdInput.value;
+
+        // master.service.url -> http://localhost:8086 (fallback)
+        const API_BASE =
+            /*[[${@environment.getProperty('master.service.url','http://localhost:8086')}]]*/ ''
+            + '/api/referrals';
+
+        // ===== Load referral code (your old code, just kept as-is) =====
+        loadBtn.addEventListener('click', function () {
+            if (!userId) {
+                msg.textContent = 'User not found. Please login again.';
+                return;
+            }
+
+            msg.textContent = 'Loading...';
+
+            fetch(API_BASE + '/code/' + userId, {
+                method: 'POST'
+            })
+                .then(function (res) {
+                    if (!res.ok) {
+                        throw new Error('Failed to load referral code');
+                    }
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (data && data.code) {
+                        codeSpan.textContent = data.code;
+                        msg.textContent = 'You can share this code with your friends.';
+                    } else {
+                        codeSpan.textContent = '---';
+                        msg.textContent = 'Could not get referral code.';
+                    }
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    msg.textContent = 'Error while loading referral code.';
+                });
+        });
+
+        // ===== Copy button =====
+        copyBtn.addEventListener('click', function () {
+            const code = codeSpan.textContent.trim();
+            if (!code || code === '---') {
+                msg.textContent = 'No code to copy.';
+                return;
+            }
+            navigator.clipboard.writeText(code)
+                .then(function () {
+                    msg.textContent = 'Referral code copied!';
+                })
+                .catch(function () {
+                    msg.textContent = 'Could not copy code.';
+                });
+        });
+
+        // ===== Share button =====
+    shareBtn.addEventListener('click', function () {
+    const code = codeSpan.textContent.trim();
+    if (!code || code === '---') {
+        msg.textContent = 'Generate your referral code first.';
+        return;
+    }
+
+    // You can change this URL to your real signup page
+    const signupUrl = 'https://hyperchip.com/signup?ref=' + encodeURIComponent(code);
+
+    const shareText =
+        'Hi! Use my Hyperchip referral code ' + code +
+        ' when you sign up to get rewards: ' + signupUrl;
+
+    // 1) Try Web Share API (works in most mobile browsers)
+    if (navigator.share) {
+        navigator.share({
+            title: 'Hyperchip Referral',
+            text: shareText,
+            url: signupUrl
+        }).then(function () {
+            msg.textContent = 'Share dialog opened.';
+        }).catch(function (err) {
+            console.log('Share cancelled', err);
+        });
+    } else {
+        // 2) Fallback: open WhatsApp share
+        const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+        window.open(whatsappUrl, '_blank');
+        msg.textContent = 'Opening WhatsApp to share your code...';
+    }
+    });
+
+
+        // ===== Load referral rewards table =====
+        function loadReferralRewards() {
+            fetch(API_BASE + '/rewards/' + userId)
+                .then(res => res.json())
+                .then(list => {
+                    const tbody = document.querySelector('#referral-reward-table tbody');
+                    tbody.innerHTML = '';
+
+                    list.forEach(r => {
+                        const email = r.referredUserEmail || '--'; // make sure backend sends this field
+                        const date  = r.createdAt || '--';
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${email}</td>
+                                <td>${r.status}</td>
+                                <td>${date}</td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(err => {
+                    console.error('Error loading referral rewards', err);
+                });
+        }
+
+        // call once when page opens
+        loadReferralRewards();
+    });
+</script>
+</body>
+</html>

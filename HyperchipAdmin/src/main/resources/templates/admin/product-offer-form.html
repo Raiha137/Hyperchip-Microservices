@@ -1,0 +1,103 @@
+<!-- templates/admin/product-offer-form.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Product Offer - Hyperchip Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <!-- Custom -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .offer-box {
+        background-color: #08131e;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+        color: #fff !important;
+        font-family: 'Times New Roman', serif;
+        }
+        label {
+        font-weight: 600;
+        color: #fff !important;
+        }
+        .btn-primary {
+        background-color: #df74e5 !important;
+        border-color: #df74e5 !important;
+        }
+        .btn-primary:hover {
+        background-color: #c45bc9 !important;
+        border-color: #c45bc9 !important;
+        }
+        .text-primary {
+        color: #df74e5 !important;
+        }
+        .alert-success-msg{
+        color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+<!-- Admin Header -->
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container py-5">
+    <div class="col-md-6 mx-auto offer-box alert-success-msg">
+        <h3 class="text-center mb-4" th:text="${offer != null} ? 'Edit Product Offer' : 'Create Product Offer'"></h3>
+        <!-- SUCCESS / ERROR Messages -->
+        <div th:if="${successMsg}" class="alert alert-success text-center alert-success-msg alert-success-msg" th:text="${successMsg}"></div>
+        <div th:if="${errorMsg}" class="alert alert-danger text-center alert-success-msg alert-success-msg" th:text="${errorMsg}"></div>
+        <form method="post" th:action="@{/admin/offers/product/save}" th:object="${offer}">
+            <input type="hidden" th:if="${offer != null}" th:field="*{id}"/>
+            <!-- Product ID -->
+            <div class="mb-3">
+                <label>Product ID</label>
+                <input type="number" th:field="*{productId}" class="form-control" placeholder="Enter product ID" required />
+            </div>
+            <!-- Discount Type -->
+            <div class="mb-3">
+                <label>Discount Type</label>
+                <select th:field="*{discountType}" class="form-select" required>
+                    <option value="">-- Select --</option>
+                    <option value="PERCENT">Percentage</option>
+                    <option value="FLAT">Flat Amount</option>
+                </select>
+            </div>
+            <!-- Discount Value -->
+            <div class="mb-3">
+                <label>Discount Value</label>
+                <input type="number" th:field="*{discountValue}" class="form-control"
+                       placeholder="Enter discount value" required step="0.01" min="0" />
+            </div>
+            <!-- Start Date -->
+            <div class="mb-3">
+                <label>Offer Starts At</label>
+                <input type="datetime-local" th:field="*{startAt}" class="form-control"/>
+            </div>
+            <!-- End Date -->
+            <div class="mb-3">
+                <label>Offer Ends At</label>
+                <input type="datetime-local" th:field="*{endAt}" class="form-control"/>
+            </div>
+            <!-- Active -->
+            <div class="mb-3">
+                <label>Status</label>
+                <select th:field="*{active}" class="form-select">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn btn-primary px-4">Save Offer</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Footer -->
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!-- templates/user/contact-user.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Contact Support - Hyperchip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          crossorigin="anonymous"/>
+    <!-- Global theme -->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <!-- Contact page theme -->
+    <link rel="stylesheet" th:href="@{/css/contact.css}"/>
+    <style>
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        width: 55px;
+        height: 55px;
+        background-color: #25D366;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        z-index: 9999;
+        transition: transform 0.2s ease;
+        }
+        .whatsapp-float i {
+        font-size: 38px;
+        }
+        .whatsapp-float:hover {
+        transform: scale(1.08);
+        color: #fff;
+        }
+        /* Mobile size */
+        @media (max-width: 576px) {
+        .whatsapp-float {
+        width: 60px;
+        height: 60px;
+        bottom: 18px;
+        right: 18px;
+        }
+        .whatsapp-float i {
+        font-size: 28px;
+        }
+        }
+    </style>
+</head>
+<body class="hc-login-body">
+<!-- Simple auth header -->
+<div th:replace="fragments/user-header :: userHeader"></div>
+<section class="contact-hero">
+    <div class="contact-overlay"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-lg-7">
+                <h1 class="mb-3">Contact Support</h1>
+                <p class="lead">
+                    Have a question about an order, payment or product?
+                    Send us a message and our Hyperchip support team will reply as soon as possible.
+                </p>
+                <p class="muted">
+                    Tip: include your Order ID if you already placed an order.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <div class="contact-card">
+                    <h5 class="mb-3">Support details</h5>
+                    <p class="mb-1">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:hyperchip.team@gmail.com">hyperchip.team@gmail.com</a>
+                    </p>
+                    <p class="mb-1">
+                        <i class="fas fa-phone me-2"></i>
+                        <a href="tel:+971563552363">+971563552363</a>
+                    </p>
+                    <hr class="contact-divider"/>
+                    <p class="mb-0">
+                        <strong>Support hours</strong><br/>
+                        Sun – Thu: 9:00 – 18:00 (GST)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="py-5 contact-section">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-7">
+                <div class="support-form">
+                    <h4 class="mb-3">Send us a message</h4>
+                    <!-- server-side messages -->
+                    <div th:if="${successMsg}" class="alert alert-success contact-msg" th:text="${successMsg}"></div>
+                    <div th:if="${errorMsg}" class="alert alert-danger" th:text="${errorMsg}"></div>
+                    <!-- client-side error -->
+                    <div id="contactClientError" class="alert alert-danger d-none"></div>
+                    <form th:action="@{/contact}" method="post" id="supportForm">
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Full Name <span class="hc-required">*</span>
+                            </label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="Your name">
+                            <div id="nameError" class="text-danger small mt-1"></div>
+                        </div>
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                Email <span class="hc-required">*</span>
+                            </label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com">
+                            <div id="emailError" class="text-danger small mt-1"></div>
+                        </div>
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">
+                                Phone
+                            </label>
+                            <input type="tel" id="phone" name="phone"
+                                   class="form-control"
+                                   placeholder="+971 5X XXX XXXX">
+                        </div>
+                        <!-- Order ID -->
+                        <div class="mb-3">
+                            <label for="orderId" class="form-label">
+                                Order ID
+                            </label>
+                            <input type="text" id="orderId" name="orderId"
+                                   class="form-control"
+                                   placeholder="e.g. ORD-12345">
+                        </div>
+                        <!-- Subject -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">
+                                Subject <span class="hc-required">*</span>
+                            </label>
+                            <input type="text" id="subject" name="subject" class="form-control" placeholder="Short subject">
+                            <div id="subjectError" class="text-danger small mt-1"></div>
+                        </div>
+                        <!-- Message -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label">
+                                Message <span class="hc-required">*</span>
+                            </label>
+                            <textarea id="message" name="message" rows="6" class="form-control" placeholder="Tell us what you need help with"></textarea>
+                            <div id="messageError" class="text-danger small mt-1"></div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                Send message
+                            </button>
+                            <button type="button" id="clearBtn" class="btn btn-light">
+                                Clear
+                            </button>
+                            <small class="muted ms-auto">
+                                We usually reply within 24–48 hours.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card contact-info-card">
+                    <div class="card-body">
+                        <h5 class="card-title">When should I contact support?</h5>
+                        <ul class="contact-list">
+                            <li>Payment was taken but order is not visible</li>
+                            <li>Cancel or change an order</li>
+                            <li>Damaged or wrong product received</li>
+                            <li>Warranty or return questions</li>
+                        </ul>
+                        <hr/>
+                        <p class="small muted">
+                            Please do not share passwords or full card details.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4 text-center muted small">
+                    By contacting support you agree to our
+                    <span class="text-decoration-underline">Privacy Policy</span>.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Footer -->
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/contact.js}"></script>
+<a href="https://wa.me/971563552363"
+   class="whatsapp-float"
+   target="_blank"
+   aria-label="Chat with Hyperchip on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+</body>
+</html>

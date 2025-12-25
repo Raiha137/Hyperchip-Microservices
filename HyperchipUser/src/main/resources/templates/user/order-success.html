@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Order Successful - Hyperchip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .hero { border-radius: 14px; }
+        .celebrate { animation: floaty 1.6s ease-in-out infinite; }
+        @keyframes floaty {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+        100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container my-5">
+    <div class="card p-5 hero text-center"
+         th:with="orderNum=${param.orderNumber != null and param.orderNumber[0] != null ? param.orderNumber[0] : ''},
+            shortOrder=${orderNum.length() > 8 ? #strings.substring(orderNum,0,8) + '...' : orderNum}">
+        <div class="mb-3">
+            <i class="fa-solid fa-circle-check fa-4x text-success celebrate"></i>
+        </div>
+        <h2 class="mb-2">Thank you — your order is confirmed!</h2>
+        <p class="text-muted mb-3">
+            Order <strong th:text="${shortOrder != '' ? shortOrder : '#000000'}">#000000</strong>
+            has been placed successfully.
+        </p>
+        <div class="d-flex justify-content-center gap-2">
+            <a th:href="@{/user/orders}" class="btn btn-outline-secondary">View My Orders</a>
+            <a th:href="@{/user/products}" class="btn btn-primary">Continue Shopping</a>
+        </div>
+        <div class="mt-4 text-muted small">
+            We have sent a confirmation email. You can track the order status from the Orders page.
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

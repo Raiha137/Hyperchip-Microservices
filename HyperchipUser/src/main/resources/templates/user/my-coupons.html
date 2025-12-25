@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>My Coupons - Hyperchip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Base theme -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Header -->
+<div th:replace="fragments/user-header :: userHeader"></div>
+<div class="container my-5">
+    <h3 class="mb-4 text-center">My Coupons</h3>
+    <!-- If no coupons -->
+    <div th:if="${#lists.isEmpty(coupons)}" class="alert alert-info text-center">
+        You don't have any coupons yet. Invite friends using your referral code to earn coupons.
+    </div>
+    <!-- Coupon table -->
+    <div th:if="${!#lists.isEmpty(coupons)}" class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Available Coupons</h5>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Discount</th>
+                        <th>Min Order</th>
+                        <th>Valid Till</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${coupons}">
+                        <td class="fw-semibold" th:text="${c.code}">REF-001</td>
+                        <td th:text="${c.description} ?: 'Referral reward'">Referral reward</td>
+                        <!-- Discount display like '10 %' or '₹100' -->
+                        <td>
+                              <span th:if="${c.discountType == T(com.hyperchip.common.dto.DiscountType).PERCENT}"
+                                    th:text="${c.discountValue} + ' %'">10 %</span>
+                            <span th:if="${c.discountType != T(com.hyperchip.common.dto.DiscountType).PERCENT}"
+                                  th:text="${c.discountValue}">100</span>
+                        </td>
+                        <td th:text="${c.minOrderAmount} ?: '-'">-</td>
+                        <td th:text="${c.endAt} ?: '-'">2025-01-01</td>
+                        <td>
+                            <span th:if="${c.active}" class="badge bg-success">Active</span>
+                            <span th:if="${!c.active}" class="badge bg-secondary">Expired</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-3 text-end">
+                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

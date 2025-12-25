@@ -1,0 +1,23 @@
+/* admin-orders.css */
+
+/* Body background and text color */
+body {
+    background: #f6f7fb;
+    color: #1f2937;
+}
+
+/* Table row hover effect */
+.table-hover tbody tr:hover {
+    background: #fff7ed;
+}
+
+/* Card style */
+.card {
+    border-radius: 10px;
+}
+
+/* Navbar brand style */
+.navbar-brand {
+    font-weight: 700;
+    color: #f3a111 !important;
+}

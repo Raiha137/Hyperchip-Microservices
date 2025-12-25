@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- User Navbar Fragment -->
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+
+            <!-- Brand / Logo -->
+            <a class="navbar-brand fw-bold text-primary" th:href="@{/}">Hyperchip</a>
+
+            <!-- Mobile toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                    aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <!-- Products link -->
+                    <li class="nav-item me-2">
+                        <a class="nav-link" th:href="@{/products}">Products</a>
+                    </li>
+
+                    <!-- Cart link with badge -->
+                    <li class="nav-item me-2 position-relative">
+                        <a class="nav-link" th:href="@{'/user/cart'}">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span id="nav-cart-count"
+                                  class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">0</span>
+                        </a>
+                    </li>
+
+                    <!-- Login button -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" th:href="@{/login}">Login</a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>

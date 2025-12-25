@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>User Management - Hyperchip Admin</title>
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+<!-- Header Fragment -->
+<div th:replace="~{fragments/admin-header :: adminHeader}"></div>
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">User Management</h2>
+    <!-- Alerts -->
+    <div th:if="${succMsg}" class="alert alert-success text-center"
+         th:text="${succMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-danger text-center"
+         th:text="${errorMsg}"></div>
+    <!-- Search Form -->
+    <form th:action="@{/admin/users}" method="get"
+          class="row g-3 justify-content-center mb-4">
+        <input type="hidden" name="type" th:value="${userType}"/>
+        <div class="col-auto">
+            <input type="text"
+                   name="keyword"
+                   class="form-control"
+                   th:value="${keyword}"
+                   placeholder="Search by name or email"/>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        <div class="col-auto">
+            <a th:href="@{/admin/users(type=${userType})}" class="btn btn-secondary">
+                Clear
+            </a>
+        </div>
+    </form>
+    <!-- Users Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <!-- ID -->
+                <td th:text="${user['id']}">1</td>
+                <!-- Name -->
+                <td th:text="${user['fullName']}">John</td>
+                <!-- Email -->
+                <td th:text="${user['email']}">john@example.com</td>
+                <!-- Mobile -->
+                <td th:text="${user['phone']}">9999999999</td>
+                <!--                <td th:text="${user}">DEBUG</td>-->
+                <!-- createdAt (null-safe, no #temporals to avoid Map issues) -->
+                <td th:text="${user['createdAt'] != null ? user['createdAt'] : 'N/A'}">
+                    N/A
+                </td>
+                <!-- STATUS -->
+                <td>
+                        <span th:attr="data-status-id=${user['id']}"
+                              th:text="${user['blocked'] == true ? 'Blocked' : 'Active'}"
+                              th:class="${user['blocked'] == true ? 'text-danger' : 'text-success'}">
+                        Active
+                        </span>
+                </td>
+                <!-- ACTION BUTTON -->
+                <td>
+                    <button type="button"
+                            class="btn btn-sm block-btn"
+                            th:classappend="${user['blocked']} ? ' btn-success' : ' btn-danger'"
+                            th:attr="data-id=${user['id']}, data-blocked=${user['blocked']}"
+                            th:text="${user['blocked']} ? 'Unblock' : 'Block'">
+                    </button>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(users)}">
+                <td colspan="7" class="text-center">No users found.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Pagination -->
+    <nav th:if="${totalPages != null and totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <!-- Previous -->
+            <li class="page-item" th:class="${currentPage == 0 ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{/admin/users(type=${userType}, page=${currentPage - 1}, keyword=${keyword})}">
+                    Previous
+                </a>
+            </li>
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:class="${currentPage == i ? 'active' : ''}">
+                <a class="page-link"
+                   th:href="@{/admin/users(type=${userType}, page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}">
+                    1
+                </a>
+            </li>
+            <!-- Next -->
+            <li class="page-item"
+                th:class="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{/admin/users(type=${userType}, page=${currentPage + 1}, keyword=${keyword})}">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!-- Footer Fragment -->
+<div th:replace="~{fragments/admin-footer :: adminFooter}"></div>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.block-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const userId = this.getAttribute('data-id');
+                const isBlocked = this.getAttribute('data-blocked') === 'true';
+                const actionText = isBlocked ? 'Unblock' : 'Block';
+                const currentBtn = this;
+
+                Swal.fire({
+                    title: actionText + ' User?',
+                    text: 'Are you sure you want to ' + actionText.toLowerCase() + ' this user?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, ' + actionText,
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg',
+                        title: 'fw-bold text-dark',
+                        confirmButton: 'px-4 py-2',
+                        cancelButton: 'px-4 py-2'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/admin/users/block-unblock/' + userId, {
+                            method: 'POST'
+                        })
+                            .then(() => {
+                                const newBlocked = !isBlocked;
+
+                                // Update button
+                                currentBtn.textContent = newBlocked ? 'Unblock' : 'Block';
+                                currentBtn.setAttribute('data-blocked', newBlocked.toString());
+                                currentBtn.classList.toggle('btn-success', newBlocked);
+                                currentBtn.classList.toggle('btn-danger', !newBlocked);
+
+                                // Update status text/color
+                                const statusSpan = document.querySelector(
+                                    'span[data-status-id="' + userId + '"]'
+                                );
+                                if (statusSpan) {
+                                    if (newBlocked) {
+                                        statusSpan.textContent = 'Blocked';
+                                        statusSpan.classList.remove('text-success');
+                                        statusSpan.classList.add('text-danger');
+                                    } else {
+                                        statusSpan.textContent = 'Active';
+                                        statusSpan.classList.remove('text-danger');
+                                        statusSpan.classList.add('text-success');
+                                    }
+                                }
+
+                                Swal.fire('Success', 'User status updated.', 'success');
+                            })
+                            .catch(() => {
+                                Swal.fire('Error', 'Failed to update user.', 'error');
+                            });
+                    }
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

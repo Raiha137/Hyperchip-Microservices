@@ -1,0 +1,161 @@
+<!-- templates/admin/category-offer-form.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title th:text="${offer != null and offer.id != null} ? 'Edit Category Offer' : 'Add Category Offer'">
+        Category Offer
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .offer-form-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
+        .offer-form-card {
+        background-color: #08131e;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+        color: #fff !important;
+        font-family: 'Times New Roman', serif;
+        width: 100%;
+        max-width: 600px;
+        }
+        .offer-form-card h3 {
+        color: #fff;
+        text-align: center;
+        margin-bottom: 20px;
+        }
+        .offer-form-card label {
+        color: #fff !important;
+        font-weight: 600;
+        }
+        .offer-form-card .form-control,
+        .offer-form-card .form-select {
+        background-color: #0f2031;
+        border-color: #243447;
+        color: #fff;
+        }
+        .offer-form-card .form-control:focus,
+        .offer-form-card .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(223, 116, 229, 0.45);
+        border-color: #df74e5;
+        }
+        .btn-primary {
+        background-color: #df74e5 !important;
+        border-color: #df74e5 !important;
+        font-family: 'Times New Roman', serif;
+        font-weight: 600;
+        }
+        .btn-primary:hover {
+        background-color: #c45bc9 !important;
+        border-color: #c45bc9 !important;
+        }
+        .btn-outline-light {
+        font-family: 'Times New Roman', serif;
+        }
+        small.text-muted {
+        color: #ccc !important;
+        }
+        .alert-success-msg{
+        color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+<!-- Admin Header -->
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container offer-form-wrapper">
+    <div class="offer-form-card">
+        <h3 th:text="${offer != null and offer.id != null} ? 'Edit Category Offer' : 'Add Category Offer'">
+            Category Offer
+        </h3>
+        <!-- Success / Error -->
+        <div th:if="${successMsg}" class="alert alert-success text-center mb-3 alert-success-msg" th:text="${successMsg}"></div>
+        <div th:if="${errorMsg}" class="alert alert-danger text-center mb-3 alert-success-msg" th:text="${errorMsg}"></div>
+        <form th:action="@{/admin/offers/category/save}" th:object="${offer}" method="post">
+            <!-- hidden id for edit -->
+            <input type="hidden" th:if="${offer != null and offer.id != null}" th:field="*{id}" />
+            <!-- Category -->
+            <div class="mb-3">
+                <label for="categoryId" class="form-label">Category</label>
+                <select id="categoryId" class="form-select" th:field="*{categoryId}" required>
+                    <option value="">-- Select Category --</option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name}">
+                    </option>
+                </select>
+            </div>
+            <!-- Discount Type -->
+            <div class="mb-3">
+                <label for="discountType" class="form-label">Discount Type</label>
+                <select id="discountType" class="form-select" th:field="*{discountType}" required>
+                    <option value="">-- Select Type --</option>
+                    <option value="PERCENT">Percentage (%)</option>
+                    <option value="FLAT">Flat Amount</option>
+                </select>
+                <small class="text-muted d-block mt-1">
+                    Example: PERCENTAGE = 20 means 20% off. FLAT_AMOUNT = 50 means 50 ₹ off.
+                </small>
+            </div>
+            <!-- Discount Value -->
+            <div class="mb-3">
+                <label for="discountValue" class="form-label">Discount Value</label>
+                <input type="number"
+                       id="discountValue"
+                       class="form-control"
+                       th:field="*{discountValue}"
+                       step="0.01"
+                       min="0"
+                       required />
+            </div>
+            <!-- Active -->
+            <div class="mb-3 form-check">
+                <input type="checkbox"
+                       class="form-check-input"
+                       id="active"
+                       th:field="*{active}" />
+                <label class="form-check-label" for="active">Active</label>
+            </div>
+            <!-- Start / End -->
+            <div class="mb-3">
+                <label class="form-label">Start Time (optional)</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       th:field="*{startAt}" />
+                <small class="text-muted">Leave empty to start immediately.</small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">End Time (optional)</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       th:field="*{endAt}" />
+                <small class="text-muted">Leave empty for no expiry.</small>
+            </div>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+                <a th:href="@{/admin/offers/category}" class="btn btn-outline-light">
+                    <i class="fa fa-arrow-left"></i> Back to list
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i>
+                    <span th:text="${offer != null and offer.id != null} ? 'Update Offer' : 'Save Offer'">
+                  Save Offer
+                  </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

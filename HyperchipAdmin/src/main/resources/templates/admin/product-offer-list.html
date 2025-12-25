@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Product Offers - Hyperchip Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <style>
+        .offer-box {
+        background-color: #08131e;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+        color: #fff !important;
+        font-family: 'Times New Roman', serif;
+        }
+        .btn-primary {
+        background-color: #df74e5 !important;
+        border-color: #df74e5 !important;
+        }
+        .btn-primary:hover {
+        background-color: #c45bc9 !important;
+        border-color: #c45bc9 !important;
+        }
+        th, td, h3, label {
+        color: #fff !important;
+        }
+        .alert-success-msg{
+        color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+<!-- Admin Header -->
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Product Offers</h3>
+        <a th:href="@{/admin/offers/product/add}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Add Product Offer
+        </a>
+    </div>
+    <!-- Success / Error -->
+    <div class="mt-2">
+        <div th:if="${successMsg}" class="alert alert-success text-center alert-success-msg" th:text="${successMsg}"></div>
+        <div th:if="${errorMsg}" class="alert alert-danger text-center alert-success-msg" th:text="${errorMsg}"></div>
+    </div>
+    <div class="offer-box mt-3">
+        <div class="table-responsive">
+            <table class="table table-dark table-bordered align-middle">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Discount Type</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- No offers -->
+                <tr th:if="${offers == null or #lists.isEmpty(offers)}">
+                    <td colspan="8" class="text-center text-white">No product offers found.</td>
+                </tr>
+                <!-- Rows -->
+                <tr th:each="offer, iter : ${offers}">
+                    <td th:text="${iter.index + 1}"></td>
+                    <!-- product title if present, else ID -->
+                    <td>
+                        ID: <span th:text="${offer.productId}"></span>
+                    </td>
+                    <td th:text="${offer.discountType}"></td>
+                    <td th:text="${offer.discountValue}"></td>
+                    <td>
+                        <span th:text="${offer.active} ? 'Active' : 'Inactive'"></span>
+                    </td>
+                    <td th:text="${offer.startAt} ?: '-'"></td>
+                    <td th:text="${offer.endAt} ?: '-'"></td>
+                    <td>
+                        <a th:href="@{'/admin/offers/product/edit/' + ${offer.id}}"
+                           class="btn btn-sm btn-warning">Edit</a>
+                        <a th:href="@{'/admin/offers/product/delete/' + ${offer.id}}"
+                           onclick="return confirm('Delete this offer?');"
+                           class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

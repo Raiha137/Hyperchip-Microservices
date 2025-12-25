@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title th:text="${pageTitle != null ? pageTitle : 'Hyperchip - Electronics'}">Hyperchip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- new theme CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
+    <style>
+        /* Keep rupee and number nicely aligned, like Amazon */
+        /* make whole card feel clickable */
+        .product-card { cursor: pointer; transition: transform .06s ease; }
+        .product-card:hover { transform: translateY(-3px); }
+        /* Price alignment: keep currency and number on same baseline */
+        .price-line { display: inline-flex; align-items: baseline; gap: .25rem; justify-content:center; }
+        .currency { font-size: .9rem; margin-right: -2px; }
+        .price-value { font-weight: 600; font-size: 1.05rem; }
+        /* smaller rupee for crossed-out original price */
+        .small-currency { font-size: .75rem; vertical-align: text-top; margin-right: 2px; }
+        /* prevent the card hover effect from applying when interacting with inner links/buttons */
+        .product-card a, .product-card button { cursor: pointer; }
+    </style>
+</head>
+<body class="hc-site-bg">
+<div th:replace="fragments/user-header :: userHeader"></div>
+<main class="hc-page-content footrTxt container-fluid px-0">
+    <!-- HERO -->
+    <section class="hc-hero d-flex align-items-center">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <h1 class="hc-hero-title">Power your work. Amplify your play.</h1>
+                    <p class="hc-hero-sub">Laptops, components and accessories — curated for performance and value.</p>
+                    <div class="mt-3">
+                        <a th:href="@{/user/products}" class="btn hc-btn-cta btn-lg me-2">Shop Laptops</a>
+                        <a th:href="@{/user/products?category=accessories}" class="btn btn-outline-light btn-lg">Accessories</a>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block inxBlock">
+                    <div class="hc-promo-card p-3 rounded shadow-sm bg-white text-dark">
+                        <h6 class="mb-1">Limited Time</h6>
+                        <p class="mb-1">Free shipping on orders over ₹499</p>
+                        <a th:href="@{/offers}" class="small">See offers <i class="fa fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- CATEGORIES -->
+    <section class="categories py-4">
+        <div class="container">
+            <h2 class="section-title text-center">Shop by Categories</h2>
+            <div class="row gx-3 gy-3 justify-content-center mt-3">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2" th:each="category : ${categories}">
+                    <div class="card category-card text-center p-3 border-0 shadow-sm rounded h-100">
+                        <div class="cat-img-wrap mx-auto mb-2">
+                            <img th:if="${category.imageName != null}"
+                                 th:src="${masterBaseUrl + '/uploads/categories/' + category.imageName}"
+                                 class="category-img" alt="Category Image" />
+                            <img th:if="${category.imageName == null}"
+                                 th:src="@{/img/default-category.png}" class="category-img" alt="Category" />
+                        </div>
+                        <div class="card-body p-0">
+                            <h6 class="card-title text-truncate" th:text="${category.name}">Category</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- LATEST PRODUCTS -->
+    <section class="latest-products bg-soft py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title">Latest Products</h2>
+                <a th:href="@{/user/products}" class="small view-all">Browse all</a>
+            </div>
+            <div class="row g-4">
+                <div class="col-sm-6 col-md-4 col-lg-3" th:each="product : ${products}">
+                    <div class="card product-card shadow-sm rounded h-100"
+                         th:attr="data-href=@{'/user/product/' + ${product.id}}">
+                        <div class="card-img-top product-img-wrap">
+                            <img th:if="${product.imageNames != null and !#lists.isEmpty(product.imageNames)}"
+                                 th:src="${masterBaseUrl + '/uploads/products/' + product.imageNames[0]}"
+                                 class="product-img" th:alt="${product.title}" />
+                            <img th:if="${product.imageNames == null or #lists.isEmpty(product.imageNames)}"
+                                 th:src="@{/img/default-product.png}" class="product-img" alt="No Image" />
+                        </div>
+                        <div class="card-body d-flex flex-column text-center">
+                            <h6 class="product-title text-truncate mb-2" th:text="${product.title}">Product Title</h6>
+                            <!-- Price layout: keep ₹ + number on same line, small currency -->
+                            <div class="price-line mb-2">
+                                <span class="currency">₹</span>
+                                <!-- store numeric price in data-price to format via JS -->
+                                <span class="price-value"
+                                      th:attr="data-price=${product.finalPrice != null
+                                 ? product.finalPrice
+                                 : (product.originalPrice != null
+                                 ? product.originalPrice
+                                 : (product.discountPrice != null
+                                 ? product.discountPrice
+                                 : (product.price != null ? product.price : 0.00)))}">
+                              0.00
+                              </span>
+                                <span class="ms-2 original-price text-muted"
+                                      th:if="${product.originalPrice != null
+                                 and product.finalPrice != null
+                                 and product.finalPrice < product.originalPrice}">
+                              <span class="currency-small small-currency">₹</span>
+                              <span th:attr="data-price-original=${product.originalPrice}">0.00</span>
+                              </span>
+                            </div>
+                            <div class="mt-auto">
+                                <a th:href="@{'/user/product/' + ${product.id}}" class="btn btn-outline-dark btn-sm w-100">View</a>
+                            </div>
+                        </div>
+                        <!-- small badge ribbon -->
+                        <div class="badge-off" th:if="${product.discount != null and product.discount > 0}">
+                            <span th:text="${product.discount + '%'}">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a th:href="@{/user/products}" class="btn btn-lg btn-primary btn-cta">Browse All Products</a>
+            </div>
+        </div>
+    </section>
+    </div> <!-- end pageContent -->
+</main>
+<div th:replace="fragments/user-footer :: userFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function(){
+      // Indian number formatter: adds commas in lakhs/crores pattern
+      function formatIndianNumber(num){
+        if(num === null || num === undefined) return '0.00';
+        // Ensure numeric and string
+        let n = Number(num);
+        if(isNaN(n)) return num;
+        // Keep two decimals
+        let parts = n.toFixed(2).split('.');
+        let intPart = parts[0];
+        let decPart = parts[1];
+        if(intPart.length <= 3) {
+          return intPart + '.' + decPart;
+        }
+        let last3 = intPart.slice(-3);
+        let rest = intPart.slice(0, -3);
+        // Insert commas every 2 digits in the 'rest' part
+        rest = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+        return rest + ',' + last3 + '.' + decPart;
+      }
+
+      // Format all prices on page
+      document.querySelectorAll('.price-value').forEach(function(el){
+        let raw = el.getAttribute('data-price');
+        if(raw == null) raw = el.textContent;
+        el.textContent = formatIndianNumber(raw);
+      });
+      // original price inside .original-price may be nested span with data-price-original
+      document.querySelectorAll('.original-price [data-price-original]').forEach(function(el){
+        let raw = el.getAttribute('data-price-original');
+        el.textContent = formatIndianNumber(raw);
+      });
+
+      // Make card clickable (but ignore clicks on anchors/buttons inside)
+      document.querySelectorAll('.product-card').forEach(function(card){
+        card.addEventListener('click', function(e){
+          // if clicking an anchor or a button, do nothing here (let normal click work)
+          if (e.target.closest('a') || e.target.closest('button')) return;
+          const href = card.getAttribute('data-href');
+          if(href) {
+            // normal navigation
+            window.location.href = href;
+          }
+        });
+      });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Manage Brands - Hyperchip Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons for eye icon -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="fragments/admin-header :: adminHeader"></div>
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Brands</h2>
+    <div class="container mt-5">
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <!-- Search -->
+        <form method="get" th:action="@{/admin/brands}">
+            <div class="input-group mb-3">
+                <input type="text" name="q" class="form-control" placeholder="Search brands..." th:value="${q}" />
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/brands}" role="button">Clear</a>
+            </div>
+        </form>
+        <!-- Add Brand -->
+        <a th:href="@{/admin/brands/add}" class="btn btn-primary mb-3">Add Brand</a>
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Brand Name</th>
+                    <th class="text-center">Image</th>
+                    <th style="width: 160px;" class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${brands == null or brands.totalElements == 0}">
+                    <td colspan="6" class="text-center">No brands found.</td>
+                </tr>
+                <tr th:each="brand, iter : ${brands.content}">
+                    <!-- Running index -->
+                    <td th:text="${brand.id}">1</td>
+                    <!-- Brand name -->
+                    <td th:text="${brand.name}">Sony</td>
+                    <!-- IMAGE VIEW ICON (no big image in table) -->
+                    <td class="text-center">
+                        <button type="button"
+                                class="btn btn-outline-secondary btn-sm"
+                                th:if="${brand.imageName != null}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#brandImageModal"
+                                th:attr="data-image-url=${masterBaseUrl + '/uploads/brands/' + brand.imageName},
+                              data-brand-name=${brand.name}">
+                            <i class="bi bi-eye"></i> View
+                        </button>
+                        <span th:if="${brand.imageName == null}" class="text-muted small">
+                           No image
+                           </span>
+                    </td>
+                    <!-- ACTION BUTTONS (horizontal) -->
+                    <td class="text-center text-nowrap">
+                        <a th:href="@{'/admin/brands/edit/' + ${brand.id}}"
+                           class="btn btn-warning btn-sm me-1">
+                            Edit
+                        </a>
+                        <button type="button"
+                                class="btn btn-danger btn-sm delete-btn"
+                                th:attr="data-id=${brand.id}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Simple pagination -->
+        <nav th:if="${brands != null and brands.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${brands.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/brands(page=${brands.number-1}, q=${q})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, brands.totalPages-1)}"
+                    th:classappend="${i == brands.number} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/brands(page=${i}, q=${q})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${brands.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/brands(page=${brands.number+1}, q=${q})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<!-- IMAGE MODAL (medium size) -->
+<div class="modal fade" id="brandImageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="brandImageModalLabel">Brand Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="brandImageModalImg"
+                     src=""
+                     alt="Brand Image"
+                     style="max-width: 350px; max-height: 350px; object-fit: contain;"
+                     class="rounded shadow-sm" />
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/admin-footer :: adminFooter"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Delete confirmation -->
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            let brandId = this.getAttribute('data-id');
+
+            Swal.fire({
+                title: 'Delete Brand?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f3a111', // brand orange
+                cancelButtonColor: '#6c757d',  // subtle gray
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-4 shadow-lg',
+                    title: 'fw-bold text-dark',
+                    confirmButton: 'px-4 py-2',
+                    cancelButton: 'px-4 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/admin/brands/delete/${brandId}`;
+                }
+            })
+        });
+    });
+
+    // Image modal script
+    const brandImageModal = document.getElementById('brandImageModal');
+    if (brandImageModal) {
+        brandImageModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (!button) return;
+
+            const imageUrl = button.getAttribute('data-image-url');
+            const brandName = button.getAttribute('data-brand-name') || 'Brand Image';
+
+            const modalImg = brandImageModal.querySelector('#brandImageModalImg');
+            const modalTitle = brandImageModal.querySelector('#brandImageModalLabel');
+
+            modalImg.src = imageUrl;
+            modalTitle.textContent = brandName;
+        });
+
+        // Clear image when closing (optional)
+        brandImageModal.addEventListener('hidden.bs.modal', function () {
+            const modalImg = brandImageModal.querySelector('#brandImageModalImg');
+            modalImg.src = '';
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+/* ============================================
+   HYPERCHIP SIGNUP / LOGIN THEME
+   ============================================ */
+
+/* =========================
+   BODY
+========================= */
+body.hc-login-body {
+    font-family: "Times New Roman", serif;
+    background: #0f0f0f;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================
+   BACKGROUND + OVERLAY
+========================= */
+.hc-login-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1500&q=80") center/cover no-repeat fixed;
+}
+
+.hc-login-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+.hc-login-container {
+    position: relative;
+    z-index: 5;
+    padding: 100px 0 80px;
+}
+
+/* =========================
+   LEFT SIDE CONTENT
+========================= */
+.hc-login-left {
+    color: #fff;
+    padding: 0 40px 0 30px;
+}
+
+.hc-login-logo { width: 70px; }
+
+.hc-login-logo-text {
+    font-size: 26px;
+    font-weight: bold;
+    color: #f0b837;
+}
+
+.hc-login-title {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.hc-login-subtitle {
+    font-size: 18px;
+    opacity: 0.85;
+    line-height: 1.6;
+}
+
+.hc-login-bullets { list-style: none; }
+
+.hc-login-bullets li {
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.hc-login-bullets i {
+    color: #f0b837;
+    margin-right: 10px;
+}
+
+/* =========================
+   SIGNUP FORM BOX
+========================= */
+.hc-login-form-wrapper {
+    background: rgba(15,15,15,0.95);
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.hc-login-form-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.hc-login-form-subtitle {
+    font-size: 15px;
+    opacity: 0.85;
+}
+
+/* =========================
+   INPUT FIELDS
+========================= */
+.hc-login-label {
+    font-size: 15px;
+    margin-bottom: 6px;
+    color: #ddd;
+}
+
+.hc-login-input-wrapper { position: relative; }
+
+.hc-login-input {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    background: #e3ecff;
+    color: black;
+    border: none;
+    outline: none;
+    height: 48px;
+}
+
+.hc-login-input-icon {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    font-size: 18px;
+    color: #444;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.hc-login-btn {
+    background: linear-gradient(to right, #f0b837, #ff9900);
+    border: none;
+    padding: 12px;
+    color: #000;
+    font-size: 18px;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+}
+
+.hc-login-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px rgba(255,170,0,0.7);
+}
+
+/* =========================
+   BOTTOM LINKS
+========================= */
+.hc-login-bottom { font-size: 15px; }
+
+/* =========================
+   INLINE FIELD ERRORS
+========================= */
+.hc-field-error {
+    color: #ffb3b3;
+    font-size: 13px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* =========================
+   PASSWORD STRENGTH
+========================= */
+.hc-password-meta small { font-size: 12px; }
+.hc-password-strength-label { font-weight: 600; }
+.hc-password-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.hc-password-bar-fill {
+    height: 100%;
+    width: 0;
+    background: #ff4d4d;
+    transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+/* =========================
+   HEADER NAVBAR
+========================= */
+.auth-navbar {
+    background-color: #020617;
+    border-bottom: 1px solid rgba(148,163,184,0.35);
+}
+
+.auth-navbar .navbar-brand span {
+    font-family: "Times New Roman", serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+}
+
+.auth-navbar .nav-link {
+    font-family: "Times New Roman", serif;
+    font-size: 0.9rem;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.auth-footer {
+    background: #020617;
+    color: #e5e7eb;
+    border-top: 1px solid rgba(148,163,184,0.35);
+    font-family: "Times New Roman", serif;
+}
+
+.auth-footer-text { font-size: 0.9rem; letter-spacing: 0.03em; }
+
+.auth-footer-links a {
+    color: #fbbf24;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+.auth-footer-links a:hover { text-decoration: underline; color: #fde047; }
+.auth-footer-links span { margin: 0 6px; color: #e5e7eb; }
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+    .hc-login-title { font-size: 38px; }
+    .hc-login-form-wrapper { margin-top: 40px; }
+    .hc-login-left { text-align: center; }
+}

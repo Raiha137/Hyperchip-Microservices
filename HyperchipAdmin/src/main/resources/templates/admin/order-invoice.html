@@ -1,0 +1,54 @@
+<!-- src/main/resources/templates/admin/order-invoice.html -->
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Invoice</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size:14px; color:#222; }
+        .header { text-align:center; margin-bottom:20px; }
+        .items table { width:100%; border-collapse: collapse; }
+        .items th, .items td { border:1px solid #ddd; padding:8px; }
+        .right { text-align:right; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2>Hyperchip Invoice</h2>
+</div>
+<div>
+    <div><strong>Order:</strong> <span th:text="${order.orderNumber}">ORDER123</span></div>
+    <div><strong>Date:</strong> <span th:text="${order.orderDate != null ? #temporals.format(order.orderDate,'yyyy-MM-dd HH:mm') : ''}">2025-01-01</span></div>
+    <hr/>
+    <div class="items">
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${order.items == null or #lists.isEmpty(order.items)}">
+                <td colspan="4" class="text-center">No items for this order</td>
+            </tr>
+            <tr th:each="it : ${order.items}">
+                <td th:text="${it.productName}">Product</td>
+                <td th:text="${it.quantity}">1</td>
+                <td th:text="${it.unitPrice != null ? String.format('%.2f', it.unitPrice) : '0.00'}">10</td>
+                <td th:text="${it.total != null ? String.format('%.2f', it.total) : String.format('%.2f', (it.unitPrice != null ? it.unitPrice : 0) * (it.quantity != null ? it.quantity : 0))}">10</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align:right; margin-top:12px;">
+        <div>Subtotal: <span th:text="${order.subtotal != null ? String.format('%.2f', order.subtotal) : '0.00'}">0</span></div>
+        <div>Tax: <span th:text="${order.total != null && order.subtotal != null ? String.format('%.2f', (order.total - order.subtotal)) : '0.00'}">0</span></div>
+        <div>Total: <strong th:text="${order.total != null ? String.format('%.2f', order.total) : '0.00'}">0</strong></div>
+    </div>
+</div>
+</body>
+</html>
