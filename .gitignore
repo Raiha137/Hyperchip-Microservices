@@ -4,13 +4,21 @@ target/
 *.jar
 *.war
 *.log
+
 .idea/
 .vscode/
 .DS_Store
+
 _OLD_Hyperchip-Ecommerce-Microservices/
 Ecommerce Projects_BACKUP/
+
 .git_backup/
 **/.git_backup/
+
 # Ignore runtime uploaded files
-**/uploads/
 uploads/
+**/uploads/
+
+# Ignore environment files (CRITICAL)
+.env
+**/.env
