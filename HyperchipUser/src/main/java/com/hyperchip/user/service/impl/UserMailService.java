@@ -2,12 +2,14 @@ package com.hyperchip.user.service.impl;
 
 import com.hyperchip.common.email.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnBean(JavaMailSender.class)
 public class UserMailService implements EmailService {
 
     private final JavaMailSender mailSender;

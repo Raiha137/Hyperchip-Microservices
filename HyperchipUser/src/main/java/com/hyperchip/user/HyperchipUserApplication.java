@@ -24,7 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class HyperchipUserApplication {
 
     /**
-     * Main method – application entry point.
+     * Main method – application entry point.s
      *
      * @param args Command line arguments
      */
