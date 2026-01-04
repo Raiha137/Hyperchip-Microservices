@@ -106,7 +106,7 @@ public class WebConfig implements WebMvcConfigurer {
          * - 3600 seconds (1 hour)
          * - Reduces repeated disk reads for frequently accessed images
          */
-        registry.addResourceHandler("/uploads/**")
+        registry.addResourceHandler("/uploads/users/**")
                 .addResourceLocations("file:" + usersPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
     }
