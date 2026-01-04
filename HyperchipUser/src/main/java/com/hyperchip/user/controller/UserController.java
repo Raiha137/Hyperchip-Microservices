@@ -132,10 +132,8 @@ public class UserController {
                     Files.copy(in, destinationFile, StandardCopyOption.REPLACE_EXISTING);
                 }
 
-//                String webPath = "/uploads/users/" + filename;
-//                update.setProfileImage(webPath);
-                update.setProfileImage(filename);
-
+                String webPath = "/uploads/users/" + filename;
+                update.setProfileImage(webPath);
             }
 
             // Update profile in database
