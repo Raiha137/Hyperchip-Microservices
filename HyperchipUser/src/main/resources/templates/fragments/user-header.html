@@ -96,8 +96,12 @@
                         <button id="accountDropdown"
                                 class="hc-icon-pill hc-pill-solid dropdown-toggle d-flex align-items-center"
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img th:src="${session.currentUser.profileImage != null ? session.currentUser.profileImage : '/img/default-profile.png'}"
-                                 alt="avatar" class="rounded-circle hc-avatar"/>
+                            <img th:src="${session.currentUser.profileImage != null
+        ? '/uploads/users/' + session.currentUser.profileImage
+        : '/img/default-profile.png'}"
+                                 alt="avatar"
+                                 class="rounded-circle hc-avatar"/>
+
                             <span class="d-none d-md-inline ms-1"
                                   th:text="${session.currentUser.name != null ? session.currentUser.name : session.currentUser.email}">
                                 User
