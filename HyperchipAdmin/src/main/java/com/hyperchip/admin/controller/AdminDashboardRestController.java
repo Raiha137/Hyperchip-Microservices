@@ -30,7 +30,7 @@ public class AdminDashboardRestController {
      * - Fetches high-level business metrics for admin dashboard widgets
      * - Data varies based on selected time period
      */
-    @GetMapping("/data")
+    @GetMapping
     @ResponseBody
     public DashboardResponseDto getDashboardData(
             @RequestParam(defaultValue = "MONTH") String periodType
