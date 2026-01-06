@@ -180,10 +180,10 @@ public class SalesReportClient {
      */
     public DashboardResponseDto getDashboard(String periodType) {
         String url = UriComponentsBuilder
-                .fromHttpUrl(orderServiceBaseUrl + "/api/admin/dashboard")
+                .fromHttpUrl(orderServiceBaseUrl)
+                .path("/api/admin/dashboard")
                 .queryParam("periodType", periodType)
                 .toUriString();
-
 
         return restTemplate.getForObject(url, DashboardResponseDto.class);
     }
