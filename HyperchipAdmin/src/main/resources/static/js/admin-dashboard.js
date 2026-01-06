@@ -10,7 +10,7 @@
 
   async function loadDashboard() {
     const period = periodSelect.value || 'MONTH';
-    const res = await fetch('/api/admin/dashboard/data?periodType=' + period);
+    const res = await fetch('/api/admin/dashboard?periodType=' + period);
     if (!res.ok) {
       console.error('Dashboard fetch failed', res.status);
       return;
