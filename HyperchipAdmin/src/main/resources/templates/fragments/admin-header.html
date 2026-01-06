@@ -1,65 +1,125 @@
 <!-- src/main/resources/templates/fragments/admin-header.html -->
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="adminHeader">
+<header th:fragment="adminHeader" xmlns:th="http://www.thymeleaf.org">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold">
-                <img th:src="@{/img/logo.png}" alt="Hyperchip Admin Logo" width="40" class="me-2" />
-                Hyperchip Admin
+
+            <!-- BRAND -->
+            <a class="navbar-brand d-flex align-items-center gap-2">
+                <img th:src="@{/img/logo.png}" width="40" height="40"/>
+                <div>
+                    <div class="fw-bold">HYPERCHIP</div>
+                    <small class="text-warning">ADMIN PANEL</small>
+                </div>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
-                    aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+
+            <!-- TOGGLER -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#adminNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <!-- COLLAPSE -->
             <div class="collapse navbar-collapse" id="adminNavbar">
-                <ul class="navbar-nav mx-auto">
+
+                <!-- LEFT: MENU -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/home}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/users}">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/categories}">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/products}">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/brands}">Brands</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/orders}">Orders</a></li>
+
+                    <!-- REPORTS -->
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'home'} ? ' active' : ''" th:href="@{/admin/home}">Dashboard</a>
+                        <a class="nav-link" th:href="@{/admin/reports/sales}">Reports</a>
                     </li>
+
+                    <!-- LEDGER -->
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'users'} ? ' active' : ''" th:href="@{/admin/users}">Users</a>
+                        <a class="nav-link" th:href="@{/admin/reports/ledger}">Ledger Book</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'categories'} ? ' active' : ''" th:href="@{/admin/categories}">Categories</a>
+
+                    <!-- DEALS -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Deals</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/admin/offers/product}">Product Offers</a></li>
+                            <li><a class="dropdown-item" th:href="@{/admin/offers/category}">Category Offers</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/products}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/brands}">Brands</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'orders'} ? ' active' : ''" th:href="@{/admin/orders}">Orders</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:classappend="${activePage == 'reports'} ? ' active' : ''"
-                           th:href="@{/admin/reports/sales}">
-                            Reports
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:classappend="${activePage == 'ledger'} ? ' active' : ''"
-                           th:href="@{/admin/reports/ledger}">
-                            Ledger Book
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/offers/product}">Product Offer</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/offers/category}">Category Offer</a>
-                    </li>
-                    <!--                    <li class="nav-item">-->
-                    <!--                        <a class="nav-link" th:classappend="${activePage == 'products'} ? ' active' : ''" th:href="@{/admin/shipping}">Category Offer</a>-->
-                    <!--                    </li>-->
                 </ul>
-                <div class="d-flex">
-                    <a th:href="@{/logout}" class="btn btn-outline-light me-2">
-                        Logout
-                    </a>
-                </div>
+
+                <!-- RIGHT: SEARCH -->
+                <form th:action="@{/admin/products}" method="get"
+                      class="d-flex align-items-center me-3 hc-search-form">
+
+                    <div class="hc-search-wrapper">
+                        <input id="admin-search-input"
+                               name="keyword"
+                               class="form-control hc-search-input"
+                               placeholder="Search products"
+                               th:value="${param.keyword}"/>
+
+                        <button type="button"
+                                id="admin-search-clear"
+                                class="hc-search-clear">
+                            ✕
+                        </button>
+
+                        <button type="submit"
+                                class="hc-search-icon">
+                            🔍
+                        </button>
+                    </div>
+                </form>
+
+                <!-- LOGOUT -->
+                <a th:href="@{/logout}" class="btn btn-outline-light btn-sm">
+                    Logout
+                </a>
             </div>
         </div>
     </nav>
-</div>
+    <script>
+        (function () {
+
+    function initAdminSearch() {
+        const input = document.getElementById('admin-search-input');
+        const clearBtn = document.getElementById('admin-search-clear');
+
+        if (!input || !clearBtn) return;
+
+        function toggleClear() {
+            clearBtn.classList.toggle(
+                'visible',
+                input.value.trim().length > 0
+            );
+        }
+
+        toggleClear();
+        input.addEventListener('input', toggleClear);
+
+        clearBtn.addEventListener('click', function () {
+            input.value = '';
+            toggleClear();
+            input.focus();
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                input.value = '';
+                toggleClear();
+            }
+        });
+    }
+
+    document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', initAdminSearch)
+        : initAdminSearch();
+
+})();
+
+    </script>
+</header>

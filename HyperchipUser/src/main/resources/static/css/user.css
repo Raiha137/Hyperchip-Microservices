@@ -74,3 +74,25 @@ body { background: #f6f7fb; color: #1f2937; }
 .table-hover tbody tr:hover { background: #fff7ed; }
 .card { border-radius: 10px; }
 .navbar-brand { font-weight: 700; color: #f3a111 !important; }
+
+
+
+/* admin search helpers */
+.admin-search-form .admin-search-wrapper {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+#admin-search-input {
+  min-width: 180px;
+  max-width: 380px;
+  flex: 1 1 auto; /* allow grow/shrink */
+}
+
+/* hide clear button when empty */
+#admin-search-clear { display: none; }
+#admin-search-clear.visible { display: inline-flex; }
+
+/* mobile: if you want a full-width search modal, style it elsewhere */

@@ -22,18 +22,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // ---------------- Search active products with optional filters ----------------
     @EntityGraph(attributePaths = {"category", "brand"})
     @Query("""
- SELECT p FROM Product p 
- WHERE p.deleted = false 
- AND ( :keyword IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) 
-       OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) 
-       OR (p.category IS NOT NULL AND LOWER(p.category.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) 
-       OR (p.brand IS NOT NULL AND LOWER(p.brand.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
-     )
-            AND (:categoryName IS NULL OR LOWER(TRIM(p.category.name)) = LOWER(TRIM(:categoryName)))
-            AND (:brandName IS NULL OR LOWER(TRIM(p.brand.name)) = LOWER(TRIM(:brandName)))
+ SELECT p FROM Product p
+ WHERE p.deleted = false
+ AND (
+      :keyword IS NULL
+      OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      OR (p.category IS NOT NULL AND LOWER(p.category.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+      OR (p.brand IS NOT NULL AND LOWER(p.brand.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+      OR CONCAT(p.price, '') LIKE CONCAT('%', :keyword, '%')
+      OR CONCAT(p.id, '') LIKE CONCAT('%', :keyword, '%')
+ )
+ AND (:categoryName IS NULL OR LOWER(TRIM(p.category.name)) = LOWER(TRIM(:categoryName)))
+ AND (:brandName IS NULL OR LOWER(TRIM(p.brand.name)) = LOWER(TRIM(:brandName)))
  AND (:minPrice IS NULL OR p.price >= :minPrice)
  AND (:maxPrice IS NULL OR p.price <= :maxPrice)
- """)
+""")
     Page<Product> searchWithFilters(
             @Param("keyword") String keyword,
             @Param("categoryName") String categoryName,
@@ -42,7 +46,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("maxPrice") Double maxPrice,
             Pageable pageable
     );
-
 
 
 

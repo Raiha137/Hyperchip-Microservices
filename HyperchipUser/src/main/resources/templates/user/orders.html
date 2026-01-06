@@ -173,7 +173,7 @@
         let allOrders = [];         // all orders fetched from server
         let loading   = false;
 
-      const baseListUrl = `http://localhost:8080/api/orders/user/${encodeURIComponent(userId)}`;
+      const baseListUrl = `/api/orders/user/${encodeURIComponent(userId)}`;
 
         function safeNum(v) {
             if (v === null || v === undefined) return 0;

@@ -1,15 +1,26 @@
 <!-- templates/fragments/admin-footer.html -->
-<footer th:fragment="adminFooter" class="admin-footer py-3 mt-auto bg-dark text-warning">
+<footer th:fragment="adminFooter"
+        class="admin-footer py-3 mt-auto bg-dark text-warning" xmlns:th="http://www.w3.org/1999/xhtml">
+
     <div class="container text-center small">
         <div class="row">
             <div class="col-md-6 text-md-start mb-2 mb-md-0">
                 <span>&copy; 2025 Hyperchip Admin Panel. All Rights Reserved.</span>
             </div>
+
             <div class="col-md-6 text-md-end">
-                <a href="/admin/terms" class="text-warning me-3 text-decoration-none">Terms</a>
-                <a href="/admin/privacy" class="text-warning me-3 text-decoration-none">Privacy</a>
-                <a href="/admin/support" class="text-warning text-decoration-none">Support</a>
+                <a th:href="@{/admin/terms}"
+                   class="text-warning me-3 text-decoration-none">Terms</a>
+
+                <a th:href="@{/admin/privacy}"
+                   class="text-warning me-3 text-decoration-none">Privacy</a>
+
+                <a th:href="@{/admin/support}"
+                   class="text-warning text-decoration-none">Support</a>
             </div>
         </div>
     </div>
 </footer>
+
+<!-- ✅ GLOBAL ADMIN JS (loaded on every admin page) -->
+<script th:src="@{/js/admin.js}"></script>

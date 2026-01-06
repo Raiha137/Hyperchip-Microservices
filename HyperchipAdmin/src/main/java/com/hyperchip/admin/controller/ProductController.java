@@ -58,7 +58,7 @@ public class ProductController {
      */
     @GetMapping
     public String listProducts(
-            @RequestParam(name = "q", required = false) String q,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size,
             @RequestParam(name = "sort", defaultValue = "desc") String sort,
@@ -71,8 +71,8 @@ public class ProductController {
         response.setDateHeader("Expires", 0);
 
         String url = API_BASE + "/products?page=" + page + "&size=" + size + "&sortBy=createdAt&sortDir=" + sort;
-        if (q != null && !q.trim().isEmpty()) {
-            url += "&keyword=" + URLEncoder.encode(q.trim(), StandardCharsets.UTF_8);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            url += "&keyword=" + URLEncoder.encode(keyword.trim(), StandardCharsets.UTF_8);
         }
 
         PageProductDto pageProducts;
@@ -86,7 +86,7 @@ public class ProductController {
         if (pageProducts.getContent() == null) pageProducts.setContent(Collections.emptyList());
 
         model.addAttribute("products", pageProducts);
-        model.addAttribute("q", q);
+        model.addAttribute("keyword", keyword);
 
         addCategoriesAndBrandsToModel(model); // Add dropdown options
 

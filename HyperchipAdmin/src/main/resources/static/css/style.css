@@ -2944,3 +2944,79 @@
      align-items:center;
      justify-content:center;
 }
+
+
+
+
+/* ================= SEARCH INPUT WITH INSIDE ICONS ================= */
+/* =========================
+   ADMIN SEARCH (CLEAN)
+   ========================= */
+
+.hc-search-form {
+    flex-shrink: 0;
+}
+
+/* wrapper */
+.hc-search-wrapper {
+    position: relative;
+    width: 200px; /* 🔥 adjust size here (220–280px is ideal) */
+}
+
+/* input */
+.hc-search-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 64px 0 14px; /* left | right space for icons */
+    background-color: #0f1f2e;
+    color: #fff;
+    border-radius: 10px;
+    border: 1px solid #2c3e50;
+}
+
+/* placeholder */
+.hc-search-input::placeholder {
+    color: #9aa4af;
+}
+
+/* icons (shared) */
+.hc-search-clear,
+.hc-search-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #cbd5e1;
+}
+
+/* clear (❌) */
+.hc-search-clear {
+    right: 40px;
+    display: none;
+}
+
+.hc-search-clear.visible {
+    display: block;
+}
+
+/* search (🔍) */
+.hc-search-icon {
+    right: 14px;
+}
+
+/* hover */
+.hc-search-clear:hover,
+.hc-search-icon:hover {
+    color: #ffffff;
+}
+
+/* navbar spacing fix */
+.sticky-top {
+    padding: 18px 0;
+}
+
+
+
