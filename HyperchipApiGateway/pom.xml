@@ -14,11 +14,11 @@
 
     <!-- Spring Boot parent providing default configuration and dependency versions -->
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
-        <relativePath/>
+        <groupId>com.hyperchip</groupId>
+        <artifactId>hyperchip-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
+
 
     <!-- Maven coordinates for the API Gateway module -->
     <groupId>com.hyperchip.infrastructure</groupId>
