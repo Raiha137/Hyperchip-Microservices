@@ -372,8 +372,8 @@ public class UserApiProxyController {
     @GetMapping("/orders/user/{userId}")
     public ResponseEntity<?> proxyListOrdersForUser(
             @PathVariable("userId") Long userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         return fetchOrdersForUser(userId, page, size);
     }
 
