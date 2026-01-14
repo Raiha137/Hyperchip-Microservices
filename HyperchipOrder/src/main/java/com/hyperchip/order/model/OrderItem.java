@@ -33,8 +33,8 @@ public class OrderItem {
     @Column(length = 1000)
     private String cancelReason; // Optional reason if this item was cancelled
 
-    @Column(nullable = false, columnDefinition = "bit(1) default 0")
-    private Boolean cancelled = Boolean.FALSE; // Flag to indicate if item is cancelled
+    @Column(nullable = false)
+    private Boolean cancelled = false;
 
     public boolean isCancelled() {
         return Boolean.TRUE.equals(this.cancelled);
