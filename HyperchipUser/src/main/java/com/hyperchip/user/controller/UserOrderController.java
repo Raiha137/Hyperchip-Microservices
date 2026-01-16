@@ -70,7 +70,7 @@ public class UserOrderController {
     @GetMapping("/details/{orderId}")
     public String orderDetailsPage(@PathVariable("orderId") Long orderId, Model model) {
         try {
-            String url = orderServiceBase + "/" + orderId;
+            String url = orderServiceBase + "/api/orders/" + orderId;
             ResponseEntity<OrderResponse> resp = restTemplate.getForEntity(url, OrderResponse.class);
 
             if (resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null) {
