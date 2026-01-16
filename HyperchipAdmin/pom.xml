@@ -93,11 +93,7 @@
         </dependency>
 
         <!-- Hyperchip shared modules (must be installed locally or available in repo) -->
-        <dependency>
-            <groupId>com.hyperchip</groupId>
-            <artifactId>hyperchip-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>com.hyperchip</groupId>
             <artifactId>hyperchip-master</artifactId>

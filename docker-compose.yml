@@ -1,0 +1,37 @@
+#services:
+#  mysql-db:
+#    image: mysql:8.0
+#    container_name: mysql-db
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: Fathima@137
+#      MYSQL_DATABASE: hyperchip_auth_db
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+#
+#  config-server:
+#    build: ./HyperchipConfigServer
+#    container_name: config-server
+#    ports:
+#      - "8888:8888"
+#    depends_on:
+#      - mysql-db
+#
+#  auth-service:
+#    build: ./HyperchipAuthService
+#    container_name: auth-service
+#    ports:
+#      - "8084:8084"
+#    environment:
+#      AUTH_DB_PASSWORD: Fathima@137
+#      GOOGLE_CLIENT_SECRET: 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
+#      GMAIL_APP_PASSWORD: "qozp mett jxuv csbm"
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#    depends_on:
+#      - config-server
+#      - mysql-db
+#
+#volumes:
+#  mysql_data:

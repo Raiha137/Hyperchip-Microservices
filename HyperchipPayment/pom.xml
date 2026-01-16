@@ -91,11 +91,6 @@
     <!-- IMPORTANT: dependency that must contain AddressDto -->
     <!-- Pick the artifactId that actually contains com.hyperchip.common.dto.AddressDto -->
     <!-- Option A: if AddressDto is in hyperchip-common -->
-    <dependency>
-        <groupId>com.hyperchip</groupId>
-        <artifactId>hyperchip-common</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </dependency>
 
     <!-- Option B: if AddressDto is instead in hyperchip-commonlib (you gave this pom earlier) -->
     <!-- Keep both if you are unsure, but avoid duplicate classes across modules. -->
