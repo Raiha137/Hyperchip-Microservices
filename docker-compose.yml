@@ -1,3 +1,75 @@
+version: "3.8"
+
+services:
+
+  # ===========================
+  # MySQL for Auth Service
+  # ===========================
+  auth-mysql:
+    image: mysql:8
+    container_name: auth-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${AUTH_DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${AUTH_DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - auth-db:/var/lib/mysql
+
+  # ===========================
+  # User Service
+  # ===========================
+  user-service:
+    build: ./HyperchipUser
+    container_name: user-service
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - auth-mysql
+
+  # ===========================
+  # Auth Service
+  # ===========================
+  auth-service:
+    build: ./HyperchipAuthService
+    container_name: auth-service
+    ports:
+      - "8084:8084"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
+
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+      USER_SERVICE_SSO_FINISH: ${USER_SERVICE_SSO_FINISH}
+
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+    depends_on:
+      - auth-mysql
+      - user-service
+
+volumes:
+  auth-db:
+
+
+
+
+
+
 #services:
 #  mysql-db:
 #    image: mysql:8.0
