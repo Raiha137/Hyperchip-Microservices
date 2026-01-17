@@ -2,6 +2,35 @@ version: "3.8"
 
 services:
 
+  config-server:
+    build: ./HyperchipConfigServer
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    env_file:
+      - .env
+    environment:
+      SPRING_APPLICATION_NAME: hyperchip-config-server
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: ${CONFIG_GIT_URI}
+      SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCH_PATHS: ${CONFIG_GIT_SEARCH_PATHS}
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: ${CONFIG_GIT_BRANCH}
+    restart: always
+
+  discovery:
+    build: ./HyperchipDiscovery
+    container_name: discovery
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    depends_on:
+      - config-server
+    restart: always
+
+
+
   # ===========================
   # MySQL for Auth Service
   # ===========================
