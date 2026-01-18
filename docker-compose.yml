@@ -95,8 +95,20 @@ services:
       - user-service
 
 
+  api-gateway:
+    build: ./HyperchipApiGateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - config-server
+      - discovery
+
+
 # ===========================
 # Volumes
 # ===========================
 volumes:
   auth-db:
+
+
