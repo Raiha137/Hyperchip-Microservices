@@ -90,12 +90,19 @@
     <!-- Build configuration -->
     <build>
         <plugins>
-            <!-- Spring Boot plugin to build an executable JAR and run the gateway -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
 
 </project>
