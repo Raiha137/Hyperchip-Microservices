@@ -2,6 +2,9 @@ version: "3.8"
 
 services:
 
+  # ===========================
+  # Config Server
+  # ===========================
   config-server:
     build: ./HyperchipConfigServer
     container_name: config-server
@@ -16,6 +19,10 @@ services:
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: ${CONFIG_GIT_BRANCH}
     restart: always
 
+
+  # ===========================
+  # Eureka Discovery Server
+  # ===========================
   discovery:
     build: ./HyperchipDiscovery
     container_name: discovery
@@ -28,7 +35,6 @@ services:
     depends_on:
       - config-server
     restart: always
-
 
 
   # ===========================
@@ -46,6 +52,7 @@ services:
     volumes:
       - auth-db:/var/lib/mysql
 
+
   # ===========================
   # User Service
   # ===========================
@@ -61,6 +68,7 @@ services:
     depends_on:
       - auth-mysql
 
+
   # ===========================
   # Auth Service
   # ===========================
@@ -73,66 +81,22 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-
       SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
-
       USER_SERVICE_URL: ${USER_SERVICE_URL}
       USER_SERVICE_SSO_FINISH: ${USER_SERVICE_SSO_FINISH}
-
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-
       SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
-
     depends_on:
       - auth-mysql
       - user-service
 
+
+# ===========================
+# Volumes
+# ===========================
 volumes:
   auth-db:
-
-
-
-
-
-
-#services:
-#  mysql-db:
-#    image: mysql:8.0
-#    container_name: mysql-db
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: Fathima@137
-#      MYSQL_DATABASE: hyperchip_auth_db
-#    ports:
-#      - "3306:3306"
-#    volumes:
-#      - mysql_data:/var/lib/mysql
-#
-#  config-server:
-#    build: ./HyperchipConfigServer
-#    container_name: config-server
-#    ports:
-#      - "8888:8888"
-#    depends_on:
-#      - mysql-db
-#
-#  auth-service:
-#    build: ./HyperchipAuthService
-#    container_name: auth-service
-#    ports:
-#      - "8084:8084"
-#    environment:
-#      AUTH_DB_PASSWORD: Fathima@137
-#      GOOGLE_CLIENT_SECRET: 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
-#      GMAIL_APP_PASSWORD: "qozp mett jxuv csbm"
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#    depends_on:
-#      - config-server
-#      - mysql-db
-#
-#volumes:
-#  mysql_data:
