@@ -55,6 +55,7 @@ public class SecurityConfig {
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/api/auth/**",
                                 "/actuator/**",   // health checks
                                 "/login",         // login page
                                 "/oauth2/**",     // Google OAuth URLs
