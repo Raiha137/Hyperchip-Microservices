@@ -60,7 +60,11 @@ public class UserController {
     @GetMapping("/profile")
     public String profilePage(Principal principal, Model model, HttpSession session) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:http://localhost:8084/login";
+//        if (userId == null) return "redirect:http://localhost:8084/login";
+        if (userId == null) {
+            model.addAttribute("error", "Not logged in");
+            return "user/my-account";
+        }
 
 
         Optional<UserDtls> maybeUser = userService.findById(userId);
