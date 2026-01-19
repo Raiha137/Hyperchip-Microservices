@@ -61,7 +61,7 @@ services:
       MYSQL_DATABASE: ${AUTH_DB_NAME}
       MYSQL_ROOT_PASSWORD: ${AUTH_DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - auth-db:/var/lib/mysql
 
