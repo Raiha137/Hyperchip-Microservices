@@ -40,6 +40,11 @@ services:
     depends_on:
       - config-server
     restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 
   # ===========================
@@ -106,10 +111,11 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      config-server:
-        condition: service_healthy
-      discovery:
-        condition: service_started
+        config-server:
+          condition: service_healthy
+        discovery:
+          condition: service_healthy
+
 
 
 # ===========================
