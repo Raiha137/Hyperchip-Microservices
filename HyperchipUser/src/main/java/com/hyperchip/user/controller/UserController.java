@@ -60,7 +60,8 @@ public class UserController {
     @GetMapping("/profile")
     public String profilePage(Principal principal, Model model, HttpSession session) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/";
+        if (userId == null) return "redirect:http://localhost:8084/login";
+
 
         Optional<UserDtls> maybeUser = userService.findById(userId);
         if (maybeUser.isEmpty()) {
@@ -171,7 +172,8 @@ public class UserController {
     @GetMapping("/address")
     public String userAddressList(Principal principal, Model model, HttpSession session) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/";
+        if (userId == null) return "redirect:http://localhost:8084/login";
+
 
         List<Address> addresses = userService.listAddresses(userId);
         model.addAttribute("addresses", addresses);
@@ -185,7 +187,8 @@ public class UserController {
     @GetMapping("/address/new")
     public String newAddressForm(Principal principal, Model model, HttpSession session, HttpServletRequest request) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/";
+        if (userId == null) return "redirect:http://localhost:8084/login";
+
 
         model.addAttribute("address", new Address());
 
@@ -225,7 +228,8 @@ public class UserController {
                                   HttpSession session, HttpServletRequest request) {
 
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/";
+        if (userId == null) return "redirect:http://localhost:8084/login";
+
 
         Optional<Address> opt = userService.findAddressById(id);
         if (opt.isEmpty()) return "redirect:/user/address";
