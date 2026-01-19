@@ -102,7 +102,8 @@ services:
       SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CONFIG_IMPORT: ""
-      MASTER_SERVICE_URL: http://master:8086
+      MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
+
 
     depends_on:
       - user-mysql
