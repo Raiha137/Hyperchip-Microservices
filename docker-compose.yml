@@ -18,6 +18,11 @@ services:
       SPRING_CLOUD_CONFIG_SERVER_GIT_SEARCH_PATHS: ${CONFIG_GIT_SEARCH_PATHS}
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: ${CONFIG_GIT_BRANCH}
     restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 
   # ===========================
@@ -101,8 +106,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - config-server
-      - discovery
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_started
 
 
 # ===========================
