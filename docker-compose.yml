@@ -148,16 +148,16 @@ services:
   # ===========================
 
   admin-mysql:
-      image: mysql:8
-      container_name: admin-mysql
-      restart: always
-      environment:
-        MYSQL_DATABASE: ${ADMIN_DB_NAME}
-        MYSQL_ROOT_PASSWORD: ${ADMIN_DB_PASSWORD}
-      ports:
-        - "3309:3306"
-      volumes:
-        - admin-db:/var/lib/mysql
+    image: mysql:8
+    container_name: admin-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${ADMIN_DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${ADMIN_DB_PASSWORD}
+    ports:
+      - "3309:3306"
+    volumes:
+      - admin-db:/var/lib/mysql
 
 
   # ===========================
@@ -165,26 +165,26 @@ services:
   # ===========================
 
   admin-service:
-        build: ./HyperchipAdmin
-        container_name: admin-service
-        ports:
-          - "8085:8085"
-        env_file:
-          - .env
-        environment:
-          SPRING_PROFILES_ACTIVE: prod
-          SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    build: ./HyperchipAdmin
+    container_name: admin-service
+    ports:
+      - "8085:8085"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
 
-          SPRING_DATASOURCE_URL: jdbc:mysql://admin-mysql:3306/${ADMIN_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-          SPRING_DATASOURCE_USERNAME: ${ADMIN_DB_USER}
-          SPRING_DATASOURCE_PASSWORD: ${ADMIN_DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://admin-mysql:3306/${ADMIN_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${ADMIN_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${ADMIN_DB_PASSWORD}
 
-          JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
 
-        depends_on:
-          - admin-mysql
-          - discovery
-          - config-server
+    depends_on:
+      - admin-mysql
+      - discovery
+      - config-server
 
 
 
