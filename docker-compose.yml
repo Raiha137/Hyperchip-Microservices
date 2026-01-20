@@ -186,8 +186,42 @@ services:
       - discovery
       - config-server
 
+  # ===========================
+  # MySQL for Master Service
+  # ===========================
+  master-mysql:
+    image: mysql:8
+    container_name: master-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MASTER_DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${MASTER_DB_PASSWORD}
+    ports:
+      - "3310:3306"
+    volumes:
+      - master-db:/var/lib/mysql
 
-
+  # ===========================
+  # Master Service
+  # ===========================
+  master:
+    build: ./HyperchipMaster
+    container_name: master
+    ports:
+      - "8086:8086"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_DATASOURCE_URL: jdbc:mysql://master-mysql:3306/${MASTER_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${MASTER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+    depends_on:
+      - master-mysql
+      - discovery
+      - config-server
 
 
 # ===========================
@@ -197,6 +231,7 @@ volumes:
   auth-db:
   user-db:
   admin-db:
+  master-db:
 
 
 
@@ -205,6 +240,15 @@ volumes:
 
 
 
+
+
+
+  # ===========================
+  # MySQL for ---- Service
+  # ===========================
+  # ===========================
+  # Admin Service
+  # ===========================
 
 
 
