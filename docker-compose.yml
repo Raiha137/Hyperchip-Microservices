@@ -204,9 +204,9 @@ services:
   # ===========================
   # Master Service
   # ===========================
-  master:
+  master-service:
     build: ./HyperchipMaster
-    container_name: master
+    container_name: master-service
     ports:
       - "8086:8086"
     env_file:
