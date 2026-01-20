@@ -2,6 +2,9 @@ version: "3.8"
 
 services:
 
+  # ===========================
+  # Config Server
+  # ===========================
   config-server:
     build: ./HyperchipConfigServer
     container_name: config-server
@@ -10,6 +13,9 @@ services:
     env_file:
       - .env
 
+  # ===========================
+  # Eureka Discovery Server
+  # ===========================
   discovery:
     build: ./HyperchipDiscovery
     container_name: discovery
@@ -20,6 +26,9 @@ services:
     env_file:
       - .env
 
+  # ===========================
+  # API Gateway
+  # ===========================
   api-gateway:
     build: ./HyperchipApiGateway
     container_name: api-gateway
@@ -68,13 +77,12 @@ services:
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
-
-
     depends_on:
       - auth-mysql
+      - discovery
 
   # ===========================
-  # User MySQL (user DB)
+  # MySQL for User Service
   # ===========================
   user-mysql:
     image: mysql:8
@@ -96,7 +104,6 @@ services:
     container_name: user-service
     ports:
       - "8083:8080"
-
     env_file:
       - .env
     environment:
@@ -107,22 +114,168 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CONFIG_IMPORT: ""
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
-
     depends_on:
       - user-mysql
       - config-server
       - discovery
 
-  # ===========================
-  # Volumes
-  # ===========================
+# ===========================
+# Volumes
+# ===========================
 volumes:
-    auth-db:
-    user-db:
+  auth-db:
+  user-db:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#version: "3.8"
+#
+#services:
+#
+#  config-server:
+#    build: ./HyperchipConfigServer
+#    container_name: config-server
+#    ports:
+#      - "8888:8888"
+#    env_file:
+#      - .env
+#
+#  discovery:
+#    build: ./HyperchipDiscovery
+#    container_name: discovery
+#    ports:
+#      - "8761:8761"
+#    depends_on:
+#      - config-server
+#    env_file:
+#      - .env
+#
+#  api-gateway:
+#    build: ./HyperchipApiGateway
+#    container_name: api-gateway
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - config-server
+#      - discovery
+#    environment:
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+#
+#  # ===========================
+#  # MySQL for Auth Service
+#  # ===========================
+#  auth-mysql:
+#    image: mysql:8
+#    container_name: auth-mysql
+#    restart: always
+#    environment:
+#      MYSQL_DATABASE: ${AUTH_DB_NAME}
+#      MYSQL_ROOT_PASSWORD: ${AUTH_DB_PASSWORD}
+#    ports:
+#      - "3307:3306"
+#    volumes:
+#      - auth-db:/var/lib/mysql
+#
+#  # ===========================
+#  # Auth Service
+#  # ===========================
+#  auth-service:
+#    build: ./HyperchipAuthService
+#    container_name: auth-service
+#    ports:
+#      - "8084:8084"
+#    env_file:
+#      - .env
+#    environment:
+#      SPRING_PROFILES_ACTIVE: prod
+#      SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#      SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
+#      USER_SERVICE_URL: ${USER_SERVICE_URL}
+#      USER_SERVICE_SSO_FINISH: ${USER_SERVICE_SSO_FINISH}
+#      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+#      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+#      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+#      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+#
+#
+#    depends_on:
+#      - auth-mysql
+#
+#  # ===========================
+#  # User MySQL (user DB)
+#  # ===========================
+#  user-mysql:
+#    image: mysql:8
+#    container_name: user-mysql
+#    restart: always
+#    environment:
+#      MYSQL_DATABASE: ${USER_DB_NAME}
+#      MYSQL_ROOT_PASSWORD: ${USER_DB_PASSWORD}
+#    ports:
+#      - "3308:3306"
+#    volumes:
+#      - user-db:/var/lib/mysql
+#
+#  # ===========================
+#  # User Service
+#  # ===========================
+#  user-service:
+#    build: ./HyperchipUser
+#    container_name: user-service
+#    ports:
+#      - "8083:8080"
+#
+#    env_file:
+#      - .env
+#    environment:
+#      SPRING_PROFILES_ACTIVE: prod
+#      SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/${USER_DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#      SPRING_DATASOURCE_USERNAME: ${USER_DB_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+#      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+#      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+#
+#      SPRING_CLOUD_CONFIG_ENABLED: "false"
+#      SPRING_CONFIG_IMPORT: ""
+#      MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
+#
+#    depends_on:
+#      - user-mysql
+#      - config-server
+#      - discovery
+#
+#  # ===========================
+#  # Volumes
+#  # ===========================
+#volumes:
+#    auth-db:
+#    user-db:
 
 
 
