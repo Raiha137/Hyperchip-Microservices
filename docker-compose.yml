@@ -42,7 +42,8 @@ services:
       - config-server
       - discovery
     environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
 
   # ===========================
   # MySQL for Auth Service
@@ -62,25 +63,36 @@ services:
   # ===========================
   # Auth Service
   # ===========================
+
   auth-service:
     build: ./HyperchipAuthService
     container_name: auth-service
     ports:
-      - "8084:8084"
+      - "8084:8080"
     env_file:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
+
+      # 🔹 Force Hibernate to CREATE tables
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+
+      # 🔹 Database config
       SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
+
+      # 🔹 Other service configs
       USER_SERVICE_URL: ${USER_SERVICE_URL}
       USER_SERVICE_SSO_FINISH: ${USER_SERVICE_SSO_FINISH}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+
+      # 🔹 Force Eureka URL
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+
     depends_on:
       - auth-mysql
       - discovery
@@ -112,19 +124,26 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
+
+      # Database (REQUIRED)
       SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/${USER_DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${USER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-      EUREKA_CLIENT_ENABLED: "true"
-      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+
+      # Force Eureka (REQUIRED – this fixes localhost issue)
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+
+      # Optional extras (safe)
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
+
     depends_on:
       - user-mysql
       - config-server
       - discovery
+
+
 
 # ===========================
 # Volumes
