@@ -222,6 +222,42 @@ services:
       - master-mysql
       - discovery
       - config-server
+  # ===========================
+  # MySQL for Cart Service
+  # ===========================
+  cart-mysql:
+    image: mysql:8
+    container_name: cart-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hyperchip_cart_db
+      MYSQL_ROOT_PASSWORD: ${USER_DB_PASSWORD}
+    ports:
+      - "3311:3306"
+    volumes:
+      - cart-db:/var/lib/mysql
+
+  # ===========================
+  # Cart Service
+  # ===========================
+  cart-service:
+    build: ./HyperchipCart
+    container_name: cart-service
+    ports:
+      - "8091:8091"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://cart-mysql:3306/hyperchip_cart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+    depends_on:
+      - cart-mysql
+      - discovery
+      - config-server
+
 
 
 # ===========================
@@ -232,7 +268,7 @@ volumes:
   user-db:
   admin-db:
   master-db:
-
+  cart-db:
 
 
 
