@@ -75,7 +75,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
 
       # 🔹 Force Hibernate to CREATE tables
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
       # 🔹 Database config
       SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -173,7 +173,7 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
       SPRING_DATASOURCE_URL: jdbc:mysql://admin-mysql:3306/${ADMIN_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${ADMIN_DB_USER}
@@ -213,7 +213,7 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://master-mysql:3306/${MASTER_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${MASTER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
