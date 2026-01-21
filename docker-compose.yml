@@ -258,6 +258,161 @@ services:
       - discovery
       - config-server
 
+  # ===========================
+  # MySQL for Wishlist Service
+  # ===========================
+  wishlist-mysql:
+    image: mysql:8
+    container_name: wishlist-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hyperchip_wishlist_db
+      MYSQL_ROOT_PASSWORD: ${USER_DB_PASSWORD}
+    ports:
+      - "3312:3306"
+    volumes:
+      - wishlist-db:/var/lib/mysql
+
+  # ===========================
+  # Wishlist Service
+  # ===========================
+  wishlist-service:
+    build: ./HyperchipWishlist
+    container_name: wishlist-service
+    ports:
+      - "8093:8093"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://wishlist-mysql:3306/hyperchip_wishlist_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+    depends_on:
+      - wishlist-mysql
+      - discovery
+      - config-server
+
+  # ===========================
+  # MySQL for Wallet Service
+  # ===========================
+  wallet-mysql:
+    image: mysql:8
+    container_name: wallet-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hyperchip_wallet_db
+      MYSQL_ROOT_PASSWORD: ${USER_DB_PASSWORD}
+    ports:
+      - "3313:3306"
+    volumes:
+      - wallet-db:/var/lib/mysql
+
+  # ===========================
+  # Wallet Service
+  # ===========================
+  wallet-service:
+    build: ./HyperchipWallet
+    container_name: wallet-service
+    ports:
+      - "8095:8095"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://wallet-mysql:3306/hyperchip_wallet_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+    depends_on:
+      - wallet-mysql
+      - discovery
+      - config-server
+
+
+  # ===========================
+  # MySQL for Payment Service
+  # ===========================
+  payment-mysql:
+    image: mysql:8
+    container_name: payment-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hyperchip_payment_db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3315:3306"
+    volumes:
+      - payment-db:/var/lib/mysql
+
+
+  # ===========================
+  # MySQL for Order Service
+  # ===========================
+  order-mysql:
+    image: mysql:8
+    container_name: order-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hyperchip_order_db
+      MYSQL_ROOT_PASSWORD: ${USER_DB_PASSWORD}
+    ports:
+      - "3314:3306"
+    volumes:
+      - order-db:/var/lib/mysql
+
+  # ===========================
+  # Order Service
+  # ===========================
+  order-service:
+    build: ./HyperchipOrder
+    container_name: order-service
+    ports:
+      - "8092:8092"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://order-mysql:3306/hyperchip_order_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+    depends_on:
+      - order-mysql
+      - discovery
+      - config-server
+
+
+  # ===========================
+  # Payment Service
+  # ===========================
+  payment-service:
+    build: ./HyperchipPayment
+    container_name: payment-service
+    ports:
+      - "8094:8094"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:mysql://payment-mysql:3306/hyperchip_payment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      # Razorpay
+      RAZORPAY_KEY: ${RAZORPAY_KEY}
+      RAZORPAY_SECRET: ${RAZORPAY_SECRET}
+
+      # Eureka
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+
+    depends_on:
+      - payment-mysql
+      - discovery
+      - config-server
 
 
 # ===========================
@@ -269,6 +424,9 @@ volumes:
   admin-db:
   master-db:
   cart-db:
+  wishlist-db:
+  wallet-db:
+  payment-db:
 
 
 

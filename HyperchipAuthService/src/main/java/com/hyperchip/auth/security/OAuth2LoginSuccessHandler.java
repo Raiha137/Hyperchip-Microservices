@@ -32,7 +32,8 @@ import java.util.Set;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     // SSO finish URL of the user-service, can be configured in application.properties
-    @Value("${user.service.sso.finish:http://localhost:8080/user/sso/finish}")
+    @Value("${user.service.sso.finish:http://localhost:8080/sso/finish}")
+
 
     private String userServiceSsoFinish;
 
