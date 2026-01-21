@@ -426,6 +426,7 @@ volumes:
   cart-db:
   wishlist-db:
   wallet-db:
+  order-db:
   payment-db:
 
 
