@@ -58,7 +58,7 @@ public class HyperchipAuthServiceApplication {
     public CommandLineRunner init(UserSyncService userSyncService) {
         return args -> {
             System.out.println("🔄 Starting user sync to User Service...");
-            userSyncService.syncAllUsersToUserService();
+//            userSyncService.syncAllUsersToUserService();
             System.out.println("✅ User sync completed!");
         };
     }

@@ -68,7 +68,7 @@ services:
     build: ./HyperchipAuthService
     container_name: auth-service
     ports:
-      - "8084:8080"
+      - "8084:8084"
     env_file:
       - .env
     environment:
