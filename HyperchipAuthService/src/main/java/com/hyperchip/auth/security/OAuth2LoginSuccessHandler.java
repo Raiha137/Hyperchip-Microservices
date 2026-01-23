@@ -72,13 +72,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // Send user role as query param (optional)
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
+        // send role to user-service SSO
         if (roles.contains("ROLE_ADMIN") || roles.contains("ADMIN")) {
-            redirect = new StringBuilder("/admin/home");
-
+            response.sendRedirect("http://localhost:8080/admin/home");
+            return;
         }
-        else if (roles.contains("ROLE_USER")) {
+        else {
             redirect.append("&role=USER");
         }
+
 
         // Redirect user to user-service SSO finish URL
         response.sendRedirect(redirect.toString());
