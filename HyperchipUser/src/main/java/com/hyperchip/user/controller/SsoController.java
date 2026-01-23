@@ -74,7 +74,8 @@ public class SsoController {
         // 6️⃣ Role-based redirect
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
             // Admin users redirected to admin app
-            return "redirect:http://localhost:8085/admin/home";
+            return "redirect:/admin/home";
+
         }
 
         // Default: redirect normal users to user home
