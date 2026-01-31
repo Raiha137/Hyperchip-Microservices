@@ -24,7 +24,7 @@ public class SalesReportClient {
      * Base URL of the Order Service.
      * Used mainly for Sales Report related APIs.
      */
-    @Value("${order.service.url}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceBase;
 
     /**
@@ -32,7 +32,7 @@ public class SalesReportClient {
      * Used specifically for Dashboard-related API calls.
      * (Kept separate intentionally to match existing configuration usage)
      */
-    @Value("${order.service.url}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceBaseUrl;
 
     /**
