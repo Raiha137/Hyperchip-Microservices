@@ -167,6 +167,7 @@ services:
   admin-service:
     build: ./HyperchipAdmin
     container_name: admin-service
+    restart: always
     ports:
       - "8085:8085"
     env_file:
