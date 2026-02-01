@@ -19,8 +19,4 @@ public class AdminController {
         return "admin/index";
     }
 
-    @GetMapping("/ping")
-    public String ping() {
-        return "admin/index";
-    }
 }
