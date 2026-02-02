@@ -37,9 +37,12 @@
                             <div class="mt-3 d-flex gap-2 flex-wrap">
                                 <a th:href="@{/user/updateProfile}" class="btn btn-primary">Edit Profile</a>
                                 <!-- Correct Change Password -->
-                                <a href="http://localhost:8084/forgot-password" class="btn btn-outline-secondary" target="_blank">
+
+                                <a th:href="@{/forgot-password}"
+                                   class="btn btn-outline-secondary">
                                     Change Password
                                 </a>
+
                                 <a th:href="@{/user/address/new}" class="btn btn-outline-primary">Add Address</a>
                                 <a th:href="@{/user/orders}" class="btn btn-outline-dark">My Orders</a>
                             </div>

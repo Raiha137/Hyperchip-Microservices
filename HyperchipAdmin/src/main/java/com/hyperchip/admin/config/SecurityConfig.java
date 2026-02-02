@@ -67,7 +67,7 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/logout", "GET")
                         )
                         .logoutSuccessUrl(
-                                "http://localhost:8084/login?logout"
+                                "/login?logout"
                         ) // Redirect to Auth Service login page
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")

@@ -95,7 +95,7 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
 
                         // Redirect user to login page after successful logout
-                        .logoutSuccessUrl("http://localhost:8084/login?logout")
+                        .logoutSuccessUrl("/login?logout")
 
                         // Invalidate HTTP session to clear user data
                         .invalidateHttpSession(true)

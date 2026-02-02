@@ -176,7 +176,8 @@ public class UserController {
     @GetMapping("/address")
     public String userAddressList(Principal principal, Model model, HttpSession session) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:http://localhost:8084/login";
+        if (userId == null) return "redirect:/login";
+
 
 
         List<Address> addresses = userService.listAddresses(userId);
@@ -191,7 +192,8 @@ public class UserController {
     @GetMapping("/address/new")
     public String newAddressForm(Principal principal, Model model, HttpSession session, HttpServletRequest request) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:http://localhost:8084/login";
+        if (userId == null) return "redirect:/login";
+
 
 
         model.addAttribute("address", new Address());
@@ -232,7 +234,8 @@ public class UserController {
                                   HttpSession session, HttpServletRequest request) {
 
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:http://localhost:8084/login";
+        if (userId == null) return "redirect:/login";
+
 
 
         Optional<Address> opt = userService.findAddressById(id);
@@ -313,7 +316,8 @@ public class UserController {
     @GetMapping("/orders")
     public String ordersPage(Principal principal, HttpSession session, Model model) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:http://localhost:8084/login";
+        if (userId == null) return "redirect:/login";
+
 
         model.addAttribute("userId", userId);
         return "user/orders";
