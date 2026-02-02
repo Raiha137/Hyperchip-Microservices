@@ -77,13 +77,15 @@ public class SecurityConfig {
                  * FORM LOGIN (Email + Password)
                  */
                 .formLogin(form -> form
-                        .loginPage("/login")              // custom login page
-                        .loginProcessingUrl("/login")     // POST login request
-                        .usernameParameter("email")       // email as username
-                        .successHandler(successHandler)   // on success
-                        .failureHandler(failureHandler)   // on failure
+                        .loginPage("/login")
+                        .loginProcessingUrl("/do-login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
                         .permitAll()
                 )
+
 
                 /**
                  * GOOGLE OAUTH2 LOGIN
