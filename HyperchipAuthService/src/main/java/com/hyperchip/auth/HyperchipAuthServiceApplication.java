@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * - Scans JPA entities and repositories
  * - Triggers initial user sync to user-service on startup
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.hyperchip.auth")
 @EntityScan("com.hyperchip.auth.model")
 @EnableJpaRepositories("com.hyperchip.auth.repository")
 public class HyperchipAuthServiceApplication {
