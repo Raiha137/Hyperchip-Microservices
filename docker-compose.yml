@@ -43,9 +43,10 @@ services:
       - discovery
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
 
-  # ===========================
+    # ===========================
   # MySQL for Auth Service
   # ===========================
   auth-mysql:
