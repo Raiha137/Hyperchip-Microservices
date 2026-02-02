@@ -55,14 +55,18 @@ public class SecurityConfig {
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",
-                                "/actuator/**",   // health checks
-                                "/login",         // login page
-                                "/oauth2/**",     // Google OAuth URLs
-                                "/css/**",        // static files
+                                "/login",
+                                "/signup",
+                                "/verify-otp",
+                                "/forgot-password",
+                                "/reset-password",
+                                "/oauth2/**",
+                                "/css/**",
                                 "/js/**",
-                                "/img/**"
+                                "/img/**",
+                                "/actuator/**"
                         ).permitAll()
+
 
                         // Allow everything for now
                         // Later you can change to: .authenticated()
