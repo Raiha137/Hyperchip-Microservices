@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("")
 public class AuthController {
 
     private final UserService userService;
@@ -254,7 +254,8 @@ public class AuthController {
                     "successMsg",
                     "Registered successfully! Please login."
             );
-            return "redirect:/login";
+            return "redirect:/auth/login";
+
 
         } catch (Exception e) {
             // Log full error for debugging and show friendly message to user
