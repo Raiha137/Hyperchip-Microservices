@@ -32,7 +32,7 @@ import java.util.Set;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     // SSO finish URL of the user-service, can be configured in application.properties
-    @Value("${user.service.sso.finish:http://localhost:8080/sso/finish}")
+    @Value("${user.service.sso.finish:http://api-gateway:8080/sso/finish}")
 
 
     private String userServiceSsoFinish;
@@ -74,9 +74,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         // send role to user-service SSO
         if (roles.contains("ROLE_ADMIN") || roles.contains("ADMIN")) {
-            response.sendRedirect("http://localhost:8080/admin/home");
-            return;
+            redirect.append("&role=ADMIN");
         }
+
         else {
             redirect.append("&role=USER");
         }
