@@ -44,6 +44,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka/"
 
 
     # ===========================

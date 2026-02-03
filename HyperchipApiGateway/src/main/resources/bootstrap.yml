@@ -2,6 +2,24 @@ spring:
   application:
     name: api-gateway
 
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
+
+        - id: admin-service
+          uri: lb://HYPERCHIP-ADMIN
+          predicates:
+            - Path=/admin/**
+
 eureka:
   client:
     service-url:
