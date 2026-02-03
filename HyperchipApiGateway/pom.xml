@@ -56,9 +56,20 @@
     <!-- Runtime and test dependencies for the API Gateway -->
     <dependencies>
         <!-- Spring Cloud Gateway (reactive API gateway for routing and filters) -->
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-config</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Eureka Client (to discover downstream microservices via Eureka Server) -->
