@@ -12,23 +12,25 @@ public class GatewaySecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http
-                .csrf().disable()
-                .authorizeExchange(exchanges -> exchanges
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(ex -> ex
                         .pathMatchers(
                                 "/login",
                                 "/signup",
                                 "/verify-otp",
                                 "/forgot-password",
                                 "/reset-password",
+                                "/auth/**",
                                 "/oauth2/**",
-                                "/css/**", "/js/**", "/img/**", "/uploads/**",
+                                "/css/**",
+                                "/js/**",
+                                "/img/**",
+                                "/uploads/**",
                                 "/actuator/**"
                         ).permitAll()
-                        .anyExchange().permitAll() // or adjust to your needs
+                        .anyExchange().permitAll()
                 )
-                .formLogin().disable()
-                .httpBasic().disable();
-        return http.build();
+                .build();
     }
 }
