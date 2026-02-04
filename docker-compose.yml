@@ -16,6 +16,12 @@ services:
       - "8888:8888"
     env_file:
       - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8888/actuator/health | grep -q UP" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
 
   # ===========================
   # Eureka Discovery Server
@@ -39,10 +45,13 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - config-server
-      - discovery
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_started
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka/"
 
@@ -141,9 +150,12 @@ services:
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
 
     depends_on:
-      - user-mysql
-      - config-server
-      - discovery
+      user-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
 
   # ===========================
   # MySQL for Admin Service
@@ -186,9 +198,12 @@ services:
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
 
     depends_on:
-      - admin-mysql
-      - discovery
-      - config-server
+      admin-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
 
   # ===========================
   # MySQL for Master Service
@@ -223,9 +238,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      - master-mysql
-      - discovery
-      - config-server
+      master-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
   # ===========================
   # MySQL for Cart Service
   # ===========================
@@ -258,9 +277,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      - cart-mysql
-      - discovery
-      - config-server
+      cart-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
 
   # ===========================
   # MySQL for Wishlist Service
@@ -294,9 +317,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      - wishlist-mysql
-      - discovery
-      - config-server
+      wishlist-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
 
   # ===========================
   # MySQL for Wallet Service
@@ -330,9 +357,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      - wallet-mysql
-      - discovery
-      - config-server
+      wallet-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
 
 
   # ===========================
@@ -383,9 +414,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      - order-mysql
-      - discovery
-      - config-server
+      order-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
 
 
   # ===========================
@@ -414,9 +449,13 @@ services:
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
 
     depends_on:
-      - payment-mysql
-      - discovery
-      - config-server
+      payment-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
 
 
 # ===========================
