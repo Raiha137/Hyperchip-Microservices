@@ -189,14 +189,17 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-
       SPRING_DATASOURCE_URL: jdbc:mysql://admin-mysql:3306/${ADMIN_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${ADMIN_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${ADMIN_DB_PASSWORD}
       AUTH_SERVICE_URL: http://auth-service:8084
 
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+      # <<< add these two lines >>>
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+      # optional quick fallback (env var -> will map to api.base.url via relaxed binding)
+      API_BASE_URL: http://master-service:8086/api/admin
 
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       admin-mysql:
         condition: service_started

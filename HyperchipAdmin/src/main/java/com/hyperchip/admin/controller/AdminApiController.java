@@ -17,8 +17,9 @@ public class AdminApiController {
         return Map.of("status", "ADMIN API UP");
     }
 
-    @GetMapping("/dashboard")
-    public Map<String, Object> dashboard() {
+    // changed to avoid conflict with AdminDashboardRestController
+    @GetMapping("/dashboard/info")
+    public Map<String, Object> dashboardInfo() {
         return Map.of(
                 "users", 120,
                 "orders", 45,
