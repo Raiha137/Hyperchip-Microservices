@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class UserRegistrationController {
 
     private final UserService userService;
@@ -27,7 +27,7 @@ public class UserRegistrationController {
      * @param user User object from request body
      * @return saved User object after registration
      */
-    @PostMapping("/register")
+    @PostMapping("/user/register")
     @ResponseBody // Ensure it returns JSON
     public User register(@RequestBody User user) {
         // Encode password before saving to DB
@@ -42,7 +42,7 @@ public class UserRegistrationController {
      *
      * @return status message
      */
-    @GetMapping("/test")
+    @GetMapping("/user/test")
     @ResponseBody
     public String test() {
         return "✅ Auth service is running!";

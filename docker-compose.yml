@@ -137,6 +137,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
 
       # Database (REQUIRED)
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/${USER_DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${USER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}

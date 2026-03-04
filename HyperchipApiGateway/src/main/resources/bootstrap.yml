@@ -1,3 +1,5 @@
+#Ecommerce Projects/HyperchipApiGateway/src/resources/bootstrap.yml
+
 spring:
   application:
     name: hyperchip-api-gateway

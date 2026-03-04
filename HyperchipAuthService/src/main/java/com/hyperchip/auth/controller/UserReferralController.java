@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * UserReferralController
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class UserReferralController {
 
     private final UserRepository userRepository;
