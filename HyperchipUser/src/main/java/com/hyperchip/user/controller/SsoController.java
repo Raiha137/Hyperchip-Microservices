@@ -16,7 +16,6 @@ import java.util.Optional;
  * SsoController
  */
 
-
 @RequiredArgsConstructor
 @Controller
 public class SsoController {
