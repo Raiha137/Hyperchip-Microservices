@@ -21,7 +21,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   # ===========================
   # Eureka Discovery Server
