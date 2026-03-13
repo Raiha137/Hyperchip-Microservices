@@ -55,7 +55,7 @@ public class UserSyncService {
         List<User> users = userRepository.findAll();
 
         // Target endpoint in user-service
-        String url = "http://localhost:8083/api/users/from-auth";
+        String url = System.getenv("USER_SERVICE_URL") + "/api/users/from-auth";
 
         // Step 2: Loop through each user and sync
         for (User user : users) {

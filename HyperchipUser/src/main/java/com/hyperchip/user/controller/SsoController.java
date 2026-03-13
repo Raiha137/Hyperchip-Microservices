@@ -32,7 +32,7 @@ public class SsoController {
                             HttpSession session) {
 
         if (email == null || email.isBlank()) {
-            return "redirect:" + buildRedirectPath("/");
+            return "redirect:/";
         }
 
         String normalizedEmail = email.trim().toLowerCase();
@@ -52,15 +52,19 @@ public class SsoController {
         session.setAttribute("currentUser", su);
 
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
-            return "redirect:" + buildRedirectPath("/admin/home");
+            return "redirect:/admin/home";
         }
 
-        return "redirect:" + buildRedirectPath("/user/home");
+        return "redirect:/user/home";
+
+    }
+    private String buildRedirectPath(String path) {
+        return path;
     }
 
-    private String buildRedirectPath(String path) {
-        String base = (gatewayBaseUrl == null || gatewayBaseUrl.isBlank()) ? "http://localhost:8080" : gatewayBaseUrl.trim();
-        if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
-        return base + path;
-    }
+//    private String buildRedirectPath(String path) {
+//        String base = (gatewayBaseUrl == null || gatewayBaseUrl.isBlank()) ? "http://localhost:8080" : gatewayBaseUrl.trim();
+//        if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
+//        return base + path;
+//    }
 }

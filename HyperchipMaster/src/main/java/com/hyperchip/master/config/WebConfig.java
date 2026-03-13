@@ -119,7 +119,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")                     // Apply to all API endpoints
-                .allowedOrigins("http://localhost:8083")   // Frontend origin
+                .allowedOrigins("http://localhost:8080")  // Frontend origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")                       // Allow all headers
                 .allowCredentials(true);                   // Allow cookies / auth

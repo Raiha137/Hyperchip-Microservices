@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
     // WALLET: base URL for wallet-service
     @Value("${wallet.service.url:http://localhost:8095}")
     private String walletServiceBase;
-    @Value("${user.service.url:http://localhost:8083}")
+    @Value("${USER_SERVICE_URL:http://localhost:8080}")
     private String userServiceBase;
     //
 //    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
