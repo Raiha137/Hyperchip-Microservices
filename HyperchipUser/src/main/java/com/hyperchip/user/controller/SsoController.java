@@ -22,9 +22,10 @@ public class SsoController {
 
     private final UserService userService;
 
-    private String gatewayBaseUrl = "http://localhost:8080";
 
 
+    @Value("${user.service.gateway.url:http://localhost:8080}")
+    private String gatewayBaseUrl;
 
     @GetMapping("/sso/finish")
     public String finishSso(@RequestParam("email") String email,
