@@ -15,16 +15,14 @@ import java.util.Optional;
 /**
  * SsoController
  */
-
 @RequiredArgsConstructor
 @Controller
 public class SsoController {
 
     private final UserService userService;
 
-
-
-    @Value("${user.service.gateway.url:http://localhost:8080}")
+    // read gateway base URL from config (.env / config server). default to gateway on localhost.
+    @Value("${gateway.base.url:http://localhost:8080}")
     private String gatewayBaseUrl;
 
     @GetMapping("/sso/finish")
@@ -34,7 +32,7 @@ public class SsoController {
                             HttpSession session) {
 
         if (email == null || email.isBlank()) {
-            return "redirect:/";
+            return "redirect:" + buildRedirectPath("/");
         }
 
         String normalizedEmail = email.trim().toLowerCase();
@@ -54,9 +52,15 @@ public class SsoController {
         session.setAttribute("currentUser", su);
 
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
-            return "redirect:" + gatewayBaseUrl + "/admin/home";
+            return "redirect:" + buildRedirectPath("/admin/home");
         }
 
-        return "redirect:" + gatewayBaseUrl + "/user/home";
+        return "redirect:" + buildRedirectPath("/user/home");
+    }
+
+    private String buildRedirectPath(String path) {
+        String base = (gatewayBaseUrl == null || gatewayBaseUrl.isBlank()) ? "http://localhost:8080" : gatewayBaseUrl.trim();
+        if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
+        return base + path;
     }
 }
