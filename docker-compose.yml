@@ -1,51 +1,52 @@
-#..... D:\Microservice\Ecommerce Projects\docker-compose.yml .....#
-
-
-
 version: "3.8"
 
 services:
 
-  # ===========================
   # Config Server
-  # ===========================
   config-server:
     build: ./HyperchipConfigServer
+    image: ecommerceprojects-config-server:latest
     container_name: config-server
     ports:
       - "8888:8888"
     env_file:
       - .env
     healthcheck:
-      test: [ "CMD-SHELL", "wget -qO- http://localhost:8888/actuator/health | grep -q UP" ]
+      test: ["CMD-SHELL", "curl -sS http://localhost:8888/actuator/health | grep -q UP || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
     dns:
       - 8.8.8.8
       - 8.8.4.4
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # Eureka Discovery Server
-  # ===========================
+  # Eureka Discovery
   discovery:
     build: ./HyperchipDiscovery
+    image: ecommerceprojects-discovery:latest
     container_name: discovery
     ports:
       - "8761:8761"
-    depends_on:
-      - config-server
     env_file:
       - .env
+    depends_on:
+      - config-server
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # API Gateway
-  # ===========================
+  # API Gateway (entry point)
   api-gateway:
     build: ./HyperchipApiGateway
+    image: ecommerceprojects-api-gateway:latest
     container_name: api-gateway
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     depends_on:
       config-server:
         condition: service_healthy
@@ -56,11 +57,11 @@ services:
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka/"
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-
-    # ===========================
-  # MySQL for Auth Service
-  # ===========================
+  # Auth DB
   auth-mysql:
     image: mysql:8
     container_name: auth-mysql
@@ -72,13 +73,13 @@ services:
       - "3307:3306"
     volumes:
       - auth-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
   # Auth Service
-  # ===========================
-
   auth-service:
     build: ./HyperchipAuthService
+    image: ecommerceprojects-auth-service:latest
     container_name: auth-service
     ports:
       - "8084:8084"
@@ -86,33 +87,26 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-
-      # 🔹 Force Hibernate to CREATE tables
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-
-      # 🔹 Database config
       SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
-
-      # 🔹 Other service configs
       USER_SERVICE_URL: ${USER_SERVICE_URL}
       USER_SERVICE_SSO_FINISH: ${USER_SERVICE_SSO_FINISH}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-
-      # 🔹 Force Eureka URL
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
-
     depends_on:
       - auth-mysql
       - discovery
+      - config-server
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # MySQL for User Service
-  # ===========================
+  # User DB
   user-mysql:
     image: mysql:8
     container_name: user-mysql
@@ -124,12 +118,13 @@ services:
       - "3308:3306"
     volumes:
       - user-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
   # User Service
-  # ===========================
   user-service:
     build: ./HyperchipUser
+    image: ecommerceprojects-user-service:latest
     container_name: user-service
     ports:
       - "8083:8083"
@@ -137,21 +132,14 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-
-      # Database (REQUIRED)
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/${USER_DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${USER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-
-      # Force Eureka (REQUIRED – this fixes localhost issue)
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
-
-      # Optional extras (safe)
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
-
     depends_on:
       user-mysql:
         condition: service_started
@@ -159,11 +147,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # MySQL for Admin Service
-  # ===========================
-
+  # Admin DB
   admin-mysql:
     image: mysql:8
     container_name: admin-mysql
@@ -175,16 +163,14 @@ services:
       - "3309:3306"
     volumes:
       - admin-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-
-  # ===========================
   # Admin Service
-  # ===========================
-
   admin-service:
     build: ./HyperchipAdmin
+    image: ecommerceprojects-admin-service:latest
     container_name: admin-service
-    restart: always
     ports:
       - "8085:8085"
     env_file:
@@ -196,12 +182,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${ADMIN_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${ADMIN_DB_PASSWORD}
       AUTH_SERVICE_URL: http://auth-service:8084
-
-      # <<< add these two lines >>>
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      # optional quick fallback (env var -> will map to api.base.url via relaxed binding)
       API_BASE_URL: http://master-service:8086/api/admin
-
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       admin-mysql:
@@ -210,10 +192,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # MySQL for Master Service
-  # ===========================
+  # Master DB
   master-mysql:
     image: mysql:8
     container_name: master-mysql
@@ -225,12 +208,13 @@ services:
       - "3310:3306"
     volumes:
       - master-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
   # Master Service
-  # ===========================
   master-service:
     build: ./HyperchipMaster
+    image: ecommerceprojects-master-service:latest
     container_name: master-service
     ports:
       - "8086:8086"
@@ -250,10 +234,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # MySQL for Cart Service
-  # ===========================
+  # Cart DB & Service
   cart-mysql:
     image: mysql:8
     container_name: cart-mysql
@@ -265,12 +250,12 @@ services:
       - "3311:3306"
     volumes:
       - cart-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
-  # Cart Service
-  # ===========================
   cart-service:
     build: ./HyperchipCart
+    image: ecommerceprojects-cart-service:latest
     container_name: cart-service
     ports:
       - "8091:8091"
@@ -289,11 +274,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-
-  # ===========================
-  # MySQL for Wishlist Service
-  # ===========================
+  # Wishlist DB & Service
   wishlist-mysql:
     image: mysql:8
     container_name: wishlist-mysql
@@ -305,12 +290,12 @@ services:
       - "3312:3306"
     volumes:
       - wishlist-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
-  # Wishlist Service
-  # ===========================
   wishlist-service:
     build: ./HyperchipWishlist
+    image: ecommerceprojects-wishlist-service:latest
     container_name: wishlist-service
     ports:
       - "8093:8093"
@@ -329,11 +314,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-
-  # ===========================
-  # MySQL for Wallet Service
-  # ===========================
+  # Wallet DB & Service
   wallet-mysql:
     image: mysql:8
     container_name: wallet-mysql
@@ -345,12 +330,12 @@ services:
       - "3313:3306"
     volumes:
       - wallet-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
-  # Wallet Service
-  # ===========================
   wallet-service:
     build: ./HyperchipWallet
+    image: ecommerceprojects-wallet-service:latest
     container_name: wallet-service
     ports:
       - "8095:8095"
@@ -369,12 +354,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-
-
-  # ===========================
-  # MySQL for Payment Service
-  # ===========================
+  # Payment DB & Service
   payment-mysql:
     image: mysql:8
     container_name: payment-mysql
@@ -386,11 +370,37 @@ services:
       - "3315:3306"
     volumes:
       - payment-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
+  payment-service:
+    build: ./HyperchipPayment
+    image: ecommerceprojects-payment-service:latest
+    container_name: payment-service
+    ports:
+      - "8094:8094"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://payment-mysql:3306/hyperchip_payment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      RAZORPAY_KEY: ${RAZORPAY_KEY}
+      RAZORPAY_SECRET: ${RAZORPAY_SECRET}
+      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
+    depends_on:
+      payment-mysql:
+        condition: service_started
+      discovery:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-  # ===========================
-  # MySQL for Order Service
-  # ===========================
+  # Order DB & Service
   order-mysql:
     image: mysql:8
     container_name: order-mysql
@@ -402,12 +412,12 @@ services:
       - "3314:3306"
     volumes:
       - order-db:/var/lib/mysql
+    networks:
+      - ecommerce-network
 
-  # ===========================
-  # Order Service
-  # ===========================
   order-service:
     build: ./HyperchipOrder
+    image: ecommerceprojects-order-service:latest
     container_name: order-service
     ports:
       - "8092:8092"
@@ -426,47 +436,11 @@ services:
         condition: service_started
       config-server:
         condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
-
-
-  # ===========================
-  # Payment Service
-  # ===========================
-  payment-service:
-    build: ./HyperchipPayment
-    container_name: payment-service
-    ports:
-      - "8094:8094"
-    env_file:
-      - .env
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-
-      # Database
-      SPRING_DATASOURCE_URL: jdbc:mysql://payment-mysql:3306/hyperchip_payment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-
-      # Razorpay
-      RAZORPAY_KEY: ${RAZORPAY_KEY}
-      RAZORPAY_SECRET: ${RAZORPAY_SECRET}
-
-      # Eureka
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
-
-    depends_on:
-      payment-mysql:
-        condition: service_started
-      discovery:
-        condition: service_started
-      config-server:
-        condition: service_healthy
-
-
-
-# ===========================
 # Volumes
-# ===========================
 volumes:
   auth-db:
   user-db:
@@ -478,29 +452,7 @@ volumes:
   order-db:
   payment-db:
 
-
-
-
-
-
-
-
-
-
-  # ===========================
-  # MySQL for ---- Service
-  # ===========================
-  # ===========================
-  # Admin Service
-  # ===========================
-
-
-
-
-
-
-
-
-
-
-
+# Network
+networks:
+  ecommerce-network:
+    driver: bridge

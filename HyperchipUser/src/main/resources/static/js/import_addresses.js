@@ -1,7 +1,7 @@
 // Node.js script (requires node >= 18 or install node-fetch / axios)
 const fetch = global.fetch || require('node-fetch');
 
-const USER_SERVICE_EXPORT_URL = process.env.USER_EXPORT_URL || 'http://localhost:8083/internal/migrate/addresses/export';
+const USER_SERVICE_EXPORT_URL = process.env.USER_EXPORT_URL || '/internal/migrate/addresses/export';
 const ADDRESS_SERVICE_URL = process.env.ADDRESS_SERVICE_URL || 'http://localhost:8090/api/addresses';
 const BATCH_DELAY_MS = 100; // small delay between requests
 

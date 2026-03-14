@@ -4,7 +4,6 @@ import com.hyperchip.user.model.UserDtls;
 import com.hyperchip.user.session.SessionUser;
 import com.hyperchip.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,18 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 
-/**
- * SsoController
- */
 @RequiredArgsConstructor
 @Controller
 public class SsoController {
 
     private final UserService userService;
-
-    // read gateway base URL from config (.env / config server). default to gateway on localhost.
-    @Value("${gateway.base.url:http://localhost:8080}")
-    private String gatewayBaseUrl;
 
     @GetMapping("/sso/finish")
     public String finishSso(@RequestParam("email") String email,
@@ -52,19 +44,8 @@ public class SsoController {
         session.setAttribute("currentUser", su);
 
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
-            return "redirect:/admin/home";
+            return "redirect:http://localhost:8080/admin/home";
         }
-
-        return "redirect:/user/home";
-
+        return "redirect:http://localhost:8080/user/home";
     }
-    private String buildRedirectPath(String path) {
-        return path;
-    }
-
-//    private String buildRedirectPath(String path) {
-//        String base = (gatewayBaseUrl == null || gatewayBaseUrl.isBlank()) ? "http://localhost:8080" : gatewayBaseUrl.trim();
-//        if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
-//        return base + path;
-//    }
 }

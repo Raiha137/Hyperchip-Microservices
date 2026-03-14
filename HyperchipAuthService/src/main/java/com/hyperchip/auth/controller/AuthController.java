@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("")
 public class AuthController {
 
     private final UserService userService;
