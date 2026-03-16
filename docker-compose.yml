@@ -14,11 +14,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
-      interval: 20s
-      timeout: 10s
-      retries: 10
     dns:
       - 8.8.8.8
       - 8.8.4.4
@@ -38,14 +33,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
-      interval: 15s
-      timeout: 10s
-      retries: 10
     depends_on:
-      config-server:
-        condition: service_healthy
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -60,10 +49,8 @@ services:
     env_file:
       - .env
     depends_on:
-      config-server:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
+      - config-server
+      - discovery
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
@@ -118,12 +105,9 @@ services:
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      auth-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - auth-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -170,12 +154,9 @@ services:
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
     depends_on:
-      user-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - user-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -224,12 +205,9 @@ services:
       API_BASE_URL: http://master-service:8086/api/admin
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      admin-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - admin-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -273,12 +251,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      master-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - master-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -320,12 +295,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      cart-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - cart-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -368,12 +340,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      wishlist-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - wishlist-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -415,12 +384,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      wallet-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - wallet-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -464,12 +430,9 @@ services:
       RAZORPAY_SECRET: ${RAZORPAY_SECRET}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      payment-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - payment-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -511,12 +474,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
-      order-mysql:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - order-mysql
+      - discovery
+      - config-server
     networks:
       - ecommerce-network
     restart: unless-stopped
