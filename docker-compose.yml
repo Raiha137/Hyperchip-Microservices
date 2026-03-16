@@ -55,7 +55,6 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka/"
     networks:
       - ecommerce-network
     restart: unless-stopped
@@ -103,7 +102,6 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - auth-mysql
       - discovery
@@ -149,7 +147,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/${USER_DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${USER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
@@ -203,7 +200,6 @@ services:
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
       AUTH_SERVICE_URL: http://auth-service:8084
       API_BASE_URL: http://master-service:8086/api/admin
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - admin-mysql
       - discovery
@@ -249,7 +245,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://master-mysql:3306/${MASTER_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${MASTER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - master-mysql
       - discovery
@@ -293,7 +288,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://cart-mysql:3306/hyperchip_cart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - cart-mysql
       - discovery
@@ -338,7 +332,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://wishlist-mysql:3306/hyperchip_wishlist_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - wishlist-mysql
       - discovery
@@ -382,7 +375,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://wallet-mysql:3306/hyperchip_wallet_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - wallet-mysql
       - discovery
@@ -428,7 +420,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       RAZORPAY_KEY: ${RAZORPAY_KEY}
       RAZORPAY_SECRET: ${RAZORPAY_SECRET}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - payment-mysql
       - discovery
@@ -472,7 +463,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://order-mysql:3306/hyperchip_order_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
-      JAVA_OPTS: "-Deureka.client.service-url.defaultZone=http://discovery:8761/eureka"
     depends_on:
       - order-mysql
       - discovery
