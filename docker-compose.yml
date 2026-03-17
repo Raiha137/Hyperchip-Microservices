@@ -19,10 +19,11 @@ services:
       - ecommerce-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8888/actuator/health || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8888 || exit 1" ]
       interval: 10s
       timeout: 5s
-      retries: 6
+      retries: 10
+      start_period: 40s
 
   # Eureka Discovery
   discovery:
