@@ -18,12 +18,6 @@ services:
     networks:
       - ecommerce-network
     restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8888" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 40s
 
   # Eureka Discovery
   discovery:
