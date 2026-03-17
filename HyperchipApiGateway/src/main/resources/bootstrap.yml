@@ -1,7 +1,7 @@
 #Ecommerce Projects/HyperchipApiGateway/src/resources/bootstrap.yml
 
-spring:
-  application:
-    name: hyperchip-api-gateway
-  config:
-    import: optional:configserver:http://config-server:8888
+#spring:
+#  application:
+#    name: hyperchip-api-gateway
+#  config:
+#    import: optional:configserver:http://config-server:8888

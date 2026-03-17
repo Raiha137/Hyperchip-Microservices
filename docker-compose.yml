@@ -13,13 +13,17 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
     dns:
       - 8.8.8.8
       - 8.8.4.4
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8888/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
 
   # Eureka Discovery
   discovery:
@@ -32,12 +36,17 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
     depends_on:
-      - config-server
+      config-server:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
 
   # API Gateway (entry point)
   api-gateway:
@@ -48,16 +57,22 @@ services:
       - "8080:8080"
     env_file:
       - .env
-    depends_on:
-      - config-server
-      - discovery
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Auth DB
   auth-mysql:
@@ -90,7 +105,6 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/${AUTH_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -103,12 +117,20 @@ services:
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
     depends_on:
-      - auth-mysql
-      - discovery
-      - config-server
+      auth-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # User DB
   user-mysql:
@@ -135,13 +157,12 @@ services:
     build: ./HyperchipUser
     image: ecommerceprojects-user-service:latest
     container_name: user-service
-    ports:  
+    ports:
       - "8083:8083"
     env_file:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/${USER_DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -151,12 +172,20 @@ services:
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       MASTER_SERVICE_URL: ${MASTER_SERVICE_URL}
     depends_on:
-      - user-mysql
-      - discovery
-      - config-server
+      user-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8083/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Admin DB
   admin-mysql:
@@ -189,7 +218,6 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://admin-mysql:3306/${ADMIN_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -201,12 +229,20 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8084
       API_BASE_URL: http://master-service:8086/api/admin
     depends_on:
-      - admin-mysql
-      - discovery
-      - config-server
+      admin-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8085/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Master DB
   master-mysql:
@@ -239,19 +275,26 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_URL: jdbc:mysql://master-mysql:3306/${MASTER_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${MASTER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
     depends_on:
-      - master-mysql
-      - discovery
-      - config-server
+      master-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8086/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Cart DB & Service
   cart-mysql:
@@ -283,18 +326,25 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://cart-mysql:3306/hyperchip_cart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
     depends_on:
-      - cart-mysql
-      - discovery
-      - config-server
+      cart-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8091/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Wishlist DB & Service
   wishlist-mysql:
@@ -316,7 +366,6 @@ services:
       timeout: 5s
       retries: 5
 
-
   wishlist-service:
     build: ./HyperchipWishlist
     image: ecommerceprojects-wishlist-service:latest
@@ -327,18 +376,25 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://wishlist-mysql:3306/hyperchip_wishlist_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
     depends_on:
-      - wishlist-mysql
-      - discovery
-      - config-server
+      wishlist-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8093/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Wallet DB & Service
   wallet-mysql:
@@ -370,18 +426,25 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://wallet-mysql:3306/hyperchip_wallet_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
     depends_on:
-      - wallet-mysql
-      - discovery
-      - config-server
+      wallet-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8095/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Payment DB & Service
   payment-mysql:
@@ -413,7 +476,6 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://payment-mysql:3306/hyperchip_payment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -421,12 +483,20 @@ services:
       RAZORPAY_KEY: ${RAZORPAY_KEY}
       RAZORPAY_SECRET: ${RAZORPAY_SECRET}
     depends_on:
-      - payment-mysql
-      - discovery
-      - config-server
+      payment-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8094/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
   # Order DB & Service
   order-mysql:
@@ -458,18 +528,25 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://order-mysql:3306/hyperchip_order_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
     depends_on:
-      - order-mysql
-      - discovery
-      - config-server
+      order-mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8092/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
 
 # Volumes
 volumes:
