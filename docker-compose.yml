@@ -19,7 +19,7 @@ services:
       - ecommerce-network
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8888 || exit 1" ]
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8888" ]
       interval: 10s
       timeout: 5s
       retries: 10
