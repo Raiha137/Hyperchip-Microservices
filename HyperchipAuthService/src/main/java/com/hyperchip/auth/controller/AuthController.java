@@ -56,11 +56,8 @@ public class AuthController {
         return "user/login";
     }
 
-    // ================= SIGNUP PAGE =================
-    /**
-     * Show the signup form.
-     * Adds an empty User object for form binding.
-     */
+
+
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
         model.addAttribute("tempUser", new User());
