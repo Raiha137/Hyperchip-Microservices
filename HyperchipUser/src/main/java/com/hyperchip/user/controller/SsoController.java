@@ -29,6 +29,9 @@ public class SsoController {
 
         String normalizedEmail = email.trim().toLowerCase();
 
+        System.out.println("EMAIL = " + email);
+        System.out.println("ROLE = " + role);
+
         Optional<UserDtls> opt = userService.findByEmail(normalizedEmail);
         UserDtls user;
         if (opt.isPresent()) {
@@ -44,8 +47,8 @@ public class SsoController {
         session.setAttribute("currentUser", su);
 
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
-            return "redirect:http://localhost:8080/admin/home";
+            return "redirect:/admin/home";
         }
-        return "redirect:http://localhost:8080/user/home";
+        return "redirect:/user/home";
     }
 }
