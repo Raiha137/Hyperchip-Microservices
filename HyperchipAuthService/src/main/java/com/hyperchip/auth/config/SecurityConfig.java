@@ -78,7 +78,7 @@ public class SecurityConfig {
                  */
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/do-login")
+                        .loginProcessingUrl("/auth/do-login")
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .successHandler(successHandler)

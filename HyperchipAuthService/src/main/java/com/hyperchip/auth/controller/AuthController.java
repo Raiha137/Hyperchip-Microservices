@@ -209,7 +209,13 @@ public class AuthController {
             if (tempUser.getRole() == null) tempUser.setRole("ROLE_USER");
 
             // Save user (service may handle extra checks)
+
+            System.out.println("Saving user: " + tempUser.getEmail());
+
             User savedUser = userService.registerUser(tempUser);
+
+            System.out.println("Saved user ID: " + (savedUser != null ? savedUser.getId() : "NULL"));
+            System.out.println("Total users in DB: " + userRepository.count());
 
             if (savedUser == null || savedUser.getId() == null) {
                 model.addAttribute("errorMsg", "Could not register user.");
