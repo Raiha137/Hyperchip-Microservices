@@ -116,7 +116,7 @@ public class CategoryController {
     public String editCategory(@PathVariable Long id, Model model) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Fetch the category details
+        // Fetch the category detailsF
         CategoryDto category = restTemplate.getForObject(
                 "http://hyperchip-master:8086/api/admin/categories/" + id,
                 CategoryDto.class
