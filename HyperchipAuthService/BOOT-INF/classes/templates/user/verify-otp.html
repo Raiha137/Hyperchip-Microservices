@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <title>Verify OTP - Hyperchip</title>
+
+    <!-- ==============================
+         External Libraries
+         ============================== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <!-- ==============================
+         Custom CSS
+         ============================== -->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/signup.css}"/>
+</head>
+<body class="hc-login-body">
+
+<!-- ==============================
+     Header Fragment
+     ============================== -->
+<div th:replace="fragments/auth-header :: authHeader"></div>
+
+<!-- ==============================
+     OTP Verification Section
+     ============================== -->
+<section class="hc-login-section">
+    <div class="hc-login-overlay"></div>
+
+    <div class="container hc-login-container">
+        <div class="row g-5 align-items-center">
+
+            <!-- LEFT: Hero / Info -->
+            <div class="col-lg-6">
+                <div class="hc-login-left">
+                    <div class="d-flex align-items-center mb-4">
+                        <img th:src="@{/img/logo.png}" alt="Hyperchip Logo" class="hc-login-logo me-2"/>
+                        <span class="hc-login-logo-text">Hyperchip</span>
+                    </div>
+                    <h1 class="hc-login-title mb-3">Verify Your Email</h1>
+                    <p class="hc-login-subtitle mb-4">
+                        We’ve sent a One-Time Password (OTP) to your email address. Enter the OTP and set a strong password to complete your signup.
+                    </p>
+                    <ul class="hc-login-bullets">
+                        <li><i class="fa-solid fa-circle-check"></i> Secure your account with a strong password</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Start managing your orders &amp; wishlist</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Enjoy offers, wallet and referral benefits</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- RIGHT: OTP + Password Form -->
+            <div class="col-lg-5 offset-lg-1">
+                <div class="hc-login-form-wrapper">
+
+                    <!-- ==============================
+                         Flash Messages
+                         ============================== -->
+                    <div th:if="${errorMsg}" class="alert alert-danger text-center mb-3" th:text="${errorMsg}"></div>
+                    <div th:if="${successMsg}" class="alert-background alert alert-success text-center mb-3" th:text="${successMsg}"></div>
+
+                    <h2 class="hc-login-form-title mb-1">Verify OTP</h2>
+                    <p class="hc-login-form-subtitle mb-4">
+                        Enter the OTP sent to your email and set your password to complete registration.
+                    </p>
+
+                    <!-- ==============================
+                         OTP Verification Form
+                         ============================== -->
+                    <form th:action="@{/verify-otp}" method="post" id="otpVerifyForm" novalidate>
+
+                        <!-- Hidden fields to carry user info -->
+                        <input type="hidden" name="email" th:value="${email}"/>
+                        <input type="hidden" name="fullName" th:value="${fullName}"/>
+                        <input type="hidden" name="phone" th:value="${phone}"/>
+                        <input type="hidden" name="referralCode" th:value="${referralCode}"/>
+
+                        <!-- OTP Input -->
+                        <div class="mb-3">
+                            <label for="otp" class="hc-login-label">OTP <span class="hc-required">*</span></label>
+                            <div class="hc-login-input-wrapper">
+                                <input type="text" id="otp" name="otp" class="hc-login-input"
+                                       placeholder="Enter OTP" required pattern="[0-9]{4,6}"
+                                       title="OTP should be 4 to 6 digits"/>
+                            </div>
+                        </div>
+
+                        <!-- Password Input -->
+                        <div class="mb-3">
+                            <label for="password" class="hc-login-label">Password <span class="hc-required">*</span></label>
+                            <div class="hc-login-input-wrapper">
+                                <input type="password" id="password" name="password" class="hc-login-input"
+                                       placeholder="Enter password" required minlength="8"/>
+                                <span class="hc-login-input-icon hc-toggle-password" data-target="password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                            <small class="hc-field-error" id="passwordError"></small>
+
+                            <!-- Password strength -->
+                            <div class="d-flex justify-content-between mt-1 hc-password-meta">
+                                <small class="text-muted">Use at least 8 characters with letters &amp; numbers.</small>
+                                <small id="passwordStrength" class="hc-password-strength-label"></small>
+                            </div>
+                            <div class="hc-password-bar mt-1">
+                                <div class="hc-password-bar-fill" id="passwordStrengthBar"></div>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password Input -->
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="hc-login-label">Confirm Password <span class="hc-required">*</span></label>
+                            <div class="hc-login-input-wrapper">
+                                <input type="password" id="confirmPassword" name="confirmPassword"
+                                       class="hc-login-input" placeholder="Confirm password" required minlength="8"/>
+                                <span class="hc-login-input-icon hc-toggle-password" data-target="confirmPassword">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                            <small class="hc-field-error" id="confirmError"></small>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn hc-login-btn w-100">Verify &amp; Register</button>
+
+                        <!-- Back link -->
+                        <p class="hc-login-bottom mt-3 mb-0 text-center">
+                            <a th:href="@{/signup}" class="hc-login-link fw-semibold">
+                                <i class="fas fa-arrow-left"></i> Back to Signup
+                            </a>
+                        </p>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================
+     Footer Fragment
+     ============================== -->
+<div th:replace="fragments/auth-footer :: authFooter"></div>
+
+<!-- ==============================
+     Scripts
+     ============================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const strengthLabel = document.getElementById('passwordStrength');
+        const strengthBar = document.getElementById('passwordStrengthBar');
+        const passwordError = document.getElementById('passwordError');
+        const confirmError = document.getElementById('confirmError');
+        const form = document.getElementById('otpVerifyForm');
+
+        // 🔹 Toggle password visibility
+        document.querySelectorAll('.hc-toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+
+                input.type = (input.type === 'password') ? 'text' : 'password';
+                const icon = btn.querySelector('i');
+                if (icon) icon.classList.toggle('fa-eye-slash');
+            });
+        });
+
+        // 🔹 Evaluate password strength
+        function evaluateStrength(value) {
+            let score = 0;
+            if (value.length >= 8) score++;
+            if (/[A-Z]/.test(value)) score++;
+            if (/[0-9]/.test(value)) score++;
+            if (/[^A-Za-z0-9]/.test(value)) score++;
+
+            if (!value) return {label: '', width: '0%', level: ''};
+            if (score <= 1) return {label: 'Weak', width: '33%', level: 'weak'};
+            if (score === 2 || score === 3) return {label: 'Medium', width: '66%', level: 'medium'};
+            return {label: 'Strong', width: '100%', level: 'strong'};
+        }
+
+        function updateStrength() {
+            const value = password.value || '';
+            const result = evaluateStrength(value);
+            strengthLabel.textContent = result.label;
+            strengthBar.style.width = result.width;
+            strengthBar.classList.remove('weak', 'medium', 'strong');
+            if (result.level) strengthBar.classList.add(result.level);
+        }
+
+        if (password) password.addEventListener('input', updateStrength);
+
+        // 🔹 Confirm password live validation
+        if (confirmPassword && password) {
+            confirmPassword.addEventListener('input', function () {
+                if (confirmPassword.value !== password.value) {
+                    confirmPassword.setCustomValidity('Passwords do not match');
+                    confirmError.textContent = 'Passwords do not match';
+                } else {
+                    confirmPassword.setCustomValidity('');
+                    confirmError.textContent = '';
+                }
+            });
+        }
+
+        // 🔹 Final submit validation
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                let valid = true;
+                passwordError.textContent = '';
+                confirmError.textContent = '';
+
+                if (!password.value || password.value.length < 8) {
+                    passwordError.textContent = 'Password must be at least 8 characters.';
+                    valid = false;
+                }
+                if (password.value !== confirmPassword.value) {
+                    confirmError.textContent = 'Passwords do not match.';
+                    valid = false;
+                }
+                if (!valid) e.preventDefault();
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
