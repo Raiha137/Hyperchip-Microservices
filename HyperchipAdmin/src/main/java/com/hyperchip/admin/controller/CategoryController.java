@@ -60,7 +60,7 @@ public class CategoryController {
 
         // Fetch paginated categories from Master service
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://hyperchip-master:8086/api/admin/categories?page=" + page + "&size=" + size;
+        String url = "http://master-service:8086/api/admin/categories?page=" + page + "&size=" + size;
         if (q != null && !q.isEmpty()) url += "&q=" + q;
 
         PageCategoryDto categories = restTemplate.getForObject(url, PageCategoryDto.class);
@@ -91,7 +91,7 @@ public class CategoryController {
 
         RestTemplate restTemplate = new RestTemplate();
         PageCategoryDto page = restTemplate.getForObject(
-                "http://hyperchip-master:8086/api/admin/categories?page=0&size=1000",
+                "http://master-service:8086/api/admin/categories?page=0&size=1000",
                 PageCategoryDto.class
         );
 
@@ -118,14 +118,14 @@ public class CategoryController {
 
         // Fetch the category detailsF
         CategoryDto category = restTemplate.getForObject(
-                "http://hyperchip-master:8086/api/admin/categories/" + id,
+                "http://master-service:8086/api/admin/categories/" + id,
                 CategoryDto.class
         );
         model.addAttribute("category", category);
 
         // Fetch all categories for UI reference
         PageCategoryDto page = restTemplate.getForObject(
-                "http://hyperchip-master:8086/api/admin/categories?page=0&size=1000",
+                "http://master-service:8086/api/admin/categories?page=0&size=1000",
                 PageCategoryDto.class
         );
         model.addAttribute("allCategories",
@@ -165,7 +165,7 @@ public class CategoryController {
             }
 
             // Call Master service to create category
-            restTemplate.postForObject("http://hyperchip-master:8086/api/admin/categories", map, String.class);
+            restTemplate.postForObject("http://master-service:8086/api/admin/categories", map, String.class);
 
             redirectAttributes.addFlashAttribute(
                     "successMsg",
@@ -219,7 +219,7 @@ public class CategoryController {
                         file.getInputStream(), file.getOriginalFilename()));
             }
 
-            restTemplate.put("http://hyperchip-master:8086/api/admin/categories/" + category.getId(), map);
+            restTemplate.put("http://master-service:8086/api/admin/categories/" + category.getId(), map);
 
             redirectAttributes.addFlashAttribute(
                     "successMsg",
@@ -263,11 +263,11 @@ public class CategoryController {
         RestTemplate restTemplate = new RestTemplate();
         try {
             CategoryDto category = restTemplate.getForObject(
-                    "http://hyperchip-master:8086/api/admin/categories/" + id,
+                    "http://master-service:8086/api/admin/categories/" + id,
                     CategoryDto.class
             );
 
-            restTemplate.delete("http://hyperchip-master:8086/api/admin/categories/" + id);
+            restTemplate.delete("http://master-service:8086/api/admin/categories/" + id);
 
             redirectAttributes.addFlashAttribute("successMsg",
                     category.getName() + " deleted successfully.");

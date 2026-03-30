@@ -32,7 +32,7 @@ public class DeliveryProxyController {
      * Base URL of the order service
      * - Configurable via application.properties
      */
-    @Value("${order.service.url:http://localhost:8092}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceBase;
 
     /**

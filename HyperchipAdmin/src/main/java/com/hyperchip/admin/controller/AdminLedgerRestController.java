@@ -33,7 +33,7 @@ public class AdminLedgerRestController {
      * - Used to fetch order-related financial ledger entries
      * - Default value allows local development without config
      */
-    @Value("${order.service.url:http://localhost:8092}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceBase;
 
     /**

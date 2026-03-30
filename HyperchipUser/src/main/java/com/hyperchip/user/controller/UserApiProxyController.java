@@ -53,7 +53,7 @@ public class UserApiProxyController {
     @Value("${address.service.url:http://localhost:8090}")
     private String addressServiceBase;
 
-    @Value("${order.service.url:http://localhost:8092}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceBase;
 
 //    @Value("${order.service.url:http://localhost:8092/api/user/orders}")
@@ -81,7 +81,7 @@ public class UserApiProxyController {
 
     private String orderBase() {
         String base = (orderServiceBase == null || orderServiceBase.isBlank())
-                ? "http://localhost:8092"
+                ? "http://order-service:8092"
                 : orderServiceBase.trim();
 
         if (base.endsWith("/")) {
@@ -314,7 +314,7 @@ public class UserApiProxyController {
         }
 
         // base = http://localhost:8092
-        String base = safeBase(orderServiceBase, "http://localhost:8092");
+        String base = safeBase(orderServiceBase, "http://order-service:8092");
         if (base.endsWith("/")) {
             base = base.substring(0, base.length() - 1);
         }
@@ -764,7 +764,7 @@ public class UserApiProxyController {
 //            return ResponseEntity.badRequest().body(Map.of("error", "Invalid order id"));
 //        }
 //        try {
-//            String base = safeBase(orderServiceBase, "http://localhost:8092");
+//            String base = safeBase(orderServiceBase, "http://order-service:8092");
 //            if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
 //
 //            // GET http://localhost:8092/api/orders/{orderId}/invoice
@@ -945,7 +945,7 @@ public class UserApiProxyController {
     private BigDecimal fetchOrderAmount(Long orderId) {
         try {
             // Base should be just http://localhost:8092 (no /api/orders at the end)
-            String base = safeBase(orderServiceBase, "http://localhost:8092");
+            String base = safeBase(orderServiceBase, "http://order-service:8092");
             if (base.endsWith("/")) {
                 base = base.substring(0, base.length() - 1);
             }
@@ -1310,7 +1310,7 @@ public class UserApiProxyController {
 
     private ResponseEntity<?> fetchOrdersForUser(Long userId, int page, int size) {
         try {
-            String base = safeBase(orderServiceBase, "http://localhost:8092");
+            String base = safeBase(orderServiceBase, "http://order-service:8092");
             if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
 
             // GET http://localhost:8092/api/orders/user/{userId}?page=..&size=..

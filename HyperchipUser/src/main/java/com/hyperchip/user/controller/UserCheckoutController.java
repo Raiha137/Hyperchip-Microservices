@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/user")
 public class UserCheckoutController {
 
-    @Value("${order.service.url:http://localhost:8092}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceUrl;  // Base URL for order service
 
     @Value("${cart.service.url:http://localhost:8091/api/cart}")

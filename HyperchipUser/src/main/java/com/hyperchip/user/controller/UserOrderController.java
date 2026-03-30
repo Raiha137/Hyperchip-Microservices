@@ -33,7 +33,7 @@ public class UserOrderController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${order.service.url:http://localhost:8092}")
+    @Value("${order.service.url:http://order-service:8092}")
     private String orderServiceBase; // base URL for order service (host + port)
 
     // ==================== SUCCESS / FAILURE PAGES ====================
