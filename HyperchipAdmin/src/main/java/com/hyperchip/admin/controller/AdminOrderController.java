@@ -50,9 +50,8 @@ public class AdminOrderController {
      * - Centralized endpoint for all admin order-related operations
      * - Configurable via application properties
      */
-    @Value("${order.service.admin-base-url:http://localhost:8092/api/admin/orders}")
-    private String orderAdminBase;
 
+    private String orderAdminBase = "http://order-service:8092/api/admin/orders";
     // ============================================================
     // LIST ORDERS
     // ============================================================

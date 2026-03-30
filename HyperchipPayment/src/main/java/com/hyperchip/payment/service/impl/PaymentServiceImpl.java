@@ -51,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
     private String razorpaySecret;
 
     // Order service base URL (used to fetch order details and notify status)
-    @Value("${order.service.url:http://localhost:8092/api/orders}")
+    @Value("${order.service.url}")
     private String orderServiceUrl;
 
     /**
