@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * CategoryController
@@ -45,6 +46,8 @@ public class CategoryController {
      * Why it is used:
      * Allows admin to view, search, and paginate categories efficiently.
      */
+    @Value("${api.base.url}")
+    private String apiBaseUrl;
     @GetMapping
     public String listCategories(
             @RequestParam(name = "q", required = false) String q,
@@ -60,7 +63,7 @@ public class CategoryController {
 
         // Fetch paginated categories from Master service
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://master-service:8086/api/admin/categories?page=" + page + "&size=" + size;
+        String url = apiBaseUrl + "/categories?page=" + page + "&size=" + size;
         if (q != null && !q.isEmpty()) url += "&q=" + q;
 
         PageCategoryDto categories = restTemplate.getForObject(url, PageCategoryDto.class);
@@ -91,7 +94,7 @@ public class CategoryController {
 
         RestTemplate restTemplate = new RestTemplate();
         PageCategoryDto page = restTemplate.getForObject(
-                "http://master-service:8086/api/admin/categories?page=0&size=1000",
+                apiBaseUrl + "/categories?page=0&size=1000",
                 PageCategoryDto.class
         );
 
@@ -118,14 +121,14 @@ public class CategoryController {
 
         // Fetch the category detailsF
         CategoryDto category = restTemplate.getForObject(
-                "http://master-service:8086/api/admin/categories/" + id,
+                apiBaseUrl + "/categories/" + id,
                 CategoryDto.class
         );
         model.addAttribute("category", category);
 
         // Fetch all categories for UI reference
         PageCategoryDto page = restTemplate.getForObject(
-                "http://master-service:8086/api/admin/categories?page=0&size=1000",
+                apiBaseUrl + "/categories?page=0&size=1000",
                 PageCategoryDto.class
         );
         model.addAttribute("allCategories",
@@ -165,7 +168,7 @@ public class CategoryController {
             }
 
             // Call Master service to create category
-            restTemplate.postForObject("http://master-service:8086/api/admin/categories", map, String.class);
+            restTemplate.postForObject(apiBaseUrl + "/categories", map, String.class);
 
             redirectAttributes.addFlashAttribute(
                     "successMsg",
@@ -219,7 +222,7 @@ public class CategoryController {
                         file.getInputStream(), file.getOriginalFilename()));
             }
 
-            restTemplate.put("http://master-service:8086/api/admin/categories/" + category.getId(), map);
+            restTemplate.put(apiBaseUrl + "/categories/" + category.getId(), map);
 
             redirectAttributes.addFlashAttribute(
                     "successMsg",
@@ -263,11 +266,11 @@ public class CategoryController {
         RestTemplate restTemplate = new RestTemplate();
         try {
             CategoryDto category = restTemplate.getForObject(
-                    "http://master-service:8086/api/admin/categories/" + id,
+                    apiBaseUrl + "/categories/" + id,
                     CategoryDto.class
             );
 
-            restTemplate.delete("http://master-service:8086/api/admin/categories/" + id);
+            restTemplate.delete(apiBaseUrl + "/categories/"  + id);
 
             redirectAttributes.addFlashAttribute("successMsg",
                     category.getName() + " deleted successfully.");
