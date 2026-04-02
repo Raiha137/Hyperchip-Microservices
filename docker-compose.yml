@@ -11,6 +11,7 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: main
     dns:
       - 8.8.8.8
       - 8.8.4.4
