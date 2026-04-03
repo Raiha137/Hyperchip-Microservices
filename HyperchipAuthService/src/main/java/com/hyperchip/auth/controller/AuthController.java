@@ -63,6 +63,12 @@ public class AuthController {
         model.addAttribute("tempUser", new User());
         return "user/signup";
     }
+    @GetMapping("/sso/finish")
+    public String finish(@RequestParam String email,
+                         @RequestParam String role) {
+
+        return "redirect:http://localhost:8080/user/home";
+    }
 
     // ================= SIGNUP + SEND OTP =================
     /**
