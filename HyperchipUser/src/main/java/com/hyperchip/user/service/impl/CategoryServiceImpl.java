@@ -50,7 +50,14 @@ public class CategoryServiceImpl implements CategoryService {
         System.out.println("DEBUG - CategoryServiceImpl calling: " + url);
 
         // Make GET request to the master service and map response to PageCategoryDto
-        PageCategoryDto page = restTemplate.getForObject(url, PageCategoryDto.class);
+        PageCategoryDto page;
+
+        try {
+            page = restTemplate.getForObject(url, PageCategoryDto.class);
+        } catch (Exception e) {
+            System.out.println("ERROR calling master service: " + e.getMessage());
+            return List.of(); // prevent crash
+        }
 
         // Return empty list if response or content is null
         if (page == null || page.getContent() == null) {
