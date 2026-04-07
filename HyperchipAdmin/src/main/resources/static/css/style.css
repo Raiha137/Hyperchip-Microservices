@@ -20,6 +20,9 @@ header .navbar {
     margin-top: 0 !important;
     padding-top: 0 !important;
 }
+.removeHeight{
+    display:inline !important;
+}
 /* ---------------- User Navbar ---------------- */
  .user-navbar {
      background-color: #08131e;
