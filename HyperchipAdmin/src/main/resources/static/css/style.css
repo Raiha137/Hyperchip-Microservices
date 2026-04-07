@@ -12,6 +12,14 @@ body {
     padding: 0 !important;
 }
 
+header .navbar {
+    margin: 0 !important;
+}
+
+.admin-dashboard {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
 /* ---------------- User Navbar ---------------- */
  .user-navbar {
      background-color: #08131e;
