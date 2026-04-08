@@ -109,7 +109,7 @@ public class BrandController {
 
         RestTemplate restTemplate = new RestTemplate();
         PageBrandDto page = restTemplate.getForObject(
-                "apiBaseUrl + \"/brands\"?page=0&size=1000",
+                apiBaseUrl + "/brands?page=0&size=1000",
                 PageBrandDto.class
         );
 
@@ -135,13 +135,13 @@ public class BrandController {
         RestTemplate restTemplate = new RestTemplate();
 
         BrandDto brand = restTemplate.getForObject(
-                "apiBaseUrl + \"/brands\"/" + id,
+                apiBaseUrl + "/brands/" + id,
                 BrandDto.class
         );
         model.addAttribute("brand", brand);
 
         PageBrandDto page = restTemplate.getForObject(
-                "apiBaseUrl + \"/brands\"?page=0&size=1000",
+                apiBaseUrl + "/brands?page=0&size=1000",
                 PageBrandDto.class
         );
         model.addAttribute("allBrands",
@@ -232,7 +232,7 @@ public class BrandController {
         RestTemplate restTemplate = new RestTemplate();
         try {
             BrandDto brand = restTemplate.getForObject(
-                    "apiBaseUrl + \"/brands\"/" + id,
+                    apiBaseUrl + "/brands/" + id,
                     BrandDto.class
             );
             restTemplate.delete(apiBaseUrl + "/brands/" + id);
