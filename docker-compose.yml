@@ -237,6 +237,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://master-mysql:3306/${MASTER_DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${MASTER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${MASTER_DB_PASSWORD}
+      SERVER_PORT: 8086             # override default HTTP port:contentReference[oaicite:1]{index=1}
     depends_on:
       - master-mysql
       - config-server
@@ -244,7 +245,7 @@ services:
     networks:
       - ecommerce-network
     restart: unless-stopped
-
+    
   # Cart DB & Service
   cart-mysql:
     image: mysql:8
