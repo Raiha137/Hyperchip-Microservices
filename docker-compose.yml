@@ -143,7 +143,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${USER_DB_PASSWORD}
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      MASTER_SERVICE_URL: http://master-service:8080
+      MASTER_SERVICE_URL: http://master-service:8086
     depends_on:
       - user-mysql
       - config-server
@@ -190,9 +190,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${ADMIN_DB_PASSWORD}
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      MASTER_SERVICE_URL: http://master-service:8080
+      MASTER_SERVICE_URL: http://master-service:8086
       AUTH_SERVICE_URL: http://auth-service:8084
-      API_BASE_URL: http://master-service:8080/api/admin
+      API_BASE_URL: http://master-service:8086/api/admin
     depends_on:
       - admin-mysql
       - config-server
@@ -245,7 +245,7 @@ services:
     networks:
       - ecommerce-network
     restart: unless-stopped
-    
+
   # Cart DB & Service
   cart-mysql:
     image: mysql:8

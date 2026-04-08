@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-
+import org.springframework.beans.factory.annotation.Value;
 /**
  * BrandController
  *
@@ -45,6 +45,9 @@ public class BrandController {
      * Why it is used:
      * Allows admin to view brands and search/filter them efficiently.
      */
+
+    @Value("${API_BASE_URL}")
+    private String apiBaseUrl;
     @GetMapping
     public String listBrands(
             @RequestParam(name = "q", required = false) String q,
@@ -59,7 +62,7 @@ public class BrandController {
         response.setDateHeader("Expires", 0);
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8086/api/admin/brands?page=" + page + "&size=" + size;
+        String url = apiBaseUrl + "/brands?page=" + page + "&size=" + size;
         if (q != null && !q.isEmpty()) url += "&q=" + q;
 
         PageBrandDto brands;
@@ -106,7 +109,7 @@ public class BrandController {
 
         RestTemplate restTemplate = new RestTemplate();
         PageBrandDto page = restTemplate.getForObject(
-                "http://localhost:8086/api/admin/brands?page=0&size=1000",
+                "apiBaseUrl + \"/brands\"?page=0&size=1000",
                 PageBrandDto.class
         );
 
@@ -132,13 +135,13 @@ public class BrandController {
         RestTemplate restTemplate = new RestTemplate();
 
         BrandDto brand = restTemplate.getForObject(
-                "http://localhost:8086/api/admin/brands/" + id,
+                "apiBaseUrl + \"/brands\"/" + id,
                 BrandDto.class
         );
         model.addAttribute("brand", brand);
 
         PageBrandDto page = restTemplate.getForObject(
-                "http://localhost:8086/api/admin/brands?page=0&size=1000",
+                "apiBaseUrl + \"/brands\"?page=0&size=1000",
                 PageBrandDto.class
         );
         model.addAttribute("allBrands",
@@ -183,10 +186,10 @@ public class BrandController {
 
             // CREATE or UPDATE
             if (brand.getId() == null) {
-                restTemplate.postForObject("http://localhost:8086/api/admin/brands", map, String.class);
+                restTemplate.postForObject(apiBaseUrl + "/brands", map, String.class);
                 redirectAttributes.addFlashAttribute("successMsg", brand.getName() + " added successfully.");
             } else {
-                restTemplate.put("http://localhost:8086/api/admin/brands/" + brand.getId(), map);
+                restTemplate.put(apiBaseUrl + "/brands/" + brand.getId(), map);
                 redirectAttributes.addFlashAttribute("successMsg", brand.getName() + " updated successfully.");
             }
 
@@ -229,10 +232,10 @@ public class BrandController {
         RestTemplate restTemplate = new RestTemplate();
         try {
             BrandDto brand = restTemplate.getForObject(
-                    "http://localhost:8086/api/admin/brands/" + id,
+                    "apiBaseUrl + \"/brands\"/" + id,
                     BrandDto.class
             );
-            restTemplate.delete("http://localhost:8086/api/admin/brands/" + id);
+            restTemplate.delete(apiBaseUrl + "/brands/" + id);
             redirectAttributes.addFlashAttribute("successMsg", brand.getName() + " deleted successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMsg", "Failed to delete brand. Please try again.");
