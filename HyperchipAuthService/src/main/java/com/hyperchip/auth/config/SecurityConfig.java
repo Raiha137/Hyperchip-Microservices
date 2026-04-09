@@ -41,7 +41,7 @@ public class SecurityConfig {
 
     /**
      * SecurityFilterChain
-     *
+     * <p>
      * - Main Spring Security configuration
      * - Controls CSRF, login, logout, OAuth2
      */
@@ -113,7 +113,7 @@ public class SecurityConfig {
 
     /**
      * AuthenticationManager
-     *
+     * <p>
      * Developer simple notes:
      * - Connects UserDetailsService + PasswordEncoder
      * - Used during email/password login
@@ -128,5 +128,10 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
 
         return new ProviderManager(List.of(provider));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 }
