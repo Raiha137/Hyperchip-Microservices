@@ -74,6 +74,12 @@ public class UserController {
         }
 
         UserDtls user = maybeUser.get();
+        session.setAttribute("currentUser", new SessionUser(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getProfileImage()
+        ));
         List<Address> addresses = userService.listAddresses(user.getId());
 
         model.addAttribute("user", user);
