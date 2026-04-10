@@ -65,9 +65,20 @@ public class AuthController {
     }
     @GetMapping("/sso/finish")
     public String finish(@RequestParam String email,
-                         @RequestParam String role) {
+                         @RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "role", required = false) String role) {
 
-        return "redirect:http://localhost:8080/user/home";
+        String redirect = "redirect:http://localhost:8080/sso/finish?email=" + email;
+
+        if (name != null && !name.isBlank()) {
+            redirect += "&name=" + name;
+        }
+
+        if (role != null && !role.isBlank()) {
+            redirect += "&role=" + role;
+        }
+
+        return redirect;
     }
 
     // ================= SIGNUP + SEND OTP =================
@@ -104,7 +115,7 @@ public class AuthController {
         // Save temp user in session until OTP is verified
         user.setEmail(email);
         session.setAttribute("tempUser", user);
-        
+
         // Save referral code in session (optional)
         if (referralCode != null && !referralCode.trim().isEmpty()) {
             session.setAttribute("referralCode", referralCode.trim());
