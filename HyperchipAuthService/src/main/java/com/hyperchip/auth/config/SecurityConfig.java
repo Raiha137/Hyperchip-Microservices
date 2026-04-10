@@ -130,8 +130,4 @@ public class SecurityConfig {
         return new ProviderManager(List.of(provider));
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-    }
 }
