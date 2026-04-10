@@ -84,7 +84,10 @@
 
                     <!-- LOGIN / SIGNUP (if not logged in) -->
                     <div th:if="${session.currentUser == null}" class="d-flex align-items-center gap-2">
-                        <a class="btn btn-outline-light btn-sm" th:href="@{/login}">Login</a>
+                        <a class="btn btn-outline-light btn-sm"
+                           th:href="${@environment.getProperty('auth.service.login.url') != null
+                                   ? @environment.getProperty('auth.service.login.url')
+                                   : '/login'}">Login</a>
                         <a th:href="@{/signup}" class="btn btn-light btn-sm text-primary">Sign Up</a>
                     </div>
 
