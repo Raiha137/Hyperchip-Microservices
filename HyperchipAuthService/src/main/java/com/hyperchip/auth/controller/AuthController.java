@@ -103,8 +103,7 @@ public class AuthController {
 
         // Save temp user in session until OTP is verified
         user.setEmail(email);
-        session.setAttribute("tempUser", user);
-
+        session.setAttribute("currentUser", user);
         // Save referral code in session (optional)
         if (referralCode != null && !referralCode.trim().isEmpty()) {
             session.setAttribute("referralCode", referralCode.trim());
