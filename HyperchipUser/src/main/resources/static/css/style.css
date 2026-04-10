@@ -6539,3 +6539,17 @@ body.hc-site-bg {
   .hc-hero{ padding:46px 0; min-height:260px; }
   .hc-hero-title{ font-size:1.35rem; }
 }
+
+
+.hc-center-block {
+    display: flex;
+    flex-wrap: wrap;   /* CRITICAL FIX */
+    align-items: center;
+    gap: 10px;
+}
+
+.hc-search-form {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+}
