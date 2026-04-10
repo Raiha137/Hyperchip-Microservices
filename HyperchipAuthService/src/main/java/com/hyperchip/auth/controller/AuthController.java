@@ -64,11 +64,11 @@ public class AuthController {
         return "user/signup";
     }
     @GetMapping("/sso/finish")
-    public String finish(@RequestParam String email,
+    public String finish(@RequestParam("email") String email,
                          @RequestParam(value = "name", required = false) String name,
                          @RequestParam(value = "role", required = false) String role) {
 
-        String redirect = "redirect:http://localhost:8080/sso/finish?email=" + email;
+        String redirect = "redirect:http://localhost:8083/sso/finish?email=" + email;
 
         if (name != null && !name.isBlank()) {
             redirect += "&name=" + name;
@@ -80,7 +80,6 @@ public class AuthController {
 
         return redirect;
     }
-
     // ================= SIGNUP + SEND OTP =================
     /**
      * Start signup process:
