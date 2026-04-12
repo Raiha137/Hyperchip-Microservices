@@ -76,9 +76,9 @@
                 </form>
 
                 <!-- LOGOUT -->
-                <a th:href="@{/logout}" class="btn btn-outline-light btn-sm">
-                    Logout
-                </a>
+                <form th:action="@{/logout}" method="get" class="d-inline">
+                    <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
