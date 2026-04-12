@@ -11,12 +11,12 @@ public class SecurityConfig {
 
     /**
      * Configures Spring Security filter chain for the Admin Service.
-     *
+     * <p>
      * Purpose:
      * - Defines which endpoints are accessible without authentication
      * - Disables CSRF protection for simplicity in server-to-server calls
      * - Configures logout behavior and session cleanup
-     *
+     * <p>
      * Security Scope:
      * - This service currently acts as a UI gateway / admin-facing service
      * - Authentication is handled externally (Auth Service)
@@ -66,9 +66,7 @@ public class SecurityConfig {
                         .logoutRequestMatcher(
                                 new AntPathRequestMatcher("/logout", "GET")
                         )
-                        .logoutSuccessUrl(
-                                "/login?logout"
-                        ) // Redirect to Auth Service login page
+                        .logoutSuccessUrl("http://localhost:8080/login?logout") // Redirect to Auth Service login page
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 );
