@@ -64,7 +64,7 @@ public class SecurityConfig {
                  */
                 .logout(logout -> logout
                         .logoutRequestMatcher(
-                                new AntPathRequestMatcher("/logout", "GET")
+                                new AntPathRequestMatcher("/admin/logout", "GET")
                         )
                         .logoutSuccessUrl("http://localhost:8080/login?logout") // Redirect to Auth Service login page
                         .invalidateHttpSession(true)
