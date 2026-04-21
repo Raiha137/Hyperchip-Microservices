@@ -96,15 +96,15 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        registry.addResourceHandler("/masters/uploads/categories/**")
+        registry.addResourceHandler("/uploads/categories/**")
                 .addResourceLocations("file:" + categoriesPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
 
-        registry.addResourceHandler("/masters/uploads/brands/**")
+        registry.addResourceHandler("/uploads/brands/**")
                 .addResourceLocations("file:" + brandsPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
 
-        registry.addResourceHandler("/masters/uploads/products/**")
+        registry.addResourceHandler("/uploads/products/**")
                 .addResourceLocations("file:" + productsPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
     }
