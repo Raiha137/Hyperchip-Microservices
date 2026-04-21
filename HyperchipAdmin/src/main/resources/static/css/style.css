@@ -3044,5 +3044,7 @@ header .navbar {
     padding: 18px 0;
 }
 
-
+.alert-success span{
+    color: #ece3e3 !important;
+ }
 

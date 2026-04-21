@@ -63,7 +63,7 @@
                         th:if="${category.imageName != null}"
                         data-bs-toggle="modal"
                         data-bs-target="#categoryImageModal"
-                        th:attr="data-image-url=@{'/uploads/categories/' + ${category.imageName}},
+                        th:attr="data-image-url=@{'/masters/uploads/categories/' + ${category.imageName}},
                         data-category-name=${category.name}">
                     <i class="bi bi-eye"></i> View
                 </button>
