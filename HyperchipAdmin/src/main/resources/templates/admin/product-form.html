@@ -183,7 +183,8 @@
                         <div th:each="img : ${product.imageNames}"
                              class="image-item"
                              th:attr="data-image-name=${img}">
-                            <img th:src="@{'/uploads/products/' + ${img}}"
+                            <img th:src="@{'/masters/uploads/products/' + ${img}}"
+
                                  th:attr="data-orig-url=@{'/masters/uploads/products/' + ${img}}"
                                  th:alt="${img}"
                                  onerror="this.dataset.broken='true'; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;120&quot; height=&quot;80&quot;><rect width=&quot;100%&quot; height=&quot;100%&quot; fill=&quot;%23f6f7f9&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; fill=&quot;%23999&quot; font-size=&quot;12&quot;>Image not found</text></svg>'" />

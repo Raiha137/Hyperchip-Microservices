@@ -108,6 +108,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
                 .addResourceLocations("file:" + productsPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
     }
+
     /**
      * Configure Cross-Origin Resource Sharing (CORS) rules.
      *

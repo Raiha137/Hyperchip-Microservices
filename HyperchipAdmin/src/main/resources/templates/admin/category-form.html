@@ -62,7 +62,8 @@
                     <div class="mb-3" id="existingImageContainer"
                          th:if="${category.imageName != null}">
                         <label class="form-label">Current Image:</label><br />
-                        <img th:src="@{'/uploads/categories/' + ${category.imageName}}"
+                        <img th:src="@{'/masters/uploads/categories/' + ${category.imageName}}"
+
                              width="120"
                              class="rounded" />
                     </div>

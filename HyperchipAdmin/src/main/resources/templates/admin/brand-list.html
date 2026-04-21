@@ -65,8 +65,9 @@
                                 th:if="${brand.imageName != null}"
                                 data-bs-toggle="modal"
                                 data-bs-target="#brandImageModal"
-                                th:attr="data-image-url=@{'/uploads/brands/' + ${brand.imageName}},
-                               data-brand-name=${brand.name}">
+                                th:attr="data-image-url=@{'/masters/uploads/brands/' + ${brand.imageName}},
+
+                                data-brand-name=${brand.name}">
                             <i class="bi bi-eye"></i> View
                         </button>
                         <span th:if="${brand.imageName == null}" class="text-muted small">

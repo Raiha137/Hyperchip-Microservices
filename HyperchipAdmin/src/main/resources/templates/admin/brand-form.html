@@ -52,7 +52,9 @@
                                 <!-- Existing image preview (for edit mode) -->
                                 <div class="mb-3" id="existingImageContainer" th:if="${brand.imageName != null}">
                                     <label class="form-label">Current Image:</label><br />
-                                    <img th:src="@{'/uploads/brands/' + ${brand.imageName}}" alt="brand" style="max-height:120px; object-fit:cover;" />
+                                    <img th:src="@{'/masters/uploads/brands/' + ${brand.imageName}}"
+
+                                         alt="brand" style="max-height:120px; object-fit:cover;" />
                                 </div>
                                 <div class="mb-3" id="previewContainer" style="display:none;">
                                     <label class="form-label">Selected Image Preview:</label><br />
