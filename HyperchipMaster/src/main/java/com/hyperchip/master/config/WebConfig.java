@@ -96,19 +96,18 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        registry.addResourceHandler("/uploads/categories/**")
+        registry.addResourceHandler("/masters/uploads/categories/**")
                 .addResourceLocations("file:" + categoriesPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
 
-        registry.addResourceHandler("/uploads/brands/**")
+        registry.addResourceHandler("/masters/uploads/brands/**")
                 .addResourceLocations("file:" + brandsPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
 
-        registry.addResourceHandler("/uploads/products/**")
+        registry.addResourceHandler("/masters/uploads/products/**")
                 .addResourceLocations("file:" + productsPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
     }
-
     /**
      * Configure Cross-Origin Resource Sharing (CORS) rules.
      *
