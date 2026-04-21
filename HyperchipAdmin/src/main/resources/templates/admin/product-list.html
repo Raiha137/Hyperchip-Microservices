@@ -94,7 +94,7 @@
                 <!-- First image only, small thumbnail -->
                 <td>
                     <img th:if="${product.imageNames != null and product.imageNames.size() > 0}"
-                         th:src="@{'/masters/uploads/products/' + ${product.imageNames[0]}}"
+                         th:src="@{'/uploads/products/' + ${product.imageNames[0]}}"
                          alt="Product Image"
                          style="height:50px; width:50px; object-fit:cover;" />
                 </td>
