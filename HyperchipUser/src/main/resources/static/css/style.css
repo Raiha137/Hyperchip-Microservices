@@ -6553,3 +6553,6 @@ body.hc-site-bg {
     min-width: 200px;
     max-width: 300px;
 }
+.alert-success {
+    color: #ece3e3 !important;
+ }
