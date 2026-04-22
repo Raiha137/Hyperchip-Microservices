@@ -6165,8 +6165,11 @@
  .hero {
      border-radius: 14px;
 }
- .checkout h5, span, strong{
+ .checkout h5, strong{
      color:#000;
+}
+ .alert span{
+     color:#fff !important;
 }
  .product-summary .product-title {
      color : #000;
