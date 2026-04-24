@@ -52,7 +52,7 @@ public class HomeController {
      * - Add them to the model for rendering on the home page
      * - Log the number of categories and products loaded
      */
-    @GetMapping({"/", "/user/home"})
+    @GetMapping({"/", "/home"})
     public String home(Model model) {
         List<CategoryDto> categories = categoryService.getAllCategories();
         List<ProductDto> products = productService.getAllProducts();

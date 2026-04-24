@@ -1,3 +1,4 @@
+/*auth-css*/
 /* header-footer.css */
 
 /* ---------------- User Navbar ---------------- */
@@ -3061,3 +3062,245 @@ input.form-control:focus, select.form-select:focus, textarea.form-control:focus 
 .alert-background{
     background:#f3a111;
 }
+
+/******************USER********************/
+
+/* ===== SEARCH BAR (ONLY IN USER.CSS) ===== */
+.hc-search-form { margin: 0; }
+
+.hc-search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+}
+
+.hc-search-input {
+    padding-right: 3.5rem;
+    height: 38px;
+    border-radius: 6px;
+}
+
+.hc-search-icon {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.hc-search-clear {
+    position: absolute;
+    right: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+}
+
+.hc-search-clear.visible { display: inline-flex; }
+
+
+/* ===== CUSTOM NAVBAR SYSTEM ===== */
+nav.hc-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+}
+
+.hc-navbar {
+    background: #020617;
+    border-bottom: 1px solid rgba(148,163,184,0.35);
+    padding: 0.6rem;
+}
+
+.hc-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #f9fafb;
+}
+
+.hc-nav {
+    display: flex;
+    gap: 1.4rem;
+}
+
+.hc-nav .nav-link {
+    color: #e5e7eb;
+    position: relative;
+}
+
+.hc-nav .nav-link::after {
+    content: "";
+    height: 2px;
+    background: linear-gradient(to right,#facc15,#f97316);
+    transform: scaleX(0);
+    transition: 0.2s;
+}
+
+.hc-nav .nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+/* ===== ICON PILLS ===== */
+.hc-icon-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(148,163,184,0.45);
+}
+
+.hc-icon-pill:hover {
+    border-color: #facc15;
+    color: #facc15;
+}
+
+.hc-avatar {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+}
+
+/* ===== EXTRA SMALL UTILITIES ===== */
+.align-items-center a {
+    margin: 1rem 2rem 0 0;
+}
+
+.profileImage {
+    background: radial-gradient(#bd951ed4, transparent);
+}
+
+/* ===== SWEET ALERT CUSTOM (NOT IN AUTH) ===== */
+.swal2-popup {
+    border-radius: 16px !important;
+}
+
+.swal2-styled.swal2-confirm {
+    background-color: #f3a111 !important;
+}
+
+.swal2-styled.swal2-cancel {
+    background-color: #6c757d !important;
+}
+
+/* ===== CONTACT PAGE (FULL EXTRA) ===== */
+body.hc-login-body {
+    background-color: #020816;
+    color: #f8f9fa;
+}
+
+.contact-hero {
+    position: relative;
+    padding: 56px 0;
+    background: url("/img/board-bg.jpg") center/cover no-repeat;
+}
+
+.contact-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(0,0,0,0.75), rgba(4,17,38,0.9));
+}
+
+.contact-card {
+    border-radius: 14px;
+    background: #050f1f;
+    padding: 24px;
+    border: 1px solid rgba(243,161,17,0.25);
+}
+
+.contact-section {
+    background: radial-gradient(circle at top,#0b1725,#02040a);
+}
+
+.support-form {
+    background-color: #050f1f;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid rgba(243,161,17,0.25);
+}
+
+.support-form .form-control {
+    background-color: #dfe9ff;
+    border-radius: 8px;
+}
+
+.support-form .btn-primary {
+    background-color: #f3a111;
+    border-radius: 999px;
+}
+
+.contact-info-card {
+    background-color: #050f1f;
+    border-radius: 16px;
+}
+
+.contact-list {
+    padding-left: 1.2rem;
+}
+
+.contact-msg {
+    color: #fff;
+}
+
+/* ===== COUPON (NOT IN AUTH) ===== */
+#coupon-discount-row {
+    font-weight: bold;
+    color: #d9534f;
+}
+
+#apply-coupon-btn {
+    min-width: 75px;
+}
+
+/* ===== LOGIN NEW DESIGN (EXTRA) ===== */
+.hc-login-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.hc-login-form-wrapper {
+    background: rgba(17,17,17,0.92);
+    border-radius: 1.2rem;
+    padding: 2rem;
+}
+
+.hc-login-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+}
+
+.hc-login-btn {
+    border-radius: 999px;
+    background: linear-gradient(to right,#fbbf24,#f59e0b);
+    font-weight: 700;
+}
+
+/* ===== AUTH INPUT MODERN ===== */
+.auth-input {
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: #e8f0fe;
+}
+
+
+.table-hover tbody tr:hover {
+    background: #fff7ed;
+}
+
+
+
+
+
+
+
+
+
+
+
