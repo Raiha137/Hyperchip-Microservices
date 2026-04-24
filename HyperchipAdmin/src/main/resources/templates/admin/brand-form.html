@@ -14,69 +14,97 @@
 </head>
 <body>
 <div th:replace="fragments/admin-header :: adminHeader"></div>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <!--                <div class="card-header bg-primary text-white text-center">-->
-                <!--                    <h3 th:text="${brand.id} == null ? 'Add Brand' : 'Edit Brand'">Brand Form</h3>-->
-                <!--                </div>-->
-                <div class="card-body">
-                    <div th:if="${successMsg}" class="alert alert-success text-center" th:text="${successMsg}"></div>
-                    <div th:if="${errorMsg}" class="alert alert-danger text-center" th:text="${errorMsg}"></div>
-                    <div class="addBrand">
-                        <div class="form-container">
-                            <h2 th:text="${brand.id} == null ? 'Add Brand' : 'Edit Brand'">Add Brand</h2>
-                            <form th:action="@{/admin/brands/save}" th:object="${brand}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                                <input type="hidden" th:field="*{id}" />
-                                <div class="form-group mb-3">
-                                    <label for="name">
-                                        Brand Name <span class="hc-required">*</span>
-                                    </label>
-                                    <input type="text" id="name"
-                                           th:field="*{name}"
-                                           class="form-control"
-                                           placeholder="Enter brand name"
-                                           required />
-                                    <div class="invalid-feedback">
-                                        Please enter the brand name.
-                                    </div>
-                                    <small id="dupBrandMsg" class="text-danger" style="display:none;">
-                                        Brand already exists. Please choose another name.
-                                    </small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="imageFile">Upload Image</label>
-                                    <input type="file" id="imageFile" name="imageFile" accept="image/*" />
-                                </div>
-                                <!-- Existing image preview (for edit mode) -->
-                                <div class="mb-3" id="existingImageContainer" th:if="${brand.imageName != null}">
-                                    <label class="form-label">Current Image:</label><br />
-                                    <img th:src="@{'/masters/uploads/brands/' + ${brand.imageName}}"
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-5 col-lg-4">
+            <div class="shadow p-4 rounded bg-dark text-white">
 
-                                         alt="brand" style="max-height:120px; object-fit:cover;" />
-                                </div>
-                                <div class="mb-3" id="previewContainer" style="display:none;">
-                                    <label class="form-label">Selected Image Preview:</label><br />
-                                    <img id="imagePreview" width="150" class="rounded" />
-                                </div>
-                                <div class="form-group checkbox">
-                                    <input type="checkbox" id="active" th:field="*{active}" />
-                                    <label for="active">Active</label>
-                                </div>
-                                <button type="submit" class="btn-submit"
-                                        th:text="${brand.id} == null ? 'Add Brand' : 'Update Brand'">Submit</button>
-                            </form>
-                            <div class="back-link">
-                                <a th:href="@{/admin/brands}">Back to Brand List</a>
-                            </div>
+                <form th:action="@{/admin/brands/save}"
+                      method="post"
+                      enctype="multipart/form-data"
+                      th:object="${brand}"
+                      class="needs-validation"
+                      novalidate>
+
+                    <h3 class="text-center mb-4"
+                        th:text="${brand.id} == null ? 'Add Brand' : 'Edit Brand'"></h3>
+
+                    <input type="hidden" th:field="*{id}" />
+
+                    <!-- BRAND NAME -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            Brand Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               id="name"
+                               class="form-control"
+                               th:field="*{name}"
+                               required />
+                        <div class="invalid-feedback">
+                            Brand name is required.
                         </div>
+                        <small id="dupBrandMsg" class="text-danger d-none">
+                            Brand already exists.
+                        </small>
                     </div>
+
+                    <!-- IMAGE -->
+                    <div class="mb-3">
+                        <label for="imageFile" class="form-label">Upload Image</label>
+                        <input type="file"
+                               id="imageFile"
+                               name="imageFile"
+                               class="form-control"
+                               accept="image/*" />
+                    </div>
+
+                    <!-- EXISTING IMAGE -->
+                    <div class="mb-3" id="existingImageContainer"
+                         th:if="${brand.imageName != null}">
+                        <label class="form-label">Current Image:</label><br />
+                        <img th:src="@{'/masters/uploads/brands/' + ${brand.imageName}}"
+                             width="120"
+                             class="rounded" />
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div class="mb-3" id="previewContainer" style="display:none;">
+                        <label class="form-label">Selected Image Preview:</label><br />
+                        <img id="imagePreview" width="150" class="rounded" />
+                    </div>
+
+                    <!-- ACTIVE -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox"
+                               th:field="*{active}"
+                               class="form-check-input"
+                               id="active" />
+                        <label class="form-check-label" for="active">Active</label>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <div class="text-center">
+                        <button type="submit"
+                                class="btn btn-warning w-100"
+                                th:text="${brand.id} == null ? 'Add Brand' : 'Update Brand'">
+                        </button>
+                    </div>
+
+                </form>
+
+                <div class="text-center mt-3">
+                    <a th:href="@{/admin/brands}" class="text-warning">
+                        Back to Brand List
+                    </a>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+
+
 <div th:replace="fragments/admin-footer :: adminFooter"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
