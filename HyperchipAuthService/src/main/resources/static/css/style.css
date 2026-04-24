@@ -3056,6 +3056,7 @@ input.form-control:focus, select.form-select:focus, textarea.form-control:focus 
 }
 .alert-success{
     color:#fff;
+    background:#000 !important;
 }
 .alert-background{
     background:#f3a111;
