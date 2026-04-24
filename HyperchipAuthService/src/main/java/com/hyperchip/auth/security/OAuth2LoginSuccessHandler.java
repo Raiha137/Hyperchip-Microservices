@@ -82,7 +82,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
         // Redirect user to user-service SSO finish URL
-        String redirectUrl = "/sso/finish" + redirect.substring(redirect.indexOf("?"));
+        String redirectUrl = "/user/sso/finish" + redirect.substring(redirect.indexOf("?"));
 
         if (roles.contains("ROLE_ADMIN") || roles.contains("ADMIN")) {
             response.sendRedirect("/admin/home");
