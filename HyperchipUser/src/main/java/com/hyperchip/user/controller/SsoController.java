@@ -67,6 +67,6 @@ public class SsoController {
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
             return "redirect:/admin/home";
         }
-        return "redirect:/home";
+        return "redirect:/user/home";
     }
 }
