@@ -195,21 +195,21 @@ public class UserController {
      * Display form to create a new address.
      * Supports returning only modal fragment if AJAX request.
      */
-    @GetMapping("/address/new")
-    public String newAddressForm(Principal principal, Model model, HttpSession session, HttpServletRequest request) {
-        Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/login";
-
-
-
-        model.addAttribute("address", new Address());
-
-        String xrw = request.getHeader("X-Requested-With");
-        if ("XMLHttpRequest".equalsIgnoreCase(xrw)) {
-            return "user/address-form :: addressForm";
-        }
-        return "user/address-form";
-    }
+//    @GetMapping("/address/new")
+//    public String newAddressForm(Principal principal, Model model, HttpSession session, HttpServletRequest request) {
+//        Long userId = resolveUserId(principal, session);
+//        if (userId == null) return "redirect:/login";
+//
+//
+//
+//        model.addAttribute("address", new Address());
+//
+//        String xrw = request.getHeader("X-Requested-With");
+//        if ("XMLHttpRequest".equalsIgnoreCase(xrw)) {
+//            return "user/address-form :: addressForm";
+//        }
+//        return "user/address-form";
+//    }
 
     /**
      * Create new address (AJAX or normal form).

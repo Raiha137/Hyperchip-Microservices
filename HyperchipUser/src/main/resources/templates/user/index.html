@@ -199,7 +199,7 @@
 
           const namesCsv = card.getAttribute('data-images') || '';
           const names = namesCsv.split(',').map(s => s.trim()).filter(Boolean);
-         
+
           const urls = names
             .map(name => '/uploads/products/' + name)
             .filter(Boolean);
