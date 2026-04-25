@@ -199,10 +199,9 @@
 
           const namesCsv = card.getAttribute('data-images') || '';
           const names = namesCsv.split(',').map(s => s.trim()).filter(Boolean);
-          const base = (card.getAttribute('data-master-base-url') || '').replace(/\/+$/, '');
-
+         
           const urls = names
-            .map(name => (base ? (base + '/uploads/products/' + name) : name))
+            .map(name => '/uploads/products/' + name)
             .filter(Boolean);
 
           let timer = null;
