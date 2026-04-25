@@ -85,11 +85,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
        String redirectUrl = "http://localhost:8080/sso/finish"
                 + redirect.substring(redirect.indexOf("?"));
 
-        if (roles.contains("ROLE_ADMIN") || roles.contains("ADMIN")) {
-            response.sendRedirect("/admin/home");
-        } else {
-            response.sendRedirect(redirectUrl);
-        }
+        response.sendRedirect(redirectUrl);
 
     }
 
