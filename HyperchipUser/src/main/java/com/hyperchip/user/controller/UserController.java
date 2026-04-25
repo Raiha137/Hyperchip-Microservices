@@ -36,7 +36,7 @@ import java.util.*;
  * Provides CRUD for addresses and updates profile with optional image upload.
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
@@ -93,7 +93,7 @@ public class UserController {
     @GetMapping("/updateProfile")
     public String editProfilePage(Principal principal, Model model, HttpSession session) {
         Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/user/login";
+        if (userId == null) return "redirect:/login";
 
         UserDtls user = userService.findById(userId).orElse(null);
         model.addAttribute("user", user);
@@ -117,7 +117,7 @@ public class UserController {
         Long userId = resolveUserId(principal, session);
         if (userId == null) {
             attributes.addFlashAttribute("errorMsg", "Please login to update profile.");
-            return "redirect:/user/login";
+            return "redirect:/login";
         }
 
         try {
@@ -160,7 +160,7 @@ public class UserController {
             }
 
             attributes.addFlashAttribute("successMsg", "Profile updated successfully.");
-            return "redirect:/user/profile";
+            return "redirect:/profile";
 
         } catch (IOException ioe) {
             log.error("Failed to save profile image", ioe);
@@ -170,7 +170,7 @@ public class UserController {
         } catch (Exception ex) {
             log.error("Profile update failed", ex);
             attributes.addFlashAttribute("errorMsg", "Profile update failed. Please try again.");
-            return "redirect:/user/updateProfile";
+            return "redirect:/updateProfile";
         }
     }
 
@@ -219,15 +219,15 @@ public class UserController {
                                 RedirectAttributes attrs, HttpSession session, HttpServletRequest request) {
         Long userId = resolveUserId(principal, session);
         if (userId == null) {
-            return handleAjaxOrRedirect(request, 401, "Please login to add address.", "/user/login");
+            return handleAjaxOrRedirect(request, 401, "Please login to add address.", "/login");
         }
 
         try {
             userService.addAddress(userId, address);
-            return handleAjaxOrRedirect(request, 200, "Address added successfully.", "/user/address");
+            return handleAjaxOrRedirect(request, 200, "Address added successfully.", "/address");
         } catch (Exception ex) {
             log.error("Failed to create address for userId={}", userId, ex);
-            return handleAjaxOrRedirect(request, 500, "Failed to add address.", "/user/address");
+            return handleAjaxOrRedirect(request, 500, "Failed to add address.", "/address");
         }
     }
 
@@ -245,11 +245,11 @@ public class UserController {
 
 
         Optional<Address> opt = userService.findAddressById(id);
-        if (opt.isEmpty()) return "redirect:/user/address";
+        if (opt.isEmpty()) return "redirect:/address";
 
         Address a = opt.get();
         if (a.getUser() == null || !userId.equals(a.getUser().getId())) {
-            return "redirect:/user/address";
+            return "redirect:/address";
         }
 
         model.addAttribute("address", a);
@@ -271,15 +271,15 @@ public class UserController {
 
         Long userId = resolveUserId(principal, session);
         if (userId == null) {
-            return handleAjaxOrRedirect(request, 401, "Please login to update address.", "/user/login");
+            return handleAjaxOrRedirect(request, 401, "Please login to update address.", "/login");
         }
 
         try {
             userService.updateAddress(id, address);
-            return handleAjaxOrRedirect(request, 200, "Address updated successfully.", "/user/address");
+            return handleAjaxOrRedirect(request, 200, "Address updated successfully.", "/address");
         } catch (Exception ex) {
             log.error("Failed to update address id={} for userId={}", id, userId, ex);
-            return handleAjaxOrRedirect(request, 500, "Failed to update address.", "/user/address");
+            return handleAjaxOrRedirect(request, 500, "Failed to update address.", "/address");
         }
     }
 
@@ -292,15 +292,15 @@ public class UserController {
 
         Long userId = resolveUserId(principal, session);
         if (userId == null) {
-            return handleAjaxOrRedirect(request, 401, "Please login to delete address.", "/user/login");
+            return handleAjaxOrRedirect(request, 401, "Please login to delete address.", "/login");
         }
 
         try {
             userService.deleteAddress(userId, id);
-            return handleAjaxOrRedirect(request, 200, "Address deleted", "/user/address");
+            return handleAjaxOrRedirect(request, 200, "Address deleted", "/address");
         } catch (Exception ex) {
             log.error("Failed to delete address id={} for userId={}", id, userId, ex);
-            return handleAjaxOrRedirect(request, 500, "Failed to delete address.", "/user/address");
+            return handleAjaxOrRedirect(request, 500, "Failed to delete address.", "/address");
         }
     }
 
