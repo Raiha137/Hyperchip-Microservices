@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 @RequiredArgsConstructor
 @Controller
 public class SsoController {
@@ -44,6 +46,22 @@ public class SsoController {
         }
 
         SessionUser su = userService.toSessionUser(user);
+
+// 1. Create authentication object
+        var auth = new UsernamePasswordAuthenticationToken(
+                su,
+                null,
+                java.util.List.of(() -> role != null && role.equalsIgnoreCase("ADMIN") ? "ROLE_ADMIN" : "ROLE_USER")
+        );
+
+// 2. Set into SecurityContext
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(auth);
+
+// 3. Save in session (CRITICAL)
+        session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+
+// 4. Your custom session (optional)
         session.setAttribute("currentUser", su);
 
         if (role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("ROLE_ADMIN"))) {
