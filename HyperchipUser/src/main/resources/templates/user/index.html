@@ -60,7 +60,7 @@
                     <div class="card category-card text-center p-3 border-0 shadow-sm rounded h-100">
                         <div class="cat-img-wrap mx-auto mb-2">
                             <img th:if="${category.imageName != null}"
-                                 th:src="${masterBaseUrl + '/uploads/categories/' + category.imageName}"
+                                 th:src="@{'/uploads/categories/' + category.imageName}"
                                  class="category-img" alt="Category Image" />
                             <img th:if="${category.imageName == null}"
                                  th:src="@{/img/default-category.png}" class="category-img" alt="Category" />
@@ -86,7 +86,7 @@
                          th:attr="data-href=@{'/user/product/' + ${product.id}}">
                         <div class="card-img-top product-img-wrap">
                             <img th:if="${product.imageNames != null and !#lists.isEmpty(product.imageNames)}"
-                                 th:src="${masterBaseUrl + '/uploads/products/' + product.imageNames[0]}"
+                                 th:src="@{'/uploads/products/' + product.imageNames[0]}"
                                  class="product-img" th:alt="${product.title}" />
                             <img th:if="${product.imageNames == null or #lists.isEmpty(product.imageNames)}"
                                  th:src="@{/img/default-product.png}" class="product-img" alt="No Image" />

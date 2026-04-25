@@ -309,7 +309,7 @@
                         </div>
                         <div class="product-img-wrapper">
                             <img th:if="${prod.imageNames != null and !#lists.isEmpty(prod.imageNames)}"
-                                 th:src="${masterBaseUrl + '/uploads/products/' + prod.imageNames[0]}"
+                                 th:src="@{ '/uploads/products/' + prod.imageNames[0]}"
                                  class="product-img" th:alt="${prod.title}" />
                             <img th:if="${prod.imageNames == null or #lists.isEmpty(prod.imageNames)}"
                                  th:src="@{/img/default-product.png}" class="product-img" alt="No Image" />
