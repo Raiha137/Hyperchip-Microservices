@@ -36,7 +36,7 @@ import java.util.*;
  * Provides CRUD for addresses and updates profile with optional image upload.
  */
 @Controller
-@RequestMapping("")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
