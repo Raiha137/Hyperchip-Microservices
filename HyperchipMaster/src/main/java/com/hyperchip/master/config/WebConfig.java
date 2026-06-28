@@ -84,6 +84,10 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
         // Products directory resolution
         productsPath = Paths.get(productsDirProp).toAbsolutePath().normalize();
         if (!Files.exists(productsPath)) Files.createDirectories(productsPath);
+
+        System.out.println("categoriesPath = " + categoriesPath);
+        System.out.println("brandsPath = " + brandsPath);
+        System.out.println("productsPath = " + productsPath);
     }
 
     /**

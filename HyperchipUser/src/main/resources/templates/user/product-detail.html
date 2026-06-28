@@ -126,7 +126,7 @@
         <div class="col-lg-6">
             <div class="zoom-container p-3 bg-white rounded" id="zoomContainer">
                 <img th:if="${product.imageNames != null and !#lists.isEmpty(product.imageNames)}"
-                     th:src="@{'/uploads/products/' + product.imageNames[0]}"
+                     th:src="@{'/uploads/products/' + ${product.imageNames[0]}}"
                      id="mainProductImage" class="zoomable img-fluid" th:alt="${product.title}" />
                 <img th:if="${product.imageNames == null or #lists.isEmpty(product.imageNames)}"
                      th:src="@{/img/default-product.png}" id="mainProductImage" class="zoomable img-fluid" alt="No Image Available" />
