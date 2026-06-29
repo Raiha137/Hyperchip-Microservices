@@ -227,6 +227,8 @@ services:
     build: ./HyperchipMaster
     image: ecommerceprojects-master-service:latest
     container_name: master-service
+    volumes:
+      - ./uploads:/uploads
     ports:
       - "8086:8086"
     env_file:
