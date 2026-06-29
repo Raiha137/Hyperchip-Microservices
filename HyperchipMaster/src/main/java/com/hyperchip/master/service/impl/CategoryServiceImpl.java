@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import org.springframework.beans.factory.annotation.Value;
 /**
  * Service implementation for Category entity.
  * Provides CRUD operations, soft delete, pagination, and image handling for categories.
@@ -28,6 +28,8 @@ public class CategoryServiceImpl implements CategoryService {
     // Topic name for event logging/messaging (can be integrated with Kafka or other messaging system)
     private static final String TOPIC = "category-events";
 
+    @Value("${upload.categories.dir}")
+    private String uploadDir;
     // ----------------------------------- CREATE CATEGORY -----------------------------------
     /**
      * Saves a new category to the database.
@@ -148,7 +150,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @throws IOException if saving file fails
      */
     private String storeImage(MultipartFile file) throws IOException {
-        String uploadDir = "uploads/categories";
+
         Path uploadPath = Paths.get(uploadDir);
 
         if (!Files.exists(uploadPath)) {
@@ -157,6 +159,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
+
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return fileName;
