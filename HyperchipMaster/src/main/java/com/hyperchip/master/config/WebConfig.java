@@ -82,7 +82,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
         if (!Files.exists(brandsPath)) Files.createDirectories(brandsPath);
 
         // Products directory resolution
-        productsPath = Paths.get(System.getProperty("user.dir"), productsDirProp).toAbsolutePath().normalize();
+        productsPath = Paths.get(productsDirProp).toAbsolutePath().normalize();
         if (!Files.exists(productsPath)) Files.createDirectories(productsPath);
 
         System.out.println("categoriesPath = " + categoriesPath);
@@ -109,7 +109,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
                 .setCachePeriod(3600);
 
         registry.addResourceHandler("/uploads/products/**")
-                .addResourceLocations("file:" + productsPath.toAbsolutePath() + "/")
+                .addResourceLocations("file:/uploads/products/")
                 .setCachePeriod(3600);
     }
 
