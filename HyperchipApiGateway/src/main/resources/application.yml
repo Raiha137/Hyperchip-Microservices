@@ -1,0 +1,12 @@
+  spring:
+    cloud:
+      gateway:
+        routes:
+          - id: master-service
+            uri: http://master-service:8086
+            predicates:
+              - Path=/api/masters/**
+          - id: master-uploads
+            uri: http://master-service:8086
+            predicates:
+              - Path=/uploads/**

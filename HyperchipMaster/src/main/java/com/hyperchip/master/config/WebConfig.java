@@ -109,7 +109,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
                 .setCachePeriod(3600);
 
         registry.addResourceHandler("/uploads/products/**")
-                .addResourceLocations("file:/uploads/products/")
+                .addResourceLocations("file:" + productsPath.toAbsolutePath() + "/")
                 .setCachePeriod(3600);
     }
 
