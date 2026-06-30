@@ -6559,3 +6559,11 @@ body.hc-site-bg {
 .alert-success {
     color: #ece3e3 !important;
  }
+
+.product-title {
+    color: #000 !important;
+}
+
+.price-value {
+    color: #000 !important;
+}

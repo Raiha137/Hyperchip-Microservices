@@ -83,7 +83,9 @@
             <div class="row g-4">
                 <div class="col-sm-6 col-md-4 col-lg-3" th:each="product : ${products}">
                     <div class="card product-card shadow-sm rounded h-100"
-                         th:attr="data-href=@{'/user/product/' + ${product.id}}">
+                         th:attr="
+        data-href=@{'/user/product/' + ${product.id}},
+        data-images=${#strings.listJoin(product.imageNames, ',')}">
                         <div class="card-img-top product-img-wrap">
                             <img th:if="${product.imageNames != null and !#lists.isEmpty(product.imageNames)}"
                                  th:src="@{'/uploads/products/' + ${product.imageNames[0]}}"
