@@ -342,7 +342,7 @@ public class CartServiceImpl implements CartService {
         try {
             String publicUrl = productServiceUrl.endsWith("/")
                     ? productServiceUrl + "products/" + productId
-                    : productServiceUrl + "/products/" + productId;
+                    : productServiceUrl + "/public/products/" + productId;
             return restTemplate.getForObject(publicUrl, CartProductDto.class);
         } catch (Exception e) {
             log.debug("public fetch failed for product {} : {}", productId, e.getMessage());
