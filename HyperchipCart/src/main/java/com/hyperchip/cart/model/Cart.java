@@ -50,16 +50,21 @@ public class Cart {
     )
     private List<CartItem> items = new ArrayList<>();
 
-    /**
-     * Time when the cart was created.
-     */
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-    /**
-     * Time when the cart was last updated.
-     */
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     /**
      * Helper method to add an item to the cart.
