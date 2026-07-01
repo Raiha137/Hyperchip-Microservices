@@ -351,10 +351,10 @@ public class CartServiceImpl implements CartService {
                         ? productServiceUrl + "api/admin/products/" + productId
                         : productServiceUrl + "/api/admin/products/" + productId;
                 return restTemplate.getForObject(adminUrl, CartProductDto.class);
-            } catch (Exception ex) {
-                log.warn("fetchProduct failed for id {}: {}", productId, ex.getMessage());
-                return null;
-            }
+            }  catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
         }
     }
 
