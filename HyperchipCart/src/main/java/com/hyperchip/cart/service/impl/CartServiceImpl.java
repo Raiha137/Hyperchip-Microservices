@@ -315,8 +315,8 @@ public class CartServiceImpl implements CartService {
         if (qty <= 0) return;
         try {
             String url = productServiceUrl.endsWith("/")
-                    ? productServiceUrl + "api/products/" + productId + "/decrementStock?qty=" + qty
-                    : productServiceUrl + "/api/products/" + productId + "/decrementStock?qty=" + qty;
+                    ? productServiceUrl + "public/products/" + productId + "/decrementStock?qty=" + qty
+                    : productServiceUrl + "/public/products/" + productId + "/decrementStock?qty=" + qty;
             restTemplate.put(url, null);
         } catch (Exception ex) {
             log.error("decrementProductStock failed for product {}: {}", productId, ex.getMessage());

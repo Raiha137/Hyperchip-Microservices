@@ -73,20 +73,11 @@ public class WishlistServiceImpl implements WishlistService {
         }
 
         // Product availability check via RestTemplate
-        String[] candidatePaths = new String[] {
-                productServiceBaseUrl.endsWith("/") ? productServiceBaseUrl + "api/products/" + productId
-                        : productServiceBaseUrl + "/api/products/" + productId,
-                productServiceBaseUrl.endsWith("/") ? productServiceBaseUrl + "api/admin/products/" + productId
-                        : productServiceBaseUrl + "/api/admin/products/" + productId
-        };
+        String url = masterServiceBase + "/public/products/" + productId;
 
-        Map<String, Object> product = null;
-        for (String url : candidatePaths) {
-            try {
-                product = restTemplate.getForObject(url, Map.class);
-                if (product != null) break;
-            } catch (Exception ignore) {}
-        }
+        Map<String, Object> product = restTemplate.getForObject(url, Map.class);
+
+
 
         if (product == null) {
             throw new RuntimeException("Product not found");
