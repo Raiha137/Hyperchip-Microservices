@@ -427,7 +427,7 @@ public class CartServiceImpl implements CartService {
                         String base = productServiceUrl.endsWith("/") ? productServiceUrl.substring(0, productServiceUrl.length() - 1) : productServiceUrl;
                         String filename = prod.getImageNames().get(0);
                         String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8);
-                        imageUrl = base + "/public/products/images/" + encoded;
+                        imageUrl = base + "/uploads/products/" + encoded;
                     }
                 }
             } catch (Exception e) {
@@ -497,9 +497,9 @@ public class CartServiceImpl implements CartService {
             }
             try {
                 String encoded = URLEncoder.encode(t, StandardCharsets.UTF_8);
-                return base + "/public/products/images/" + encoded;
+                return base + "/uploads/products/" + encoded;
             } catch (Exception e) {
-                return base + "/public/products/images/" + t;
+                return base + "/uploads/products/" + t;
             }
         }
 
