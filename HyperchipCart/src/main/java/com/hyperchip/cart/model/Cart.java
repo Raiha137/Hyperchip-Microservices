@@ -42,6 +42,7 @@ public class Cart {
      * - Cascade ALL ensures items are saved/removed with the cart
      * - orphanRemoval removes unused cart items automatically
      */
+    @Builder.Default
     @OneToMany(
             mappedBy = "cart",
             cascade = CascadeType.ALL,
