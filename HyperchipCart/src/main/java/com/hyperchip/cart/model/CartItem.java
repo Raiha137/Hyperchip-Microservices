@@ -72,6 +72,15 @@ public class CartItem {
      * Timestamp when the product
      * was added to the cart.
      */
+
+    @Builder.Default
     @Column(name = "added_at", nullable = false, updatable = false)
     private LocalDateTime addedAt = LocalDateTime.now();
+
+    @PrePersist
+    public void prePersist() {
+        if (addedAt == null) {
+            addedAt = LocalDateTime.now();
+        }
+    }
 }
