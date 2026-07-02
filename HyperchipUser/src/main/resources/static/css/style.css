@@ -494,9 +494,19 @@
  form .btn-light:hover {
      background-color: #f1f1f1;
 }
- .login .loginForm h1,h2,h4,h5,h6,div,a,span,label,input {
-     color: #fff;
-     font-family: 'Times New Roman', serif;
+.login .loginForm h1,
+.login .loginForm h2,
+.login .loginForm h3,
+.login .loginForm h4,
+.login .loginForm h5,
+.login .loginForm h6,
+.login .loginForm div,
+.login .loginForm a,
+.login .loginForm span,
+.login .loginForm label,
+.login .loginForm input {
+    color: #fff;
+    font-family: 'Times New Roman', serif;
 }
  .login-box{
      background-color: #08131e !important;
