@@ -424,10 +424,8 @@ public class CartServiceImpl implements CartService {
                             || stock < 1);
 
                     if (prod.getImageNames() != null && !prod.getImageNames().isEmpty()) {
-                        String base = productServiceUrl.endsWith("/") ? productServiceUrl.substring(0, productServiceUrl.length() - 1) : productServiceUrl;
                         String filename = prod.getImageNames().get(0);
-                        String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8);
-                        imageUrl = base + "/uploads/products/" + encoded;
+                        imageUrl = ensureAbsoluteImageUrl(filename);
                     }
                 }
             } catch (Exception e) {
@@ -482,7 +480,9 @@ public class CartServiceImpl implements CartService {
         if (t.isEmpty()) return null;
         if (t.startsWith("http://") || t.startsWith("https://")) return t;
 
-        String[] bases = new String[]{ uploadsBaseUrl, productServiceBase, masterServiceBase };
+        String[] bases = new String[]{
+                "http://localhost:8086"
+        };
         for (String base : bases) {
             if (base == null) continue;
             base = base.trim();
