@@ -44,23 +44,28 @@ public class UserPaymentProxyController {
 
     // ======================== CREATE PAYMENT ========================
 
-    /**
-     * Handles POST request to create payment for a given order.
-     * Flexible: forwards request to multiple candidate endpoints in payment service.
-     *
-     * @param orderId         Order ID for which payment is being created
-     * @param incoming        Optional request body containing additional payment info
-     * @param incomingHeaders Headers from the incoming request (e.g., auth, cookies)
-     * @return Response from the first working payment service endpoint
-     */
-    @PostMapping("/payment/create/{orderId}")
-    public ResponseEntity<?> createPaymentFlexible(@PathVariable("orderId") Long orderId,
-                                                   @RequestBody(required = false) Map<String, Object> incoming,
-                                                   @RequestHeader HttpHeaders incomingHeaders) {
-        List<String> candidates = buildCreateCandidates(orderId);
-        Map<String, Object> payload = (incoming == null) ? Map.of() : incoming;
 
-        return forwardPostToFirstWorking(candidates, payload, incomingHeaders);
+    @PostMapping("/payment/create/{orderId}")
+    public ResponseEntity<?> createPaymentFlexible(@PathVariable Long orderId) {
+        try {
+            String url = paymentServiceUrl + "/api/payments/create/" + orderId;
+
+            ResponseEntity<Map> response =
+                    restTemplate.postForEntity(url, null, Map.class);
+
+            return ResponseEntity.status(response.getStatusCode())
+                    .body(response.getBody());
+
+        } catch (Exception ex) {
+            log.error("Payment create failed for orderId {}", orderId, ex);
+
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(Map.of(
+                            "success", false,
+                            "message", "Payment service not reachable",
+                            "error", ex.getMessage()
+                    ));
+        }
     }
 
     /**
