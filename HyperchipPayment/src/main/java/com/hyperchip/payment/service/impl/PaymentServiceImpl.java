@@ -92,11 +92,21 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // === 1) Fetch order details from Order Service ===
+        log.info("====================================");
+        log.info("orderServiceUrl Property : {}", orderServiceUrl);
+
         String url = orderServiceUrl + "/" + orderId;
+
+        log.info("Calling Order Service");
+        log.info("Final Order URL : {}", url);
+
         Map<String, Object> order = restTemplate.getForObject(url, Map.class);
 
+        log.info("Order Response : {}", order);
+
+
+
         if (order == null) {
-            // Order service returned nothing — cannot proceed
             throw new RuntimeException("Order service returned null for order " + orderId);
         }
 
@@ -131,18 +141,33 @@ public class PaymentServiceImpl implements PaymentService {
 
         // === 3) Create Razorpay order ===
         // RazorpayClient initialization uses injected key + secret
-        RazorpayClient razorpay = new RazorpayClient(razorpayKey, razorpaySecret);
+        log.info("====================================");
+        log.info("Amount        : {}", amount);
+        log.info("Currency      : {}", currency);
+        log.info("Minor Amount  : {}", amountMinor);
+        log.info("Key Present   : {}", razorpayKey != null && !razorpayKey.isBlank());
+        log.info("Secret Present: {}", razorpaySecret != null && !razorpaySecret.isBlank());
+
 
         JSONObject req = new JSONObject();
         req.put("amount", amountMinor);
         req.put("currency", currency);
 
-        // Use orderNumber as receipt if present, otherwise generate a simple receipt
+// Use order number as receipt if present
         Object receiptValue = order.getOrDefault("orderNumber", "ORDER-" + orderId);
+
+        log.info("Receipt       : {}", receiptValue);
+
         req.put("receipt", receiptValue.toString());
 
-        // Create the order at Razorpay
+// Create Razorpay client
+        RazorpayClient razorpay =
+                new RazorpayClient(razorpayKey, razorpaySecret);
+
+// Create Razorpay order
         Order rpOrder = razorpay.orders.create(req);
+
+
         String rpOrderId = Objects.toString(rpOrder.get("id"), null);
 
         // === 4) Save payment in DB with status PENDING ===
