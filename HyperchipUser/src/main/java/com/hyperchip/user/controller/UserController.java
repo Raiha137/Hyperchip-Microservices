@@ -179,17 +179,17 @@ public class UserController {
     /**
      * Display all addresses for current user.
      */
-    @GetMapping("/address")
-    public String userAddressList(Principal principal, Model model, HttpSession session) {
-        Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/login";
-
-
-
-        List<Address> addresses = userService.listAddresses(userId);
-        model.addAttribute("addresses", addresses);
-        return "user/address-list";
-    }
+//    @GetMapping("/address")
+//    public String userAddressList(Principal principal, Model model, HttpSession session) {
+//        Long userId = resolveUserId(principal, session);
+//        if (userId == null) return "redirect:/login";
+//
+//
+//
+//        List<Address> addresses = userService.listAddresses(userId);
+//        model.addAttribute("addresses", addresses);
+//        return "user/address-list";
+//    }
 
     /**
      * Display form to create a new address.
@@ -213,96 +213,96 @@ public class UserController {
 
     /**
      * Create new address (AJAX or normal form).
-     */
-    @PostMapping("/address/create")
-    public Object createAddress(Principal principal, @ModelAttribute Address address,
-                                RedirectAttributes attrs, HttpSession session, HttpServletRequest request) {
-        Long userId = resolveUserId(principal, session);
-        if (userId == null) {
-            return handleAjaxOrRedirect(request, 401, "Please login to add address.", "/login");
-        }
-
-        try {
-            userService.addAddress(userId, address);
-            return handleAjaxOrRedirect(request, 200, "Address added successfully.", "/address");
-        } catch (Exception ex) {
-            log.error("Failed to create address for userId={}", userId, ex);
-            return handleAjaxOrRedirect(request, 500, "Failed to add address.", "/address");
-        }
-    }
-
-    /**
-     * Display form to edit an address.
-     */
-    @GetMapping("/address/{id}/edit")
-    public String editAddressForm(@PathVariable("id") Long id,
-                                  Principal principal, Model model,
-                                  HttpSession session, HttpServletRequest request) {
-
-        Long userId = resolveUserId(principal, session);
-        if (userId == null) return "redirect:/login";
-
-
-
-        Optional<Address> opt = userService.findAddressById(id);
-        if (opt.isEmpty()) return "redirect:/address";
-
-        Address a = opt.get();
-        if (a.getUser() == null || !userId.equals(a.getUser().getId())) {
-            return "redirect:/address";
-        }
-
-        model.addAttribute("address", a);
-
-        String xrw = request.getHeader("X-Requested-With");
-        if ("XMLHttpRequest".equalsIgnoreCase(xrw)) {
-            return "user/address-form :: addressForm";
-        }
-        return "user/address-form";
-    }
-
-    /**
-     * Update address by ID (AJAX or normal form).
-     */
-    @PostMapping("/address/{id}/update")
-    public Object updateAddressById(@PathVariable("id") Long id, @ModelAttribute Address address,
-                                    Principal principal, RedirectAttributes attrs,
-                                    HttpSession session, HttpServletRequest request) {
-
-        Long userId = resolveUserId(principal, session);
-        if (userId == null) {
-            return handleAjaxOrRedirect(request, 401, "Please login to update address.", "/login");
-        }
-
-        try {
-            userService.updateAddress(id, address);
-            return handleAjaxOrRedirect(request, 200, "Address updated successfully.", "/address");
-        } catch (Exception ex) {
-            log.error("Failed to update address id={} for userId={}", id, userId, ex);
-            return handleAjaxOrRedirect(request, 500, "Failed to update address.", "/address");
-        }
-    }
-
-    /**
-     * Delete address by ID (AJAX or normal form).
-     */
-    @PostMapping("/address/{id}/delete")
-    public Object deleteAddressById(@PathVariable("id") Long id, Principal principal,
-                                    RedirectAttributes attrs, HttpSession session, HttpServletRequest request) {
-
-        Long userId = resolveUserId(principal, session);
-        if (userId == null) {
-            return handleAjaxOrRedirect(request, 401, "Please login to delete address.", "/login");
-        }
-
-        try {
-            userService.deleteAddress(userId, id);
-            return handleAjaxOrRedirect(request, 200, "Address deleted", "/address");
-        } catch (Exception ex) {
-            log.error("Failed to delete address id={} for userId={}", id, userId, ex);
-            return handleAjaxOrRedirect(request, 500, "Failed to delete address.", "/address");
-        }
-    }
+//     */
+//    @PostMapping("/address/create")
+//    public Object createAddress(Principal principal, @ModelAttribute Address address,
+//                                RedirectAttributes attrs, HttpSession session, HttpServletRequest request) {
+//        Long userId = resolveUserId(principal, session);
+//        if (userId == null) {
+//            return handleAjaxOrRedirect(request, 401, "Please login to add address.", "/login");
+//        }
+//
+//        try {
+//            userService.addAddress(userId, address);
+//            return handleAjaxOrRedirect(request, 200, "Address added successfully.", "/address");
+//        } catch (Exception ex) {
+//            log.error("Failed to create address for userId={}", userId, ex);
+//            return handleAjaxOrRedirect(request, 500, "Failed to add address.", "/address");
+//        }
+//    }
+//
+//    /**
+//     * Display form to edit an address.
+//     */
+//    @GetMapping("/address/{id}/edit")
+//    public String editAddressForm(@PathVariable("id") Long id,
+//                                  Principal principal, Model model,
+//                                  HttpSession session, HttpServletRequest request) {
+//
+//        Long userId = resolveUserId(principal, session);
+//        if (userId == null) return "redirect:/login";
+//
+//
+//
+//        Optional<Address> opt = userService.findAddressById(id);
+//        if (opt.isEmpty()) return "redirect:/address";
+//
+//        Address a = opt.get();
+//        if (a.getUser() == null || !userId.equals(a.getUser().getId())) {
+//            return "redirect:/address";
+//        }
+//
+//        model.addAttribute("address", a);
+//
+//        String xrw = request.getHeader("X-Requested-With");
+//        if ("XMLHttpRequest".equalsIgnoreCase(xrw)) {
+//            return "user/address-form :: addressForm";
+//        }
+//        return "user/address-form";
+//    }
+//
+//    /**
+//     * Update address by ID (AJAX or normal form).
+//     */
+//    @PostMapping("/address/{id}/update")
+//    public Object updateAddressById(@PathVariable("id") Long id, @ModelAttribute Address address,
+//                                    Principal principal, RedirectAttributes attrs,
+//                                    HttpSession session, HttpServletRequest request) {
+//
+//        Long userId = resolveUserId(principal, session);
+//        if (userId == null) {
+//            return handleAjaxOrRedirect(request, 401, "Please login to update address.", "/login");
+//        }
+//
+//        try {
+//            userService.updateAddress(id, address);
+//            return handleAjaxOrRedirect(request, 200, "Address updated successfully.", "/address");
+//        } catch (Exception ex) {
+//            log.error("Failed to update address id={} for userId={}", id, userId, ex);
+//            return handleAjaxOrRedirect(request, 500, "Failed to update address.", "/address");
+//        }
+//    }
+//
+//    /**
+//     * Delete address by ID (AJAX or normal form).
+//     */
+//    @PostMapping("/address/{id}/delete")
+//    public Object deleteAddressById(@PathVariable("id") Long id, Principal principal,
+//                                    RedirectAttributes attrs, HttpSession session, HttpServletRequest request) {
+//
+//        Long userId = resolveUserId(principal, session);
+//        if (userId == null) {
+//            return handleAjaxOrRedirect(request, 401, "Please login to delete address.", "/login");
+//        }
+//
+//        try {
+//            userService.deleteAddress(userId, id);
+//            return handleAjaxOrRedirect(request, 200, "Address deleted", "/address");
+//        } catch (Exception ex) {
+//            log.error("Failed to delete address id={} for userId={}", id, userId, ex);
+//            return handleAjaxOrRedirect(request, 500, "Failed to delete address.", "/address");
+//        }
+//    }
 
     // ==================== ORDERS ====================
 

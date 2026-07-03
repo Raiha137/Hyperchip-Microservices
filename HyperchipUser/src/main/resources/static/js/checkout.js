@@ -354,10 +354,8 @@ const res = await fetch('/user/api/proxy/checkout/place', {
 async function createRazorOrderOnServer(appOrderId) {
   // For GET we don't need a JSON body
   const res = await fetch(endpoints.createRazor(appOrderId), {
-    method: 'GET',
+    method: 'POST',
     credentials: 'same-origin'
-    // you can add CSRF headers if your user-service requires it for GET,
-    // but usually CSRF is only checked for POST/PUT/DELETE.
   });
 
   if (!res.ok) {
@@ -516,8 +514,39 @@ if (paymentMethod === 'RAZORPAY' || paymentMethod === 'ONLINE' || paymentMethod 
   if (typeof Razorpay === 'undefined') {
     throw new Error('Razorpay SDK not loaded');
   }
+
+// ================= DEBUG START =================
+
+  console.log("========================================");
+  console.log("Razor Response");
+  console.log(razor);
+
+  console.log("========================================");
+  console.log("Razor Options");
+  console.log(rzpOptions);
+
+  console.log("========================================");
+  console.log("Razorpay Object");
+  console.log(window.Razorpay);
+
+  console.log("========================================");
+  console.log("Razorpay Key:", razor.razorpayKey);
+  console.log("Razorpay Order ID:", razor.razorpayOrderId);
+  console.log("Amount:", razor.amount);
+  console.log("Amount Minor:", razor.amountMinor);
+  console.log("Currency:", razor.currency);
+  console.log("Fake:", razor.fake);
+
+// ================= DEBUG END =================
+
   const rzp = new Razorpay(rzpOptions);
+
+  console.log("========================================");
+  console.log("Razorpay Instance");
+  console.log(rzp);
+
   rzp.open();
+
   setButtonLoading(false);
   return;
 }

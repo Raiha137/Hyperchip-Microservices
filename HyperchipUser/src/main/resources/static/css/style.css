@@ -950,10 +950,9 @@
      background-color: #f8f9fa;
 }
 /* Shared font and color theme */
- .login .loginForm h1, h2, h3, h4, h5, h6, div, a, span, label, input {
-     color: #fff;
-     font-family: 'Times New Roman', serif;
-}
+
+
+
  .login-box {
      background-color: #08131e !important;
      border-radius: 12px;
@@ -3624,10 +3623,10 @@
  form .btn-light:hover {
      background-color: #f1f1f1;
 }
- .login .loginForm h1,h2,h4,h5,h6,div,a,span,label,input {
-     color: #fff;
-     font-family: 'Times New Roman', serif;
-}
+/* .login .loginForm h1,h2,h4,h5,h6,div,a,span,label,input {*/
+/*     color: #fff;*/
+/*     font-family: 'Times New Roman', serif;*/
+/*}*/
  .login-box{
      background-color: #08131e !important;
 }
@@ -4041,10 +4040,10 @@
      background-color: #f8f9fa;
 }
 /* Shared font and color theme */
- .login .loginForm h1, h2, h3, h4, h5, h6, div, a, span, label, input {
-     color: #fff;
-     font-family: 'Times New Roman', serif;
-}
+/* .login .loginForm h1, h2, h3, h4, h5, h6, div, a, span, label, input {*/
+/*     color: #fff;*/
+/*     font-family: 'Times New Roman', serif;*/
+/*}*/
  .login-box {
      background-color: #08131e !important;
      border-radius: 12px;

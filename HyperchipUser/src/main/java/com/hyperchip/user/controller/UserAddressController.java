@@ -2,15 +2,14 @@ package com.hyperchip.user.controller;
 
 import com.hyperchip.common.dto.AddressDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+
+import com.hyperchip.user.service.UserService;
+import com.hyperchip.user.model.Address;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
 import jakarta.servlet.http.HttpSession;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,13 +21,10 @@ import java.util.List;
  */
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/address")
+@RequestMapping("/user/address")
 public class UserAddressController {
 
-    private final RestTemplate restTemplate;
-
-    @Value("${address.service.url:http://localhost:8090}")
-    private String addressServiceUrl;
+    private final UserService userService;
 
     /**
      * Helper method to resolve the current user ID from session or optional X-User-Id header.
@@ -64,20 +60,7 @@ public class UserAddressController {
         if (userId == null) return "redirect:/login";
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-User-Id", userId.toString());
-            HttpEntity<Void> ent = new HttpEntity<>(headers);
-
-            ResponseEntity<AddressDto[]> resp = restTemplate.exchange(
-                    addressServiceUrl + "/api/addresses",
-                    HttpMethod.GET,
-                    ent,
-                    AddressDto[].class
-            );
-
-            List<AddressDto> addresses = resp.getStatusCode() == HttpStatus.OK && resp.getBody() != null
-                    ? Arrays.asList(resp.getBody())
-                    : Collections.emptyList();
+            List<Address> addresses = userService.listAddresses(userId);
             model.addAttribute("addresses", addresses);
         } catch (Exception ex) {
             model.addAttribute("addresses", Collections.emptyList());
@@ -108,15 +91,24 @@ public class UserAddressController {
         if (userId == null) return "redirect:/login";
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Id", userId.toString());
-            HttpEntity<AddressDto> ent = new HttpEntity<>(dto, headers);
-            restTemplate.postForEntity(addressServiceUrl + "/api/addresses", ent, AddressDto.class);
+            Address address = new Address();
+
+            address.setLabel(dto.getLabel());
+            address.setContactName(dto.getContactName());
+            address.setContactPhone(dto.getContactPhone());
+            address.setAddressLine1(dto.getAddressLine1());
+            address.setAddressLine2(dto.getAddressLine2());
+            address.setCity(dto.getCity());
+            address.setState(dto.getState());
+            address.setPincode(dto.getPincode());
+            address.setCountry(dto.getCountry());
+            address.setIsDefault(dto.getIsDefault());
+
+            userService.addAddress(userId, address);
         } catch (Exception ex) {
             // Optionally log or add error message
         }
-        return "redirect:/address";
+        return "redirect:/user/address";
     }
 
     /**
@@ -132,17 +124,8 @@ public class UserAddressController {
         if (userId == null) return "redirect:/login";
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-User-Id", userId.toString());
-            HttpEntity<Void> ent = new HttpEntity<>(headers);
-
-            ResponseEntity<AddressDto> resp = restTemplate.exchange(
-                    addressServiceUrl + "/api/addresses/" + id,
-                    HttpMethod.GET,
-                    ent,
-                    AddressDto.class
-            );
-            model.addAttribute("address", resp.getBody());
+            Address address = userService.findAddressById(id).orElseThrow();
+            model.addAttribute("address", address);
         } catch (Exception ex) {
             model.addAttribute("address", new AddressDto());
         }
@@ -163,16 +146,24 @@ public class UserAddressController {
         if (userId == null) return "redirect:/login";
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Id", userId.toString());
-            HttpEntity<AddressDto> ent = new HttpEntity<>(dto, headers);
-            restTemplate.exchange(addressServiceUrl + "/api/addresses/" + id, HttpMethod.PUT, ent, AddressDto.class);
+            Address address = new Address();
+
+            address.setLabel(dto.getLabel());
+            address.setContactName(dto.getContactName());
+            address.setContactPhone(dto.getContactPhone());
+            address.setAddressLine1(dto.getAddressLine1());
+            address.setAddressLine2(dto.getAddressLine2());
+            address.setCity(dto.getCity());
+            address.setState(dto.getState());
+            address.setPincode(dto.getPincode());
+            address.setCountry(dto.getCountry());
+            address.setIsDefault(dto.getIsDefault());
+
+            userService.updateAddress(id, address);
         } catch (Exception ex) {
             // Optionally log or handle error
         }
-
-        return "redirect:/address";
+        return "redirect:/user/address";
     }
 
     /**
@@ -187,15 +178,11 @@ public class UserAddressController {
         if (userId == null) return "redirect:/login";
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-User-Id", userId.toString());
-            HttpEntity<Void> ent = new HttpEntity<>(headers);
-            restTemplate.exchange(addressServiceUrl + "/api/addresses/" + id, HttpMethod.DELETE, ent, Void.class);
+            userService.deleteAddress(userId, id);
         } catch (Exception ex) {
             // Optionally log or handle
         }
-
-        return "redirect:/address";
+        return "redirect:/user/address";
     }
 
     /**
@@ -210,14 +197,12 @@ public class UserAddressController {
         if (userId == null) return "redirect:/login";
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-User-Id", userId.toString());
-            HttpEntity<Void> ent = new HttpEntity<>(headers);
-            restTemplate.exchange(addressServiceUrl + "/api/addresses/" + id + "/set-default", HttpMethod.PUT, ent, AddressDto.class);
+
+            userService.setDefaultAddress(id, userId);
         } catch (Exception ex) {
             // ignore
         }
 
-        return "redirect:/address";
+        return "redirect:/user/address";
     }
 }
