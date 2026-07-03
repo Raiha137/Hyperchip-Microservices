@@ -38,7 +38,7 @@ public class UserPaymentProxyController {
      * Base URL of the payment microservice.
      * Can include "/api/payments" or just host:port; the controller normalizes it.
      */
-    @Value("${payment.service.url:http://localhost:8094}")
+    @Value("${payment.service.url:http://payment-service:8094}")
     private String paymentServiceUrl;
 
 
