@@ -170,6 +170,10 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         for (OrderItem it : items) order.addItem(it);
         order.setOrderNumber(generateOrderNumber());
+
+        order.setStatus(OrderStatus.PENDING);
+        order.setPaymentStatus("PENDING");
+
         Order saved = orderRepository.save(order);
 // ---------- COD FLOW ----------
         if ("COD".equalsIgnoreCase(order.getPaymentMethod())) {
