@@ -740,7 +740,7 @@ public class OrderServiceImpl implements OrderService {
         itemsTable.setWidthPercentage(100);
         itemsTable.setWidths(new int[]{8, 42, 10, 20, 20});
 // header row
-        Stream.of("No", "Item", "Qty", "Unit Price (AED)", "Line Total (AED)")
+        Stream.of("No", "Item", "Qty", "Unit Price (₹)", "Line Total (₹)")
                 .forEach(col -> {
                     PdfPCell c = new PdfPCell(new Phrase(col, sectionHeader));
                     c.setBackgroundColor(Color.LIGHT_GRAY);
@@ -798,25 +798,25 @@ public class OrderServiceImpl implements OrderService {
             summary.addCell(l);
             summary.addCell(v);
         };
-        addRow.accept("Subtotal", String.format("AED %.2f", subtotal));
-        addRow.accept("Tax", String.format("AED %.2f", tax));
-        addRow.accept("Shipping", String.format("AED %.2f", shipping));
+        addRow.accept("Subtotal", String.format("₹ %.2f", subtotal));
+        addRow.accept("Tax", String.format("₹ %.2f", tax));
+        addRow.accept("Shipping", String.format("₹ %.2f", shipping));
         if (discount > 0.0) {
-            addRow.accept("Discount", String.format("- AED %.2f", discount));
+            addRow.accept("Discount", String.format("- ₹ %.2f", discount));
         }
 // bold row for grand total
         PdfPCell totalLabel = new PdfPCell(new Phrase("Total", sectionHeader));
         totalLabel.setBorder(PdfPCell.TOP);
         totalLabel.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
         summary.addCell(totalLabel);
-        PdfPCell totalValue = new PdfPCell(new Phrase(String.format("AED %.2f", grandTotal), sectionHeader));
+        PdfPCell totalValue = new PdfPCell(new Phrase(String.format("₹ %.2f", grandTotal), sectionHeader));
         totalValue.setBorder(PdfPCell.TOP);
         totalValue.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
         summary.addCell(totalValue);
 // Paid / Balance
         if (paid > 0.0) {
-            addRow.accept("Paid", String.format("AED %.2f", paid));
-            addRow.accept("Balance Due", String.format("AED %.2f", balanceDue));
+            addRow.accept("Paid", String.format("₹ %.2f", paid));
+            addRow.accept("Balance Due", String.format("₹ %.2f", balanceDue));
         }
         summary.setSpacingAfter(20f);
         doc.add(summary);

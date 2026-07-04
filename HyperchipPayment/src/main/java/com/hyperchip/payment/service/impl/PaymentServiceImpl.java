@@ -297,12 +297,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Notify Order Service that payment is successful (best-effort)
         try {
-            String notifyUrl = orderServiceUrl + "/" + orderId + "/mark-paid";
+            String notifyUrl = orderServiceUrl + "/api/orders/" + orderId + "/mark-paid";
 
             Map<String, Object> req = Map.of(
                     "paymentReference", paymentId,
                     "paymentMethod", "RAZORPAY",
-                    // send amount to order service if available (could be null)
                     "amount", payment.getAmount() != null ? payment.getAmount() : 0.0
             );
 

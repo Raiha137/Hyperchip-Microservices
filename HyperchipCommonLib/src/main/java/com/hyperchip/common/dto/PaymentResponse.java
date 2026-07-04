@@ -36,7 +36,7 @@ public class PaymentResponse {
     private Double amount;          // e.g. 392.18
     private Long amountMinor;       // e.g. 39218
 
-    // currency (INR, AED, USD, etc.)
+    // currency (INR, ₹, USD, etc.)
     private String currency;
 
     // test/fake mode flag

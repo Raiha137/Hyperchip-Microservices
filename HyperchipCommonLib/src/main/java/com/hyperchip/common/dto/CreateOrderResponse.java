@@ -23,7 +23,7 @@ public class CreateOrderResponse implements Serializable {
     /** Amount in smallest unit (e.g., fils/paise) */
     private Long amount;
 
-    /** Currency code, e.g. "AED" */
+    /** Currency code, e.g. "₹" */
     private String currency;
 
     /** Public key id to expose to frontend (rzp_xxx) */

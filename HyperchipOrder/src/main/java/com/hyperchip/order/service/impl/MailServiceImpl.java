@@ -92,7 +92,7 @@ public class MailServiceImpl implements MailService {
         for (OrderItem item : order.getOrderItems()) {
             itemsList.append("• ").append(item.getProductTitle())
                     .append(" x").append(item.getQuantity())
-                    .append(" = AED ").append(item.getTotal()).append("\n");
+                    .append(" = ₹ ").append(item.getTotal()).append("\n");
         }
 
         // 4️⃣ Build email body
@@ -107,10 +107,10 @@ public class MailServiceImpl implements MailService {
                 "📦 Items Ordered\n" +
                 itemsList + "\n" +
                 "💰 Price Summary\n" +
-                "• Subtotal       : AED " + order.getSubtotal() + "\n" +
-                "• Discount       : AED " + discount + "\n" +
-                "• Shipping       : AED " + order.getShipping() + "\n" +
-                "• Total Amount   : AED " + order.getTotalAmount() + "\n\n" +
+                "• Subtotal       : ₹ " + order.getSubtotal() + "\n" +
+                "• Discount       : ₹ " + discount + "\n" +
+                "• Shipping       : ₹ " + order.getShipping() + "\n" +
+                "• Total Amount   : ₹ " + order.getTotalAmount() + "\n\n" +
                 "🚚 Delivery Address\n" + deliveryAddress + "\n\n" +
                 "Track your order here: https://hyperchip.com/my-orders\n\n" +
                 "Thanks for choosing Hyperchip ❤️";

@@ -52,7 +52,7 @@
 //        }
 //        msg.setSubject("Order Confirmed \u2014 " + (order.getOrderNumber() != null ? order.getOrderNumber() : order.getId()));
 //        String body = "Thank you. Your order " + (order.getOrderNumber() != null ? order.getOrderNumber() : order.getId())
-//                + " has been placed. Total: AED " + (order.getTotal() == null ? "0.00" : order.getTotal()) + ".";
+//                + " has been placed. Total: ₹ " + (order.getTotal() == null ? "0.00" : order.getTotal()) + ".";
 //        msg.setText(body);
 //
 //        try {
