@@ -23,7 +23,7 @@ public class ProductServiceClient {
      * @return base URL as a String
      */
     private String baseUrl() {
-        String base = "http://master-service:8086"; // master-service port
+        String base = "http://localhost:8086"; // master-service port
         if (base.endsWith("/")) {
             base = base.substring(0, base.length() - 1);
         }
@@ -55,7 +55,7 @@ public class ProductServiceClient {
         } catch (Exception ex) {
             log.error("❌ STOCK INCREMENT FAILED productId={}, qty={}, error={}",
                     productId, quantity, ex.getMessage(), ex);
-            throw ex;
+            log.warn("Stock update failed but continuing order flow");
         }
     }
     /**
