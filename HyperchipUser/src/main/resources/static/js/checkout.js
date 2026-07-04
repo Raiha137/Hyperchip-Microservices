@@ -353,9 +353,11 @@ const res = await fetch('/user/api/proxy/checkout/place', {
 // ask server to create Razorpay order (POST → computes amount)
 async function createRazorOrderOnServer(appOrderId) {
   // For GET we don't need a JSON body
-  const res = await fetch(endpoints.createRazor(appOrderId), {
+  const res = await fetch(`/user/api/proxy/payment/create/${encodeURIComponent(appOrderId)}`, {
     method: 'POST',
-    credentials: 'same-origin'
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ appOrderId })
   });
 
   if (!res.ok) {
@@ -371,7 +373,7 @@ async function createRazorOrderOnServer(appOrderId) {
 
 async function verifyRazorOnServer(appOrderId, payload) {
   const headers = Object.assign({ 'Content-Type': 'application/json' }, getCsrfHeaders());
-const res = await fetch(endpoints.verifyRazor(appOrderId), {
+  const res = await fetch(`/user/api/proxy/payment/verify/${encodeURIComponent(appOrderId)}`, {
   method: 'POST',
   headers,
   credentials: 'same-origin',
@@ -423,7 +425,7 @@ const res = await fetch(endpoints.verifyRazor(appOrderId), {
       setButtonLoading(true, 'Placing order...');
       const placed = await placeAppOrder(payload);
       const appOrderId = placed?.orderId || placed?.id;
-      const appOrderNumber = placed?.orderNumber || placed?.orderNo;
+      const appOrderNumber = placed?.orderNumber || placed?.orderNo || appOrderId;
 
       if (!appOrderId) throw new Error('Invalid order id from server');
 
@@ -450,12 +452,16 @@ if (paymentMethod === 'RAZORPAY' || paymentMethod === 'ONLINE' || paymentMethod 
       };
 
       // call your backend verify endpoint
-      await verifyRazorOnServer(appOrderId, fakeVerify);
+      const res = await verifyRazorOnServer(appOrderId, fakeVerify);
 
-      // show success page
-      // 2. Fake Razorpay success
-      window.location.href =
-        '/user/order/success-page?orderNumber=' + encodeURIComponent(appOrderNumber || '');
+// IMPORTANT: check backend response
+      if (res && res.success === true) {
+        window.location.href =
+            '/user/order/success-page?orderNumber=' + encodeURIComponent(appOrderId);
+      } else {
+        window.location.href =
+            '/user/order/payment-failed?orderNumber=' + encodeURIComponent(appOrderId);
+      }
       return;
     } catch (e) {
       console.error('fake verify error', e);
@@ -472,11 +478,11 @@ if (paymentMethod === 'RAZORPAY' || paymentMethod === 'ONLINE' || paymentMethod 
     key: razor.razorpayKey,                                // from backend
     order_id: razor.razorpayOrderId,                       // from backend
     amount: razor.amountMinor || Math.round(razor.amount * 100), // use amountMinor if available
-    currency: razor.currency || "USD",                     // use backend currency if set
+    currency: razor.currency || "INR",                     // use backend currency if set
     name: razor.name || 'Hyperchip',
     description: razor.description || ('Order ' + (appOrderNumber || appOrderId)),
     prefill: razor.prefill || { email: el.userEmail?.value || '' },
-    notes: { appOrderId: String(appOrderId), appOrderNumber: String(appOrderNumber || '') },
+    notes: { appOrderId: String(appOrderId), appOrderNumber: String(appOrderNumber ?? appOrderId) },
 
 
  handler: async function (response) {

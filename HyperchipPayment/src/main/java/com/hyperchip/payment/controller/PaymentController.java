@@ -128,7 +128,7 @@ public class PaymentController {
      *
      * POST /api/payments/create?orderId=...
      */
-    @PostMapping("/create")
+    @PostMapping("/create/{orderId}")
     public ResponseEntity<?> createOrderParam(@RequestParam("orderId") Long orderId) {
         return createOrder(orderId);
     }
