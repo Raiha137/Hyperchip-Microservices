@@ -39,16 +39,25 @@ public class ProductServiceClient {
     public void incrementStock(Long productId, Integer quantity) {
         if (productId == null || quantity == null) return;
 
-        String url = baseUrl() + "/api/master/inventory/" + productId + "/increment?qty=" + quantity;
+        String url = baseUrl() + "/api/master/inventory/" + productId + "/increment";
+
         try {
-            log.info("CALL incrementStock url={}", url);
-            restTemplate.postForObject(url, null, Void.class);
+            log.info("👉 INCREMENT STOCK CALL: url={}, qty={}", url, quantity);
+
+            restTemplate.postForEntity(
+                    url + "?qty=" + quantity,
+                    null,
+                    Void.class
+            );
+
+            log.info("✅ STOCK INCREMENT SUCCESS productId={}, qty={}", productId, quantity);
+
         } catch (Exception ex) {
-            log.error("ERROR incrementStock productId={} qty={} : {}", productId, quantity, ex.getMessage());
+            log.error("❌ STOCK INCREMENT FAILED productId={}, qty={}, error={}",
+                    productId, quantity, ex.getMessage(), ex);
             throw ex;
         }
     }
-
     /**
      * Decrement the stock of a product in the Master Service.
      *
@@ -58,12 +67,22 @@ public class ProductServiceClient {
     public void decrementStock(Long productId, Integer quantity) {
         if (productId == null || quantity == null) return;
 
-        String url = baseUrl() + "/api/master/inventory/" + productId + "/decrement?qty=" + quantity;
+        String url = baseUrl() + "/api/master/inventory/" + productId + "/decrement";
+
         try {
-            log.info("CALL decrementStock url={}", url);
-            restTemplate.postForObject(url, null, Void.class);
+            log.info("👉 DECREMENT STOCK CALL: url={}, qty={}", url, quantity);
+
+            restTemplate.postForEntity(
+                    url + "?qty=" + quantity,
+                    null,
+                    Void.class
+            );
+
+            log.info("✅ STOCK DECREMENT SUCCESS productId={}, qty={}", productId, quantity);
+
         } catch (Exception ex) {
-            log.error("ERROR decrementStock productId={} qty={} : {}", productId, quantity, ex.getMessage());
+            log.error("❌ STOCK DECREMENT FAILED productId={}, qty={}, error={}",
+                    productId, quantity, ex.getMessage(), ex);
             throw ex;
         }
     }

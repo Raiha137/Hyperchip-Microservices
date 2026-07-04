@@ -33,7 +33,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    /**-
+    /**
      * Accepts a generic payload (Map) and forwards to verifyByBody after
      * converting values to strings. Useful when the incoming body has mixed types.
      *
@@ -109,29 +109,18 @@ public class PaymentController {
             PaymentResponse resp = paymentService.createOrder(orderId);
             return ResponseEntity.ok(resp);
         } catch (Exception ex) {
-            // Log error and include stack trace in the response for debugging (dev only)
-            log.error("createOrder failed for {} : {}", orderId, ex.getMessage(), ex);
-            StringWriter sw = new StringWriter();
-            ex.printStackTrace(new PrintWriter(sw));
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "success", false,
-                            "message", "Failed to create order",
-                            "error", ex.getMessage(),
-                            "stack", sw.toString()
-                    ));
+            throw new RuntimeException(ex);
         }
     }
-
     /**
      * Convenience: same create as above, but accepts orderId as request param.
      *
      * POST /api/payments/create?orderId=...
      */
-    @PostMapping("/create/{orderId}")
-    public ResponseEntity<?> createOrderParam(@RequestParam("orderId") Long orderId) {
-        return createOrder(orderId);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<?> createOrderParam(@RequestParam("orderId") Long orderId) {
+//        return createOrder(orderId);
+//    }
 
     /**
      * Verify payment using payload (body may contain mixed keys).
