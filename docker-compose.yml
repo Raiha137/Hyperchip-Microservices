@@ -18,6 +18,12 @@ services:
     networks:
       - ecommerce-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:8888/actuator/health" ]
+      interval: 5s
+      timeout: 8s
+      retries: 10
+      start_period: 110s
 
   # Eureka Discovery
   discovery:
@@ -48,10 +54,12 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
-      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
     depends_on:
-      - config-server
-      - discovery
+      config-server:
+        condition: service_healthy
+      discovery:
+        condition: service_started
     networks:
       - ecommerce-network
     restart: unless-stopped
