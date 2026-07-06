@@ -87,8 +87,8 @@ public class UserApiProxyController {
         if (base.endsWith("/")) {
             base = base.substring(0, base.length() - 1);
         }
-        // ✅ always attach /api/orders
-        return base + "/api/orders";
+        // ✅ always attach /api/user/orders (matches OrderUserLegacyController)
+        return base + "/api/user/orders";
     }
 
 
@@ -320,7 +320,7 @@ public class UserApiProxyController {
         }
 
         // Call order-service: POST http://localhost:8092/api/orders/place
-        String url = base + "/api/orders/place";
+        String url = base + "/api/user/orders/place";
 
         log.info("Proxying place order to: {} payloadKeys={}", url, req.keySet());
 
