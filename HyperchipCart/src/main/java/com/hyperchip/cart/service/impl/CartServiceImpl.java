@@ -481,7 +481,7 @@ public class CartServiceImpl implements CartService {
         if (t.startsWith("http://") || t.startsWith("https://")) return t;
 
         String[] bases = new String[]{
-                "http://localhost:8086"
+                "http://master-service:8086"
         };
         for (String base : bases) {
             if (base == null) continue;

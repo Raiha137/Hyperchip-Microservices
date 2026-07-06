@@ -23,7 +23,7 @@ public class ProductServiceClient {
      * @return base URL as a String
      */
     private String baseUrl() {
-        String base = "http://localhost:8086"; // master-service port
+        String base = "http://master-service:8086";
         if (base.endsWith("/")) {
             base = base.substring(0, base.length() - 1);
         }
