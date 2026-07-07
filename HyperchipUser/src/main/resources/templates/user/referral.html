@@ -106,9 +106,7 @@
         const userId = userIdInput.value;
 
         // master.service.url -> http://localhost:8086 (fallback)
-        const API_BASE =
-            /*[[${@environment.getProperty('master.service.url','http://localhost:8086')}]]*/ ''
-            + '/api/referrals';
+        const API_BASE = '/masters/api/referrals';
 
         // ===== Load referral code (your old code, just kept as-is) =====
         loadBtn.addEventListener('click', function () {

@@ -1,0 +1,500 @@
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+order-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+order-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+order-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+order-service  | 	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+order-service  | 	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+order-service  | 	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+order-service  | 	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+order-service  | 	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+order-service  | 	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+order-service  | 	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+order-service  | 	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+order-service  | 	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+order-service  | 	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+order-service  | 	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+order-service  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+order-service  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+order-service  | 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+order-service  | 	at java.base/java.lang.Thread.run(Thread.java:1583)
+order-service  | 2026-07-07T04:57:30.489Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dppr1_0.id,
+order-service  |         dppr1_0.charge,
+order-service  |         dppr1_0.prefix 
+order-service  |     from
+order-service  |         delivery_pin_prefix_rules dppr1_0 
+order-service  |     order by
+order-service  |         dppr1_0.prefix desc
+order-service  | 2026-07-07T05:02:30.469Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         ddr1_0.id,
+order-service  |         ddr1_0.charge,
+order-service  |         ddr1_0.district,
+order-service  |         ddr1_0.state 
+order-service  |     from
+order-service  |         delivery_district_rules ddr1_0 
+order-service  |     where
+order-service  |         upper(ddr1_0.state)=upper(?) 
+order-service  |         and upper(ddr1_0.district)=upper(?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         orders
+order-service  |         (address_id, admin_note, cancel_reason, cancelled, created_at, order_number, paid_amount, paid_at, payment_failure_reason, payment_method, payment_reference, payment_status, shipping, status, subtotal, tax, total_amount, updated_at, user_email, user_id) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         order_items
+order-service  |         (cancel_reason, cancelled, order_id, product_id, product_image, product_title, quantity, total, unit_price) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         o1_0.id,
+order-service  |         o1_0.address_id,
+order-service  |         o1_0.admin_note,
+order-service  |         o1_0.cancel_reason,
+order-service  |         o1_0.cancelled,
+order-service  |         o1_0.created_at,
+order-service  |         o1_0.order_number,
+order-service  |         o1_0.paid_amount,
+order-service  |         o1_0.paid_at,
+order-service  |         o1_0.payment_failure_reason,
+order-service  |         o1_0.payment_method,
+order-service  |         o1_0.payment_reference,
+order-service  |         o1_0.payment_status,
+order-service  |         o1_0.shipping,
+order-service  |         o1_0.status,
+order-service  |         o1_0.subtotal,
+order-service  |         o1_0.tax,
+order-service  |         o1_0.total_amount,
+order-service  |         o1_0.updated_at,
+order-service  |         o1_0.user_email,
+order-service  |         o1_0.user_id,
+order-service  |         i1_0.order_id,
+order-service  |         i1_0.id,
+order-service  |         i1_0.cancel_reason,
+order-service  |         i1_0.cancelled,
+order-service  |         i1_0.product_id,
+order-service  |         i1_0.product_image,
+order-service  |         i1_0.product_title,
+order-service  |         i1_0.quantity,
+order-service  |         i1_0.total,
+order-service  |         i1_0.unit_price 
+order-service  |     from
+order-service  |         orders o1_0 
+order-service  |     left join
+order-service  |         order_items i1_0 
+order-service  |             on o1_0.id=i1_0.order_id 
+order-service  |     where
+order-service  |         o1_0.id=?
+order-service  | 2026-07-07T05:07:30.445Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:12:30.421Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:17:30.397Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:22:30.372Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dppr1_0.id,
+order-service  |         dppr1_0.charge,
+order-service  |         dppr1_0.prefix 
+order-service  |     from
+order-service  |         delivery_pin_prefix_rules dppr1_0 
+order-service  |     order by
+order-service  |         dppr1_0.prefix desc
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         ddr1_0.id,
+order-service  |         ddr1_0.charge,
+order-service  |         ddr1_0.district,
+order-service  |         ddr1_0.state 
+order-service  |     from
+order-service  |         delivery_district_rules ddr1_0 
+order-service  |     where
+order-service  |         upper(ddr1_0.state)=upper(?) 
+order-service  |         and upper(ddr1_0.district)=upper(?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         orders
+order-service  |         (address_id, admin_note, cancel_reason, cancelled, created_at, order_number, paid_amount, paid_at, payment_failure_reason, payment_method, payment_reference, payment_status, shipping, status, subtotal, tax, total_amount, updated_at, user_email, user_id) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         order_items
+order-service  |         (cancel_reason, cancelled, order_id, product_id, product_image, product_title, quantity, total, unit_price) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         o1_0.id,
+order-service  |         o1_0.address_id,
+order-service  |         o1_0.admin_note,
+order-service  |         o1_0.cancel_reason,
+order-service  |         o1_0.cancelled,
+order-service  |         o1_0.created_at,
+order-service  |         o1_0.order_number,
+order-service  |         o1_0.paid_amount,
+order-service  |         o1_0.paid_at,
+order-service  |         o1_0.payment_failure_reason,
+order-service  |         o1_0.payment_method,
+order-service  |         o1_0.payment_reference,
+order-service  |         o1_0.payment_status,
+order-service  |         o1_0.shipping,
+order-service  |         o1_0.status,
+order-service  |         o1_0.subtotal,
+order-service  |         o1_0.tax,
+order-service  |         o1_0.total_amount,
+order-service  |         o1_0.updated_at,
+order-service  |         o1_0.user_email,
+order-service  |         o1_0.user_id,
+order-service  |         i1_0.order_id,
+order-service  |         i1_0.id,
+order-service  |         i1_0.cancel_reason,
+order-service  |         i1_0.cancelled,
+order-service  |         i1_0.product_id,
+order-service  |         i1_0.product_image,
+order-service  |         i1_0.product_title,
+order-service  |         i1_0.quantity,
+order-service  |         i1_0.total,
+order-service  |         i1_0.unit_price 
+order-service  |     from
+order-service  |         orders o1_0 
+order-service  |     left join
+order-service  |         order_items i1_0 
+order-service  |             on o1_0.id=i1_0.order_id 
+order-service  |     where
+order-service  |         o1_0.id=?
+order-service  | org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/orders/api/orders/50/mark-paid.
+order-service  | 	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+order-service  | 	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+order-service  | 	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+order-service  | 	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+order-service  | 	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+order-service  | 	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+order-service  | 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+order-service  | 	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+order-service  | 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+order-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+order-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+order-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+order-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+order-service  | 	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+order-service  | 	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+order-service  | 	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+order-service  | 	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+order-service  | 	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+order-service  | 	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+order-service  | 	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+order-service  | 	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+order-service  | 	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+order-service  | 	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+order-service  | 	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+order-service  | 	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+order-service  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+order-service  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+order-service  | 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+order-service  | 	at java.base/java.lang.Thread.run(Thread.java:1583)
+order-service  | 2026-07-07T05:27:30.348Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:33:57.776Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:38:57.751Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:43:57.722Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:48:57.696Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:53:57.671Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T05:58:57.644Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:03:57.618Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:08:57.596Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:13:57.572Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:18:57.551Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:23:57.531Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dppr1_0.id,
+order-service  |         dppr1_0.charge,
+order-service  |         dppr1_0.prefix 
+order-service  |     from
+order-service  |         delivery_pin_prefix_rules dppr1_0 
+order-service  |     order by
+order-service  |         dppr1_0.prefix desc
+order-service  | 2026-07-07T06:28:57.510Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:33:57.486Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:38:57.461Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:43:57.436Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dppr1_0.id,
+order-service  |         dppr1_0.charge,
+order-service  |         dppr1_0.prefix 
+order-service  |     from
+order-service  |         delivery_pin_prefix_rules dppr1_0 
+order-service  |     order by
+order-service  |         dppr1_0.prefix desc
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         ddr1_0.id,
+order-service  |         ddr1_0.charge,
+order-service  |         ddr1_0.district,
+order-service  |         ddr1_0.state 
+order-service  |     from
+order-service  |         delivery_district_rules ddr1_0 
+order-service  |     where
+order-service  |         upper(ddr1_0.state)=upper(?) 
+order-service  |         and upper(ddr1_0.district)=upper(?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         orders
+order-service  |         (address_id, admin_note, cancel_reason, cancelled, created_at, order_number, paid_amount, paid_at, payment_failure_reason, payment_method, payment_reference, payment_status, shipping, status, subtotal, tax, total_amount, updated_at, user_email, user_id) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         order_items
+order-service  |         (cancel_reason, cancelled, order_id, product_id, product_image, product_title, quantity, total, unit_price) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dppr1_0.id,
+order-service  |         dppr1_0.charge,
+order-service  |         dppr1_0.prefix 
+order-service  |     from
+order-service  |         delivery_pin_prefix_rules dppr1_0 
+order-service  |     order by
+order-service  |         dppr1_0.prefix desc
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         ddr1_0.id,
+order-service  |         ddr1_0.charge,
+order-service  |         ddr1_0.district,
+order-service  |         ddr1_0.state 
+order-service  |     from
+order-service  |         delivery_district_rules ddr1_0 
+order-service  |     where
+order-service  |         upper(ddr1_0.state)=upper(?) 
+order-service  |         and upper(ddr1_0.district)=upper(?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         orders
+order-service  |         (address_id, admin_note, cancel_reason, cancelled, created_at, order_number, paid_amount, paid_at, payment_failure_reason, payment_method, payment_reference, payment_status, shipping, status, subtotal, tax, total_amount, updated_at, user_email, user_id) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         order_items
+order-service  |         (cancel_reason, cancelled, order_id, product_id, product_image, product_title, quantity, total, unit_price) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dppr1_0.id,
+order-service  |         dppr1_0.charge,
+order-service  |         dppr1_0.prefix 
+order-service  |     from
+order-service  |         delivery_pin_prefix_rules dppr1_0 
+order-service  |     order by
+order-service  |         dppr1_0.prefix desc
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         dz1_0.id,
+order-service  |         dz1_0.charge,
+order-service  |         dz1_0.city,
+order-service  |         dz1_0.country,
+order-service  |         dz1_0.district,
+order-service  |         dz1_0.pin_code,
+order-service  |         dz1_0.state 
+order-service  |     from
+order-service  |         delivery_zones dz1_0 
+order-service  |     where
+order-service  |         dz1_0.pin_code=?
+order-service  | Hibernate: 
+order-service  |     select
+order-service  |         ddr1_0.id,
+order-service  |         ddr1_0.charge,
+order-service  |         ddr1_0.district,
+order-service  |         ddr1_0.state 
+order-service  |     from
+order-service  |         delivery_district_rules ddr1_0 
+order-service  |     where
+order-service  |         upper(ddr1_0.state)=upper(?) 
+order-service  |         and upper(ddr1_0.district)=upper(?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         orders
+order-service  |         (address_id, admin_note, cancel_reason, cancelled, created_at, order_number, paid_amount, paid_at, payment_failure_reason, payment_method, payment_reference, payment_status, shipping, status, subtotal, tax, total_amount, updated_at, user_email, user_id) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | Hibernate: 
+order-service  |     insert 
+order-service  |     into
+order-service  |         order_items
+order-service  |         (cancel_reason, cancelled, order_id, product_id, product_image, product_title, quantity, total, unit_price) 
+order-service  |     values
+order-service  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+order-service  | 2026-07-07T06:48:57.410Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:53:57.385Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T06:58:57.358Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+order-service  | 2026-07-07T07:03:57.334Z  INFO 1 --- [hyperchip-order] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
