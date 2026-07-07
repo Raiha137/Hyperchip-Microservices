@@ -50,6 +50,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${razorpay.secret:${razorpay.key-secret:}}")
     private String razorpaySecret;
 
+    @Value("${order.internal.base-url}")
+    private String orderInternalBaseUrl;
+
     // Order service base URL (used to fetch order details and notify status)
     @Value("${order.service.url}")
     private String orderServiceUrl;
@@ -224,7 +227,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // --- 1) Notify order service (best-effort) ---
         try {
-            String url = orderServiceUrl + "/" + orderId + "/mark-payment-failed";
+            String url = orderInternalBaseUrl + "/" + orderId + "/mark-payment-failed";
             restTemplate.postForEntity(
                     url,
                     Map.of("reason", reason),
@@ -297,7 +300,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Notify Order Service that payment is successful (best-effort)
         try {
-            String notifyUrl = orderServiceUrl + "/api/orders/" + orderId + "/mark-paid";
+            String notifyUrl = orderInternalBaseUrl + "/" + orderId + "/mark-paid";
 
             Map<String, Object> req = Map.of(
                     "paymentReference", paymentId,
