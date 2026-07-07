@@ -150,7 +150,7 @@ public class WishlistServiceImpl implements WishlistService {
         if (t.isEmpty()) return "/img/default-product.png";
         if (t.startsWith("http://") || t.startsWith("https://")) return t;
 
-        String[] bases = new String[]{uploadsBaseUrl, productServiceBase, masterServiceBase};
+        String[] bases = new String[]{"/masters"};
         for (String base : bases) {
             if (base == null || base.trim().isEmpty()) continue;
             base = base.trim();
