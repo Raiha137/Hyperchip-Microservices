@@ -127,10 +127,7 @@ public class UserApiProxyController {
         Object itemsObj = cart.get("items");
         if (!(itemsObj instanceof Collection)) return;
 
-        String master = productServiceBase != null ? productServiceBase.trim() : "";
-        if (master.isBlank()) master = System.getProperty("master.service.url", System.getenv("MASTER_SERVICE_URL"));
-        if (master == null || master.isBlank()) master = "http://localhost:8086";
-        if (master.endsWith("/")) master = master.substring(0, master.length() - 1);
+        String master = "/masters";
 
         for (Object obj : (Collection<?>) itemsObj) {
             if (!(obj instanceof Map)) continue;
@@ -146,7 +143,7 @@ public class UserApiProxyController {
             if (pid == null) continue;
 
             try {
-                String prodUrl = master + "/public/products/" + pid;
+                String prodUrl = productServiceBase + "/public/products/" + pid;
                 ResponseEntity<Map> pResp = restTemplate.getForEntity(prodUrl, Map.class);
                 if (pResp != null && pResp.getStatusCode().is2xxSuccessful() && pResp.getBody() != null) {
                     Map<?, ?> prod = pResp.getBody();
@@ -170,8 +167,9 @@ public class UserApiProxyController {
                         if (fname.startsWith("http://") || fname.startsWith("https://")) {
                             imageUrl = fname;
                         } else {
-                            imageUrl = master + "/public/products/images/" +
+                            imageUrl = "/masters/public/products/images/" +
                                     java.net.URLEncoder.encode(fname, java.nio.charset.StandardCharsets.UTF_8);
+
                         }
                         it.put("productImage", imageUrl);
                         it.put("imageUrl", imageUrl);
@@ -553,10 +551,6 @@ public class UserApiProxyController {
     private void enrichOrderListWithProducts(List<Map<String, Object>> orders) {
         if (orders == null || orders.isEmpty()) return;
 
-        String master = productServiceBase != null ? productServiceBase.trim() : "";
-        if (master.isBlank()) master = "http://localhost:8086";
-        if (master.endsWith("/")) master = master.substring(0, master.length() - 1);
-
         for (Map<String, Object> order : orders) {
             // items may be in "items" or "orderItems"
             Object itemsObj = order.getOrDefault("items", order.get("orderItems"));
@@ -576,7 +570,7 @@ public class UserApiProxyController {
                 if (productId == null) continue;
 
                 try {
-                    String prodUrl = master + "/public/products/" + productId;
+                    String prodUrl = productServiceBase + "/public/products/" + productId;
                     ResponseEntity<Map> pResp = restTemplate.getForEntity(prodUrl, Map.class);
                     if (pResp != null && pResp.getStatusCode().is2xxSuccessful() && pResp.getBody() != null) {
                         Map<?, ?> prod = pResp.getBody();
@@ -604,7 +598,7 @@ public class UserApiProxyController {
                             if (fname.startsWith("http://") || fname.startsWith("https://")) {
                                 imageUrl = fname;
                             } else {
-                                imageUrl = master + "/public/products/images/" +
+                                imageUrl = "/masters/public/products/images/" +
                                         java.net.URLEncoder.encode(fname, java.nio.charset.StandardCharsets.UTF_8);
                             }
                             item.put("productImage", imageUrl);
@@ -897,7 +891,7 @@ public class UserApiProxyController {
         if (t.isEmpty()) return null;
         if (t.startsWith("http://") || t.startsWith("https://")) return t;
 
-        String[] bases = new String[]{ uploadsBaseUrl, productServiceBase, masterServiceBase };
+        String[] bases = new String[]{ "/masters" };
 
         for (String base : bases) {
             if (base == null) continue;

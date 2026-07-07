@@ -480,29 +480,17 @@ public class CartServiceImpl implements CartService {
         if (t.isEmpty()) return null;
         if (t.startsWith("http://") || t.startsWith("https://")) return t;
 
-        String[] bases = new String[]{
-                "/masters"
-        };
-        for (String base : bases) {
-            if (base == null) continue;
-            base = base.trim();
-            if (base.isEmpty()) continue;
-            if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
-
-            if (t.startsWith("/")) {
-                return base + "/" + t.replaceAll("^/+", "");
-            }
-            if (t.toLowerCase().contains("uploads/")) {
-                return base + "/" + t.replaceAll("^/+", "");
-            }
-            try {
-                String encoded = URLEncoder.encode(t, StandardCharsets.UTF_8);
-                return base + "/uploads/products/" + encoded;
-            } catch (Exception e) {
-                return base + "/uploads/products/" + t;
-            }
+        if (t.startsWith("/")) {
+            return t;
         }
-
-        return t;
+        if (t.toLowerCase().contains("uploads/")) {
+            return "/" + t.replaceAll("^/+", "");
+        }
+        try {
+            String encoded = URLEncoder.encode(t, StandardCharsets.UTF_8);
+            return "/uploads/products/" + encoded;
+        } catch (Exception e) {
+            return "/uploads/products/" + t;
+        }
     }
 }
