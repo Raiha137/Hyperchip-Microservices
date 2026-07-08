@@ -15,7 +15,12 @@ body {
 header .navbar {
     margin: 0 !important;
 }
-
+.admin-top-space{
+    margin-top: -6.3rem;
+}
+.padding-admin{
+    padding: 2rem;
+}
 .admin-dashboard {
     margin-top: 0 !important;
     padding-top: 0 !important;

@@ -327,3 +327,6 @@ html {
     padding: 0 !important;
     margin: 0 !important;
 }
+.margin-top-loginPage{
+    margin-top: -8rem;
+}
