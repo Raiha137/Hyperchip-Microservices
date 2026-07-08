@@ -318,3 +318,12 @@ padding: 2rem 1.6rem 1.8rem;
 .hc-login-remember{
     color: #fff !important;
 }
+body.hc-login-body {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+html {
+    padding: 0 !important;
+    margin: 0 !important;
+}
