@@ -248,9 +248,7 @@ public class WishlistController {
                         if (!imgList.isEmpty() && imgList.get(0) != null) {
                             String fname = String.valueOf(imgList.get(0));
                             String enc = URLEncoder.encode(fname, StandardCharsets.UTF_8);
-                            String base = productServiceBaseUrl.endsWith("/") ? productServiceBaseUrl.substring(0, productServiceBaseUrl.length() - 1)
-                                    : productServiceBaseUrl;
-                            image = base + "/uploads/products/" + enc;
+                            image = "/masters/uploads/products/" + enc;
                         }
                     }
 
