@@ -24,3 +24,6 @@ uploads/
 # Ignore environment files (CRITICAL)
 .env
 **/.env
+"master-log.txt" 
+"HyperchipMaster/master-log.txt" 
+"HyperchipMaster/master-log2.txt" 
