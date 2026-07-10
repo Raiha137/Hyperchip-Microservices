@@ -216,4 +216,26 @@ public class AdminProductApiController {
                     .body("Failed to remove image: " + ex.getMessage());
         }
     }
+    // ===========================
+    // DELETE PRODUCT
+    // ===========================
+    /**
+     * DELETE /api/admin/products/{id}
+     *
+     * Purpose:
+     * - Soft-delete a product by ID (marks it deleted rather than removing the row)
+     *
+     * @param id Product ID to delete
+     * @return HTTP 200 on success, 500 on failure
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.softDeleteProduct(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete product: " + ex.getMessage());
+        }
+    }
 }
