@@ -14,6 +14,8 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
+import com.hyperchip.master.model.Product;
+import com.hyperchip.master.repository.ProductRepository;
 /**
  * Service implementation for Category entity.
  * Provides CRUD operations, soft delete, pagination, and image handling for categories.
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     // Topic name for event logging/messaging (can be integrated with Kafka or other messaging system)
     private static final String TOPIC = "category-events";
@@ -98,6 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return Soft-deleted Category entity
      */
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public Category softDeleteCategory(Long id) {
         Category existing = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -105,9 +109,17 @@ public class CategoryServiceImpl implements CategoryService {
         existing.setDeleted(true);
         Category deleted = categoryRepository.save(existing);
         sendEvent("CATEGORY_DELETED", deleted);
+
+        // Cascade: soft-delete + deactivate all products under this category
+        List<Product> linkedProducts = productRepository.findByCategory_IdAndDeletedFalse(id);
+        for (Product p : linkedProducts) {
+            p.setDeleted(true);
+            p.setActive(false);
+        }
+        productRepository.saveAll(linkedProducts);
+
         return deleted;
     }
-
     // ----------------------------------- LIST CATEGORIES WITH PAGINATION & SEARCH -----------------------------------
     /**
      * Retrieves paginated list of active categories, optionally filtered by search query.

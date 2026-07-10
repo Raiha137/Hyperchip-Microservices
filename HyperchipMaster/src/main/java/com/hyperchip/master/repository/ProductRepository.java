@@ -50,6 +50,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
 
+    List<Product> findByCategory_IdAndDeletedFalse(Long categoryId);
 
     // ---------------- Find all active products with pagination in descending creation order ----------------
     @EntityGraph(attributePaths = {"category", "brand"})
