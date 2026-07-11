@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
+import com.hyperchip.common.dto.DashboardResponseDto;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * SalesReportWebController
  *
@@ -68,6 +70,25 @@ public class SalesReportWebController {
         return "admin/reports/sales-report"; // Thymeleaf view
     }
 
+
+// ===================================================
+// DASHBOARD DATA (JSON, consumed by admin-index.html)
+// ===================================================
+    /**
+     * Purpose:
+     * Provide dashboard aggregation data (chart points, top products/
+     * categories/brands) as JSON for the admin dashboard page's JS to consume.
+     *
+     * What it does:
+     * - Delegates to SalesReportClient.getDashboard(periodType), which calls
+     *   the order-service's /api/admin/dashboard endpoint.
+     */
+    @GetMapping("/admin/api/dashboard")
+    @ResponseBody
+    public DashboardResponseDto dashboardData(
+            @RequestParam(value = "periodType", defaultValue = "MONTH") String periodType) {
+        return salesReportClient.getDashboard(periodType);
+    }
     // ===================================================
     // EXPORT SALES REPORT TO PDF
     // ===================================================
