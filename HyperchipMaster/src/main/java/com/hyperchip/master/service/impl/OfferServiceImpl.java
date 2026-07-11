@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
@@ -412,11 +413,11 @@ public class OfferServiceImpl implements OfferService {
     }
 
     private Instant toInstant(LocalDateTime dt) {
-        return dt != null ? dt.toInstant(ZoneOffset.UTC) : null;
+        return dt != null ? dt.atZone(ZoneId.of("Asia/Kolkata")).toInstant() : null;
     }
 
     private LocalDateTime toLocalDateTime(Instant i) {
-        return i != null ? LocalDateTime.ofInstant(i, ZoneOffset.UTC) : null;
+        return i != null ? LocalDateTime.ofInstant(i, ZoneId.of("Asia/Kolkata")) : null;
     }
 
     private ProductOfferDto toProductDto(ProductOffer offer) {
