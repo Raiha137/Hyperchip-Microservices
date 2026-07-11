@@ -1,9 +1,7 @@
-package com.hyperchip.admin.controller;
-
 import com.hyperchip.common.dto.LedgerEntryDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,7 +12,6 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/admin")
-@RequiredArgsConstructor
 public class AdminLedgerRestController {
 
     /**
@@ -23,8 +20,19 @@ public class AdminLedgerRestController {
      * Purpose:
      * - Calls Order Service and Wallet Service
      * - Fetches ledger-related data from those services
+     *
+     * NOTE: built manually (not injected) with explicit timeouts so that
+     * an unreachable order-service or wallet-service fails fast instead
+     * of hanging the /api/admin/ledger request indefinitely.
      */
     private final RestTemplate restTemplate;
+
+    public AdminLedgerRestController() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(3000); // 3 seconds to establish connection
+        factory.setReadTimeout(5000);    // 5 seconds to read response
+        this.restTemplate = new RestTemplate(factory);
+    }
 
     /**
      * Base URL of the Order Service.
