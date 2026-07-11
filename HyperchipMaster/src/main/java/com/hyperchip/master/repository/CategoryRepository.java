@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for Category entity.
@@ -33,6 +34,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
      * @return Page of non-deleted categories
      */
     Page<Category> findAllByDeletedFalse(Pageable pageable);
+
+    Optional<Category> findByNameIgnoreCaseAndDeletedTrue(String name);
 
     /**
      * Checks if a category exists with the given name (case-insensitive) and is not deleted.

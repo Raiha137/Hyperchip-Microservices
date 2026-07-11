@@ -47,23 +47,41 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public Category saveCategory(Category category, MultipartFile file) throws IOException {
+        // Check if an ACTIVE category with this name already exists
         if (categoryRepository.existsByNameIgnoreCaseAndDeletedFalse(category.getName())) {
             throw new RuntimeException("Category already exists!");
         }
 
+        // Check if a DELETED category with this exact name exists — if so, revive it
+        Optional<Category> deletedMatch = categoryRepository.findByNameIgnoreCaseAndDeletedTrue(category.getName());
+
+        if (deletedMatch.isPresent()) {
+            Category existing = deletedMatch.get();
+            existing.setDeleted(false);
+            existing.setActive(true);
+            existing.setName(category.getName()); // keep casing user typed
+
+            if (file != null && !file.isEmpty()) {
+                existing.setImageName(storeImage(file));
+            }
+
+            Category revived = categoryRepository.save(existing);
+            sendEvent("CATEGORY_CREATED", revived);
+            return revived;
+        }
+
+        // No conflict at all — create fresh
         category.setDeleted(false);
         category.setActive(true);
 
-        // Handle image upload if file is provided
         if (file != null && !file.isEmpty()) {
             category.setImageName(storeImage(file));
         }
 
         Category saved = categoryRepository.save(category);
-        sendEvent("CATEGORY_CREATED", saved); // log or publish event
+        sendEvent("CATEGORY_CREATED", saved);
         return saved;
     }
-
     // ----------------------------------- UPDATE CATEGORY -----------------------------------
     /**
      * Updates an existing category.
