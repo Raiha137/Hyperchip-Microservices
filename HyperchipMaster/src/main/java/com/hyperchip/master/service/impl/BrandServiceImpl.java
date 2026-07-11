@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import com.hyperchip.master.model.Product;
+import com.hyperchip.master.repository.ProductRepository;
 /**
  * Service implementation for Brand entity.
  * Provides CRUD operations, soft delete, pagination, and image handling for brands.
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
+    private final ProductRepository productRepository;
 
     // Topic name for event logging/messaging (can be integrated with Kafka or other messaging system)
     private static final String TOPIC = "brand-events";
@@ -43,25 +45,41 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     public Brand saveBrand(Brand brand, MultipartFile file) throws IOException {
-        // Check for duplicate brand name
+        // Check for duplicate ACTIVE brand name
         if (brandRepository.existsByNameIgnoreCaseAndDeletedFalse(brand.getName())) {
             throw new RuntimeException("Brand already exists!");
         }
 
-        // Initialize brand status
+        // Check if a DELETED brand with this exact name exists — if so, revive it
+        Optional<Brand> deletedMatch = brandRepository.findByNameIgnoreCaseAndDeletedTrue(brand.getName());
+
+        if (deletedMatch.isPresent()) {
+            Brand existing = deletedMatch.get();
+            existing.setDeleted(false);
+            existing.setActive(true);
+            existing.setName(brand.getName());
+
+            if (file != null && !file.isEmpty()) {
+                existing.setImageName(storeImage(file));
+            }
+
+            Brand revived = brandRepository.save(existing);
+            sendEvent("BRAND_CREATED", revived);
+            return revived;
+        }
+
+        // No conflict — create fresh
         brand.setDeleted(false);
         brand.setActive(true);
 
-        // Handle image upload
         if (file != null && !file.isEmpty()) {
-            brand.setImageName(storeImage(file)); // store image and set filename
+            brand.setImageName(storeImage(file));
         }
 
         Brand saved = brandRepository.save(brand);
-        sendEvent("BRAND_CREATED", saved); // log or publish event
+        sendEvent("BRAND_CREATED", saved);
         return saved;
     }
-
     // ----------------------------------- UPDATE BRAND -----------------------------------
     /**
      * Updates an existing brand.
@@ -101,6 +119,7 @@ public class BrandServiceImpl implements BrandService {
      * @return Soft-deleted Brand entity
      */
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public Brand softDeleteBrand(Long id) {
         Brand existing = brandRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Brand not found"));
@@ -108,6 +127,15 @@ public class BrandServiceImpl implements BrandService {
         existing.setDeleted(true);
         Brand deleted = brandRepository.save(existing);
         sendEvent("BRAND_DELETED", deleted);
+
+        // Cascade: soft-delete + deactivate all products under this brand
+        List<Product> linkedProducts = productRepository.findByBrand_IdAndDeletedFalse(id);
+        for (Product p : linkedProducts) {
+            p.setDeleted(true);
+            p.setActive(false);
+        }
+        productRepository.saveAll(linkedProducts);
+
         return deleted;
     }
 

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for Brand entity.
@@ -30,6 +31,8 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
      * @return Page of active, non-deleted brands
      */
     Page<Brand> findAllByDeletedFalseAndActiveTrue(Pageable pageable);
+
+    Optional<Brand> findByNameIgnoreCaseAndDeletedTrue(String name);
 
     /**
      * Searches for active, non-deleted brands whose names contain the given query string (case-insensitive).
