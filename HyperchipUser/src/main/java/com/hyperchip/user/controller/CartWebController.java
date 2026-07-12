@@ -42,7 +42,7 @@ public class CartWebController {
      * Base URL for Cart Service
      * - Can be overridden via property: cart.service.url
      */
-    @Value("${cart.service.url:http://localhost:8080/api/cart}")
+    @Value("${cart.service.url:http://cart-service:8091/api/cart}")
     private String cartServiceBase;
 
     /**
