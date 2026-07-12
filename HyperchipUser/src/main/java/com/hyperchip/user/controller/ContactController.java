@@ -46,7 +46,7 @@ public class ContactController {
      * - Adds an empty ContactDto to the model for form binding
      * - Uses public header and layout
      */
-    @GetMapping("/contact")
+    @GetMapping("/user/contact")
     public String showPublicContactForm(Model model) {
         model.addAttribute("contactDto", new ContactDto());
         return "user/contact"; // view with public header
@@ -63,7 +63,7 @@ public class ContactController {
      * - If valid, saves contact message via ContactService
      * - Adds success flash message for display after redirect
      */
-    @PostMapping("/contact")
+    @PostMapping("/user/contact")
     public String submitPublicContact(
             @Valid @ModelAttribute("contactDto") ContactDto contactDto,
             BindingResult result,

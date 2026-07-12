@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon" type="image/png" href="/img/logo-tab.png" sizes="64x64"/>
+    <link rel="icon" type="image/png" th:href="@{/auth-assets/img/logo-tab.png}" sizes="64x64"/>
     <title>Verify OTP - Hyperchip</title>
 
     <!-- ==============================
@@ -16,8 +16,8 @@
     <!-- ==============================
          Custom CSS
          ============================== -->
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
-    <link rel="stylesheet" th:href="@{/css/signup.css}"/>
+    <link rel="stylesheet" th:href="@{/auth-assets/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/auth-assets/css/signup.css}"/>
 </head>
 <body class="hc-login-body">
 
@@ -39,7 +39,7 @@
             <div class="col-lg-6">
                 <div class="hc-login-left">
                     <div class="d-flex align-items-center mb-4">
-                        <img th:src="@{/img/logo.png}" alt="Hyperchip Logo" class="hc-login-logo me-2"/>
+                        <img th:src="@{/auth-assets/img/logo.png}" alt="Hyperchip Logo" class="hc-login-logo me-2"/>
                         <span class="hc-login-logo-text">Hyperchip</span>
                     </div>
                     <h1 class="hc-login-title mb-3">Verify Your Email</h1>
