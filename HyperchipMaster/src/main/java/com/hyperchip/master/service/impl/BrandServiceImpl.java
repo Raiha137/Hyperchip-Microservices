@@ -6,6 +6,7 @@ import com.hyperchip.master.service.BrandService;
 import com.hyperchip.common.dto.BrandDto;
 import com.hyperchip.common.dto.PageBrandDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,8 @@ import com.hyperchip.master.repository.ProductRepository;
 @RequiredArgsConstructor
 public class BrandServiceImpl implements BrandService {
 
+    @Value("${upload.brands.dir:uploads/brands}")
+    private String uploadDir;
     private final BrandRepository brandRepository;
     private final ProductRepository productRepository;
 
@@ -206,8 +209,7 @@ public class BrandServiceImpl implements BrandService {
      * @throws IOException if saving file fails
      */
     private String storeImage(MultipartFile file) throws IOException {
-        String uploadDir = "uploads/brands";
-        Path uploadPath = Paths.get(uploadDir);
+        Path uploadPath = Paths.get(uploadDir);   // use the injected field, don't redeclare it
 
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
@@ -219,7 +221,6 @@ public class BrandServiceImpl implements BrandService {
 
         return fileName;
     }
-
     // ----------------------------------- HELPER METHOD: SEND EVENT -----------------------------------
     /**
      * Sends a simple event with brand details.
