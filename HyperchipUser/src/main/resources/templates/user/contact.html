@@ -105,7 +105,7 @@
                     <div th:if="${errorMsg}" class="alert alert-danger" th:text="${errorMsg}"></div>
                     <!-- client-side error -->
                     <div id="contactClientError" class="alert alert-danger d-none"></div>
-                    <form th:action="@{/user/contact}" method="post" id="supportForm">
+                    <form th:action="@{/contact}" method="post" id="supportForm">
                         <!-- Full Name -->
                         <div class="mb-3">
                             <label for="name" class="form-label">
