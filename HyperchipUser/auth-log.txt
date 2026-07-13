@@ -1,0 +1,500 @@
+auth-service  |     <body class="hc-login-body margin-top-loginPage" style="margin-top: -7.3rem;">
+auth-service  | 
+auth-service  | 
+auth-service  | 
+auth-service  | 
+auth-service  | 
+auth-service  |     <section class="hc-login-section">
+auth-service  | 
+auth-service  |         <div class="hc-login-overlay"></div>
+auth-service  | 
+auth-service  |         <div class="container hc-login-container">
+auth-service  |             <div class="row g-5 align-items-center">
+auth-service  | 
+auth-service  |                 <!-- LEFT SIDE: Hero text -->
+auth-service  |                 <div class="col-lg-6">
+auth-service  |                     <div class="hc-login-left">
+auth-service  |                         <!-- Logo + Brand -->
+auth-service  |                         <div class="d-flex align-items-center mb-4">
+auth-service  |                             <img th:src="@{/auth-assets/img/logo.png}" alt="Hyperchip Logo" class="hc-login-logo me-2">
+auth-service  |                             <span class="hc-login-logo-text">Hyperchip</span>
+auth-service  |                         </div>
+auth-service  | 
+auth-service  |                         <h1 class="hc-login-title mb-3">Welcome Back</h1>
+auth-service  | 
+auth-service  |                         <p class="hc-login-subtitle mb-4">
+auth-service  |                             Sign in to your Hyperchip account and continue shopping the latest laptops,
+auth-service  |                             mobiles, accessories and more – all in one secure place.
+auth-service  |                         </p>
+auth-service  | 
+auth-service  |                         <ul class="hc-login-bullets">
+auth-service  |                             <li><i class="fa-solid fa-circle-check"></i> Fast &amp; secure checkout</li>
+auth-service  |                             <li><i class="fa-solid fa-circle-check"></i> Track your orders in real time</li>
+auth-service  |                             <li><i class="fa-solid fa-circle-check"></i> Access offers, wallet &amp; wishlist</li>
+auth-service  |                         </ul>
+auth-service  |                     </div>
+auth-service  |                 </div>
+auth-service  | 
+auth-service  |                 <!-- RIGHT SIDE: Login form -->
+auth-service  |                 <div class="col-lg-5 offset-lg-1">
+auth-service  |                     <div class="hc-login-form-wrapper">
+auth-service  | 
+auth-service  |                         <h2 class="hc-login-form-title mb-1">Login</h2>
+auth-service  |                         <p class="hc-login-form-subtitle mb-4">
+auth-service  |                             Enter your email and password to continue.
+auth-service  |                         </p>
+auth-service  | 
+auth-service  |                         <!-- SUCCESS MESSAGE -->
+auth-service  |                         <div th:if="${successMsg}" class="alert-background  alert alert-success text-center mb-3" th:text="${successMsg}"></div>
+auth-service  | 
+auth-service  |                         <!-- LOGOUT SUCCESS MESSAGE -->
+auth-service  |                         <div th:if="${param.logout != null}" class="alert-background alert alert-success text-center mb-3">
+auth-service  |                             You have been logged out successfully.
+auth-service  |                         </div>
+auth-service  | 
+auth-service  |                         <!-- ERROR MESSAGES -->
+auth-service  |                         <div th:if="${param.error == 'bad_credentials'}" class="alert alert-danger text-center mb-3">
+auth-service  |                             Invalid email or password.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'locked'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your account is locked. Please contact support.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'disabled'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your account is disabled. Please contact support.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'expired'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your account has expired. Please contact support.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'credentials_expired'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your credentials have expired. Please reset your password.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error != null and param.logout == null
+auth-service  |                                      and !(param.error == 'bad_credentials' or param.error == 'locked'
+auth-service  |                                      or param.error == 'disabled' or param.error == 'expired'
+auth-service  |                                      or param.error == 'credentials_expired')}"
+auth-service  |                              class="alert alert-danger text-center mb-3">
+auth-service  |                             Invalid email or password.
+auth-service  |                         </div>
+auth-service  | 
+auth-service  |                         <!-- LOGIN FORM -->
+auth-service  | 
+auth-service  |                         <form action="/login" method="post" class="hc-login-form">
+auth-service  |                         <!-- EMAIL -->
+auth-service  |                             <div class="mb-4">
+auth-service  |                                 <label class="hc-login-label" for="email">Email</label>
+auth-service  |                                 <div class="hc-login-input-wrapper">
+auth-service  |                                     <input type="email" id="email" name="email"
+auth-service  |                                            class="hc-login-input"
+auth-service  |                                            placeholder="Enter your email" required autocomplete="username">
+auth-service  |                                     <span class="hc-login-input-icon"><i class="fa-regular fa-envelope"></i></span>
+auth-service  |                                 </div>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                             <!-- PASSWORD -->
+auth-service  |                             <div class="mb-3">
+auth-service  |                                 <label class="hc-login-label" for="password">Password</label>
+auth-service  |                                 <div class="hc-login-input-wrapper">
+auth-service  |                                     <input type="password" id="password" name="password"
+auth-service  |                                            class="hc-login-input"
+auth-service  |                                            placeholder="Enter your password" required autocomplete="current-password">
+auth-service  |                                     <span class="hc-login-input-icon toggle-password"><i class="fa-regular fa-eye"></i></span>
+auth-service  |                                 </div>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                             <!-- REMEMBER + FORGOT -->
+auth-service  |                             <div class="d-flex justify-content-between align-items-center mb-4">
+auth-service  |                                 <div class="form-check">
+auth-service  |                                     <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+auth-service  |                                     <label class="form-check-label hc-login-remember" for="remember-me">
+auth-service  |                                         Remember me
+auth-service  |                                     </label>
+auth-service  |                                 </div>
+auth-service  |                                 <a th:href="@{/forgot-password}" class="hc-login-link">Forgot password?</a>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                             <!-- LOGIN BUTTON -->
+auth-service  |                             <button type="submit" class="btn hc-login-btn w-100">LOGIN</button>
+auth-service  | 
+auth-service  |                             <!-- SIGNUP LINK -->
+auth-service  |                             <p class="hc-login-bottom mt-3 mb-0 text-center">
+auth-service  |                                 Don’t have an account?
+auth-service  |                                 <a th:href="@{/signup}" class="hc-login-link fw-semibold">Create one</a>
+auth-service  |                             </p>
+auth-service  | 
+auth-service  |                             <!-- GOOGLE LOGIN -->
+auth-service  |                             <div class="mt-4">
+auth-service  |                                 <a th:href="@{/oauth2/authorization/google}"
+auth-service  |                                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+auth-service  |                                     <i class="fab fa-google"></i>
+auth-service  |                                     <span>Sign in with Google</span>
+auth-service  |                                 </a>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                         </form>
+auth-service  |                     </div>
+auth-service  |                 </div>
+auth-service  | 
+auth-service  |             </div>
+auth-service  |         </div>
+auth-service  |     </section>
+auth-service  | 
+auth-service  |     <!-- AUTH FOOTER -->
+auth-service  |     <div th:replace="fragments/auth-footer :: authFooter"></div>
+auth-service  | 
+auth-service  |     <!-- JS -->
+auth-service  |     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+auth-service  |     <script th:src="@{/auth-assets/js/login.js}"></script>
+auth-service  |     </body>
+auth-service  |     </html>
+auth-service  | "
+auth-service  | 	at org.attoparser.MarkupParser.parseDocument(MarkupParser.java:366) ~[attoparser-2.0.7.RELEASE.jar!/:2.0.7.RELEASE]
+auth-service  | 	at org.attoparser.MarkupParser.parse(MarkupParser.java:257) ~[attoparser-2.0.7.RELEASE.jar!/:2.0.7.RELEASE]
+auth-service  | 	at org.thymeleaf.templateparser.markup.AbstractMarkupTemplateParser.parse(AbstractMarkupTemplateParser.java:230) ~[thymeleaf-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	... 133 common frames omitted
+auth-service  | 
+auth-service  | 2026-07-13T06:50:25.485Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.j.s.OpenEntityManagerInViewInterceptor : Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+auth-service  | 2026-07-13T06:50:25.485Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.web.servlet.DispatcherServlet        : Failed to complete request: org.thymeleaf.exceptions.TemplateInputException: An error happened during template parsing (template: "class path resource [templates/user/login.html]" - line 16, col 9)
+auth-service  | 2026-07-13T06:50:25.485Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+auth-service  | 2026-07-13T06:50:25.486Z ERROR 1 --- [auth-service] [nio-8084-exec-7] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.thymeleaf.exceptions.TemplateInputException: An error happened during template parsing (template: "class path resource [templates/user/login.html]" - line 16, col 9)] with root cause
+auth-service  | 
+auth-service  | org.attoparser.ParseException: (Line = 16, Column = 9) Incomplete structure: "<link th:href="@{/auth-assets/css/login.css}" rel="stylesheet"/>
+auth-service  |     </head>
+auth-service  |     <body class="hc-login-body margin-top-loginPage" style="margin-top: -7.3rem;">
+auth-service  | 
+auth-service  | 
+auth-service  | 
+auth-service  | 
+auth-service  | 
+auth-service  |     <section class="hc-login-section">
+auth-service  | 
+auth-service  |         <div class="hc-login-overlay"></div>
+auth-service  | 
+auth-service  |         <div class="container hc-login-container">
+auth-service  |             <div class="row g-5 align-items-center">
+auth-service  | 
+auth-service  |                 <!-- LEFT SIDE: Hero text -->
+auth-service  |                 <div class="col-lg-6">
+auth-service  |                     <div class="hc-login-left">
+auth-service  |                         <!-- Logo + Brand -->
+auth-service  |                         <div class="d-flex align-items-center mb-4">
+auth-service  |                             <img th:src="@{/auth-assets/img/logo.png}" alt="Hyperchip Logo" class="hc-login-logo me-2">
+auth-service  |                             <span class="hc-login-logo-text">Hyperchip</span>
+auth-service  |                         </div>
+auth-service  | 
+auth-service  |                         <h1 class="hc-login-title mb-3">Welcome Back</h1>
+auth-service  | 
+auth-service  |                         <p class="hc-login-subtitle mb-4">
+auth-service  |                             Sign in to your Hyperchip account and continue shopping the latest laptops,
+auth-service  |                             mobiles, accessories and more – all in one secure place.
+auth-service  |                         </p>
+auth-service  | 
+auth-service  |                         <ul class="hc-login-bullets">
+auth-service  |                             <li><i class="fa-solid fa-circle-check"></i> Fast &amp; secure checkout</li>
+auth-service  |                             <li><i class="fa-solid fa-circle-check"></i> Track your orders in real time</li>
+auth-service  |                             <li><i class="fa-solid fa-circle-check"></i> Access offers, wallet &amp; wishlist</li>
+auth-service  |                         </ul>
+auth-service  |                     </div>
+auth-service  |                 </div>
+auth-service  | 
+auth-service  |                 <!-- RIGHT SIDE: Login form -->
+auth-service  |                 <div class="col-lg-5 offset-lg-1">
+auth-service  |                     <div class="hc-login-form-wrapper">
+auth-service  | 
+auth-service  |                         <h2 class="hc-login-form-title mb-1">Login</h2>
+auth-service  |                         <p class="hc-login-form-subtitle mb-4">
+auth-service  |                             Enter your email and password to continue.
+auth-service  |                         </p>
+auth-service  | 
+auth-service  |                         <!-- SUCCESS MESSAGE -->
+auth-service  |                         <div th:if="${successMsg}" class="alert-background  alert alert-success text-center mb-3" th:text="${successMsg}"></div>
+auth-service  | 
+auth-service  |                         <!-- LOGOUT SUCCESS MESSAGE -->
+auth-service  |                         <div th:if="${param.logout != null}" class="alert-background alert alert-success text-center mb-3">
+auth-service  |                             You have been logged out successfully.
+auth-service  |                         </div>
+auth-service  | 
+auth-service  |                         <!-- ERROR MESSAGES -->
+auth-service  |                         <div th:if="${param.error == 'bad_credentials'}" class="alert alert-danger text-center mb-3">
+auth-service  |                             Invalid email or password.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'locked'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your account is locked. Please contact support.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'disabled'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your account is disabled. Please contact support.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'expired'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your account has expired. Please contact support.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error == 'credentials_expired'}" class="alert alert-warning text-center mb-3">
+auth-service  |                             Your credentials have expired. Please reset your password.
+auth-service  |                         </div>
+auth-service  |                         <div th:if="${param.error != null and param.logout == null
+auth-service  |                                      and !(param.error == 'bad_credentials' or param.error == 'locked'
+auth-service  |                                      or param.error == 'disabled' or param.error == 'expired'
+auth-service  |                                      or param.error == 'credentials_expired')}"
+auth-service  |                              class="alert alert-danger text-center mb-3">
+auth-service  |                             Invalid email or password.
+auth-service  |                         </div>
+auth-service  | 
+auth-service  |                         <!-- LOGIN FORM -->
+auth-service  | 
+auth-service  |                         <form action="/login" method="post" class="hc-login-form">
+auth-service  |                         <!-- EMAIL -->
+auth-service  |                             <div class="mb-4">
+auth-service  |                                 <label class="hc-login-label" for="email">Email</label>
+auth-service  |                                 <div class="hc-login-input-wrapper">
+auth-service  |                                     <input type="email" id="email" name="email"
+auth-service  |                                            class="hc-login-input"
+auth-service  |                                            placeholder="Enter your email" required autocomplete="username">
+auth-service  |                                     <span class="hc-login-input-icon"><i class="fa-regular fa-envelope"></i></span>
+auth-service  |                                 </div>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                             <!-- PASSWORD -->
+auth-service  |                             <div class="mb-3">
+auth-service  |                                 <label class="hc-login-label" for="password">Password</label>
+auth-service  |                                 <div class="hc-login-input-wrapper">
+auth-service  |                                     <input type="password" id="password" name="password"
+auth-service  |                                            class="hc-login-input"
+auth-service  |                                            placeholder="Enter your password" required autocomplete="current-password">
+auth-service  |                                     <span class="hc-login-input-icon toggle-password"><i class="fa-regular fa-eye"></i></span>
+auth-service  |                                 </div>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                             <!-- REMEMBER + FORGOT -->
+auth-service  |                             <div class="d-flex justify-content-between align-items-center mb-4">
+auth-service  |                                 <div class="form-check">
+auth-service  |                                     <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+auth-service  |                                     <label class="form-check-label hc-login-remember" for="remember-me">
+auth-service  |                                         Remember me
+auth-service  |                                     </label>
+auth-service  |                                 </div>
+auth-service  |                                 <a th:href="@{/forgot-password}" class="hc-login-link">Forgot password?</a>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                             <!-- LOGIN BUTTON -->
+auth-service  |                             <button type="submit" class="btn hc-login-btn w-100">LOGIN</button>
+auth-service  | 
+auth-service  |                             <!-- SIGNUP LINK -->
+auth-service  |                             <p class="hc-login-bottom mt-3 mb-0 text-center">
+auth-service  |                                 Don’t have an account?
+auth-service  |                                 <a th:href="@{/signup}" class="hc-login-link fw-semibold">Create one</a>
+auth-service  |                             </p>
+auth-service  | 
+auth-service  |                             <!-- GOOGLE LOGIN -->
+auth-service  |                             <div class="mt-4">
+auth-service  |                                 <a th:href="@{/oauth2/authorization/google}"
+auth-service  |                                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+auth-service  |                                     <i class="fab fa-google"></i>
+auth-service  |                                     <span>Sign in with Google</span>
+auth-service  |                                 </a>
+auth-service  |                             </div>
+auth-service  | 
+auth-service  |                         </form>
+auth-service  |                     </div>
+auth-service  |                 </div>
+auth-service  | 
+auth-service  |             </div>
+auth-service  |         </div>
+auth-service  |     </section>
+auth-service  | 
+auth-service  |     <!-- AUTH FOOTER -->
+auth-service  |     <div th:replace="fragments/auth-footer :: authFooter"></div>
+auth-service  | 
+auth-service  |     <!-- JS -->
+auth-service  |     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+auth-service  |     <script th:src="@{/auth-assets/js/login.js}"></script>
+auth-service  |     </body>
+auth-service  |     </html>
+auth-service  | "
+auth-service  | 	at org.attoparser.MarkupParser.parseDocument(MarkupParser.java:366) ~[attoparser-2.0.7.RELEASE.jar!/:2.0.7.RELEASE]
+auth-service  | 	at org.attoparser.MarkupParser.parse(MarkupParser.java:257) ~[attoparser-2.0.7.RELEASE.jar!/:2.0.7.RELEASE]
+auth-service  | 	at org.thymeleaf.templateparser.markup.AbstractMarkupTemplateParser.parse(AbstractMarkupTemplateParser.java:230) ~[thymeleaf-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.thymeleaf.templateparser.markup.AbstractMarkupTemplateParser.parseStandalone(AbstractMarkupTemplateParser.java:100) ~[thymeleaf-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.thymeleaf.engine.TemplateManager.parseAndProcess(TemplateManager.java:649) ~[thymeleaf-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.thymeleaf.TemplateEngine.process(TemplateEngine.java:1103) ~[thymeleaf-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.thymeleaf.TemplateEngine.process(TemplateEngine.java:1077) ~[thymeleaf-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.thymeleaf.spring6.view.ThymeleafView.renderFragment(ThymeleafView.java:372) ~[thymeleaf-spring6-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.thymeleaf.spring6.view.ThymeleafView.render(ThymeleafView.java:192) ~[thymeleaf-spring6-3.1.2.RELEASE.jar!/:3.1.2.RELEASE]
+auth-service  | 	at org.springframework.web.servlet.DispatcherServlet.render(DispatcherServlet.java:1432) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.servlet.DispatcherServlet.processDispatchResult(DispatcherServlet.java:1168) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1106) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$FilterObservation$SimpleFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:479) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:340) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator.lambda$wrapSecured$0(ObservationFilterChainDecorator.java:82) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:128) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.doFilterInternal(OAuth2AuthorizationRequestRedirectFilter.java:198) ~[spring-security-oauth2-client-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:323) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:224) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) ~[spring-security-config-6.3.3.jar!/:6.3.3]
+auth-service  | 	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:113) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.valves.RemoteIpValve.invoke(RemoteIpValve.java:731) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.30.jar!/:na]
+auth-service  | 	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+auth-service  | 
+auth-service  | 2026-07-13T06:50:25.491Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /error
+auth-service  | 2026-07-13T06:50:25.492Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /error
+auth-service  | 2026-07-13T06:50:25.493Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+auth-service  | 2026-07-13T06:50:25.494Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#errorHtml(HttpServletRequest, HttpServletResponse)
+auth-service  | 2026-07-13T06:50:25.494Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.j.s.OpenEntityManagerInViewInterceptor : Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+auth-service  | 2026-07-13T06:50:25.501Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.w.s.v.ContentNegotiatingViewResolver : Selected 'text/html' given [text/html, text/html;q=0.8]
+auth-service  | 2026-07-13T06:50:25.501Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.j.s.OpenEntityManagerInViewInterceptor : Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+auth-service  | 2026-07-13T06:50:25.502Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 500
+auth-service  | 2026-07-13T06:50:25.502Z DEBUG 1 --- [auth-service] [nio-8084-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+auth-service  | 2026-07-13T06:50:28.985Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : HTTP GET http://discovery:8761/eureka/apps/delta
+auth-service  | 2026-07-13T06:50:28.985Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:50:28.989Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:50:28.990Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+auth-service  | 2026-07-13T06:50:32.995Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:50:32.996Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:50:33.003Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:50:43.006Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:50:43.007Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:50:43.013Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:50:53.015Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:50:53.016Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:50:53.022Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:50:58.989Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : HTTP GET http://discovery:8761/eureka/apps/delta
+auth-service  | 2026-07-13T06:50:58.989Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:50:58.993Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:50:58.993Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+auth-service  | 2026-07-13T06:51:03.020Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:51:03.021Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:03.026Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:13.028Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:51:13.028Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:13.031Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:23.034Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:51:23.034Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:23.039Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:27.078Z  INFO 1 --- [auth-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+auth-service  | 2026-07-13T06:51:28.993Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : HTTP GET http://discovery:8761/eureka/apps/delta
+auth-service  | 2026-07-13T06:51:28.993Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:28.999Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:28.999Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+auth-service  | 2026-07-13T06:51:33.036Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:51:33.037Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:33.040Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:43.042Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:51:43.042Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:43.046Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:53.049Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : HTTP PUT http://discovery:8761/eureka/apps/AUTH-SERVICE/172ba97b0978:auth-service:8084?status=UP&lastDirtyTimestamp=1783924361790
+auth-service  | 2026-07-13T06:51:53.050Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:53.054Z DEBUG 1 --- [auth-service] [beatExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:58.999Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : HTTP GET http://discovery:8761/eureka/apps/delta
+auth-service  | 2026-07-13T06:51:58.999Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+auth-service  | 2026-07-13T06:51:59.003Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Response 200 OK
+auth-service  | 2026-07-13T06:51:59.003Z DEBUG 1 --- [auth-service] [reshExecutor-%d] o.s.web.client.RestTemplate              : Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
