@@ -133,9 +133,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function validateReferral() {
         if (!referralInput) return true;
         const val = referralInput.value.trim();
-        if (!val) { setFieldError(referralError, ""); return true; }
+        if (!val) { setFieldError(referralError, ""); return true; } // optional field
         if (/\s/.test(val)) { setFieldError(referralError, "Referral code must not contain spaces."); return false; }
-        if (val.toUpperCase() !== "HC1-EF540C") { setFieldError(referralError, "Invalid referral code."); return false; }
         setFieldError(referralError, ""); return true;
     }
 
