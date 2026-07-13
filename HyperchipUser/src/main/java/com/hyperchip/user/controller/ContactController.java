@@ -95,7 +95,7 @@ public class ContactController {
      * - Adds an empty ContactDto for form binding
      * - Uses user-specific header and layout
      */
-    @GetMapping("/contact")
+    @GetMapping("/user/contact")
     public String showUserContactForm(Model model) {
         model.addAttribute("contactDto", new ContactDto());
         return "user/contact-user"; // view with user header
@@ -112,7 +112,7 @@ public class ContactController {
      * - Saves the contact message via ContactService
      * - Adds flash attribute to show success message after redirect
      */
-    @PostMapping("/contact")
+    @PostMapping("/user/contact")
     public String submitUserContact(
             @Valid @ModelAttribute("contactDto") ContactDto contactDto,
             BindingResult result,
@@ -129,6 +129,6 @@ public class ContactController {
         // set success message for redirect
         redirectAttributes.addFlashAttribute("successMsg", "Your message has been sent successfully!");
 
-        return "redirect:/user/contact-user";
+        return "redirect:/user/contact";
     }
 }
