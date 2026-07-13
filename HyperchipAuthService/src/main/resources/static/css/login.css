@@ -97,14 +97,14 @@ margin-right: .5rem;
 
 /* RIGHT SIDE FORM CARD */
 .hc-login-form-wrapper {
-background: rgba(17, 17, 17, 0.92);
-border-radius: 1.2rem;
-padding: 2.4rem 2.1rem 2.2rem;
-border: 1px solid rgba(255, 255, 255, 0.08);
-box-shadow: 0 22px 60px rgba(0, 0, 0, 0.9);
-backdrop-filter: blur(14px);
-color: var(--hc-text-light);
-font-family: "Times New Roman", serif;
+    background: #121213;
+    border-radius: 1.2rem;
+    padding: 2.4rem 2.1rem 2.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(14px);
+    color: var(--hc-text-light);
+    font-family: "Times New Roman", serif;
 }
 
 .hc-login-form-title {
@@ -136,16 +136,17 @@ border-bottom: 1px solid rgba(229,231,235,0.75);
     width: 100%;
     padding: .45rem 2.2rem .45rem 0;
     border: none;
-    background: transparent;
-    color: #fff !important;        /* white text on black bg */
+    background: #121213;
+    color: #fff !important;
     font-size: .95rem;
     outline: none;
     font-family: "Times New Roman", serif;
 }
 
 .hc-login-input::placeholder {
-    color: rgba(255,255,255,0.6) !important;   /* light gray-white placeholder */
+    color: rgba(255,255,255,0.6) !important;
 }
+
 
 .hc-login-input-wrapper:focus-within {
 border-bottom-color: var(--hc-accent);
@@ -335,8 +336,8 @@ html {
 .hc-login-input:-webkit-autofill:hover,
 .hc-login-input:-webkit-autofill:focus,
 .hc-login-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px black inset !important;
-    box-shadow: 0 0 0 1000px black inset !important;
+    -webkit-box-shadow: 0 0 0 1000px #121213 inset !important;
+    box-shadow: 0 0 0 1000px #121213 inset !important;
     -webkit-text-fill-color: #fff !important;
     caret-color: #fff;
     transition: background-color 5000s ease-in-out 0s;

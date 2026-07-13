@@ -7,6 +7,14 @@ spring:
           order: 1
           predicates:
             - Path=/api/masters/**
+        - id: user-uploads
+          uri: http://user-service:8083
+          order: 1
+          filters:
+            - StripPrefix=0
+            - PreserveHostHeader
+          predicates:
+            - Path=/uploads/users/**
         - id: master-uploads
           uri: http://master-service:8086
           order: 2
