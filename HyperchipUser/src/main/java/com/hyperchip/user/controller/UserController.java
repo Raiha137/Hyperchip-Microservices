@@ -160,7 +160,7 @@ public class UserController {
             }
 
             attributes.addFlashAttribute("successMsg", "Profile updated successfully.");
-            return "redirect:/profile";
+            return "redirect:/user/profile";
 
         } catch (IOException ioe) {
             log.error("Failed to save profile image", ioe);
@@ -170,7 +170,7 @@ public class UserController {
         } catch (Exception ex) {
             log.error("Profile update failed", ex);
             attributes.addFlashAttribute("errorMsg", "Profile update failed. Please try again.");
-            return "redirect:/updateProfile";
+            return "redirect:/user/updateProfile";
         }
     }
 

@@ -132,20 +132,19 @@ position: relative;
 border-bottom: 1px solid rgba(229,231,235,0.75);
 }
 
-
 .hc-login-input {
     width: 100%;
     padding: .45rem 2.2rem .45rem 0;
     border: none;
     background: transparent;
-    color: #000 !important;
+    color: #fff !important;        /* white text on black bg */
     font-size: .95rem;
     outline: none;
     font-family: "Times New Roman", serif;
 }
 
 .hc-login-input::placeholder {
-    color: rgba(0,0,0,0.5) !important;
+    color: rgba(255,255,255,0.6) !important;   /* light gray-white placeholder */
 }
 
 .hc-login-input-wrapper:focus-within {
@@ -329,4 +328,16 @@ html {
 }
 .margin-top-loginPage{
     margin-top: -8rem;
+}
+
+
+.hc-login-input:-webkit-autofill,
+.hc-login-input:-webkit-autofill:hover,
+.hc-login-input:-webkit-autofill:focus,
+.hc-login-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px black inset !important;
+    box-shadow: 0 0 0 1000px black inset !important;
+    -webkit-text-fill-color: #fff !important;
+    caret-color: #fff;
+    transition: background-color 5000s ease-in-out 0s;
 }
