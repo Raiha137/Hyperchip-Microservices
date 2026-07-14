@@ -74,6 +74,7 @@
                         <thead>
                         <tr>
                             <th>Friend Email</th>
+                            <th>Coupon Code</th>
                             <th>Status</th>
                             <th>Date</th>
                         </tr>
@@ -201,16 +202,18 @@
                     tbody.innerHTML = '';
 
                     list.forEach(r => {
-                        const email = r.referredUserEmail || '--'; // make sure backend sends this field
+                        const email = r.referredUserEmail || '--';
                         const date  = r.createdAt || '--';
+                        const coupon = r.couponCode || '--';
 
                         tbody.innerHTML += `
-                            <tr>
-                                <td>${email}</td>
-                                <td>${r.status}</td>
-                                <td>${date}</td>
-                            </tr>
-                        `;
+        <tr>
+            <td>${email}</td>
+            <td class="fw-semibold text-primary">${coupon}</td>
+            <td>${r.status}</td>
+            <td>${date}</td>
+        </tr>
+    `;
                     });
                 })
                 .catch(err => {

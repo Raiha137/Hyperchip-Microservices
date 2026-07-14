@@ -460,6 +460,7 @@ public class OfferServiceImpl implements OfferService {
                 .referrerUserId(rr.getReferrerUserId())
                 .referredUserId(rr.getReferredUserId())
                 .referralCode(rr.getReferralCode())
+                .couponCode("COUPON_ISSUED".equals(rr.getStatus()) ? ("REF-" + rr.getId()) : null)
                 .status(rr.getStatus())
                 .referredUserEmail(rr.getReferredUserEmail())
                 .createdAt(toLocalDateTime(rr.getCreatedAt()))

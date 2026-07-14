@@ -12,6 +12,7 @@ public class ReferralRewardDto {
     private Long referrerUserId;
     private Long referredUserId;
     private String referralCode;
+    private String couponCode;   // the coupon this referral earned, e.g. "REF-3"
     private String status;     // PENDING_REWARD, COUPON_ISSUED, USED, EXPIRED
     private LocalDateTime createdAt;
     private String referredUserEmail;
