@@ -565,6 +565,19 @@
                 return;
             }
 
+            // ✅ Guard against double-submit (fixes duplicate product bug)
+            if (formEl.dataset.submitting === 'true') {
+                e.preventDefault();
+                return;
+            }
+            formEl.dataset.submitting = 'true';
+
+            const submitBtn = formEl.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+            }
+
             // Make sure finalFiles are put into a hidden file input
             finalizeFilesIntoInput();
             // 👉 no e.preventDefault() here, browser will submit normally
